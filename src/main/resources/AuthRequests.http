@@ -1,0 +1,108 @@
+GET http://localhost:8888/auth/public
+Content-Type: application/json
+
+###
+POST http://localhost:8888/auth/login
+Content-Type: application/json
+
+{
+  "mail": "admin@admin.com",
+  "password": "ohDpM-HJBI-o93M-8UxI"
+}
+
+###
+POST http://localhost:8888/auth/login
+Content-Type: application/json
+
+{
+  "mail": "admin@admin.com",
+  "password": "admin1"
+}
+
+###
+
+POST http://localhost:8888/auth/login
+Content-Type: application/json
+
+{
+  "mail": "admin@mail.com",
+  "password": "admin1"
+}
+
+###
+PATCH http://localhost:8888/auth/login/password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4NzMwMTg2OCwiZXhwIjoxNTg3MzA1NDY4LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.RXTMPBurB2d_CFOSOGmaW4hmedZPvnDFZhsLZow8zPsVek4XLpes5A30oHNHQx1kWuHMSQqfJ1Y_AC0W0oxE5MOncIYmrAtW_K82evRbq1uYMlQYtmzmMGhOlAHNDNZ6_f8nQ_YRgRyZboKYkhJETAUbcY50BZD2bAU5hifDLJ0HvY3M7IhXTk48tEgLk5xYURONJyW91HfPBDpFtJcDp3GzkulMArRl8-fO1Ri9v3dPe9mCIKxjAQPrhLU7QpPJFMju-lt_pP3Id2wBPdsDKBOluZ6tPQC3mJhDk-QIXLiJjlPC8lVmewBditk_dn1G3eIi_ESJsPSCQuLPotfZCw
+
+{
+  "oldPassword": "ohDpM-HJBI-o93M-8UxI",
+  "newPassword": "admin1"
+}
+
+###
+
+PATCH http://localhost:8888/auth/login/mail
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4NzMwMTg2OCwiZXhwIjoxNTg3MzA1NDY4LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.RXTMPBurB2d_CFOSOGmaW4hmedZPvnDFZhsLZow8zPsVek4XLpes5A30oHNHQx1kWuHMSQqfJ1Y_AC0W0oxE5MOncIYmrAtW_K82evRbq1uYMlQYtmzmMGhOlAHNDNZ6_f8nQ_YRgRyZboKYkhJETAUbcY50BZD2bAU5hifDLJ0HvY3M7IhXTk48tEgLk5xYURONJyW91HfPBDpFtJcDp3GzkulMArRl8-fO1Ri9v3dPe9mCIKxjAQPrhLU7QpPJFMju-lt_pP3Id2wBPdsDKBOluZ6tPQC3mJhDk-QIXLiJjlPC8lVmewBditk_dn1G3eIi_ESJsPSCQuLPotfZCw
+
+{
+  "newmail": "admin@mail.com",
+  "password": "admin1"
+}
+
+###
+
+
+POST http://localhost:8888/auth/claim
+Content-Type: application/json
+
+{
+  "mail": "toto@mail.com",
+  "password": "toto"
+}
+
+###
+
+
+POST http://localhost:8888/auth/claim
+Content-Type: application/json
+
+{
+  "mail": "user2@mail.com",
+  "password": "toto"
+}
+
+###
+
+
+POST http://localhost:8888/auth/login
+Content-Type: application/json
+
+{
+  "mail": "toto@mail.com",
+  "password": "toto"
+}
+
+###
+
+GET http://localhost:8888/auth/refresh
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiI4Iiwic3ViIjoiMiIsImlhdCI6MTU4NzMwMTkzMiwiZXhwIjoxNTg3Mzg4MzMyLCJ0eXBlIjoiUkVGUkVTSCJ9.Gf-vnY-IraV0gjJBw2_8pFIR9vlNjWhXvp9ZtK50aXKb8aANd2gOF4_c9YH2OJJCH-hPJzJLRpfRHdpywg9pRtRhP8EH2HaovdFC_oecl0o4NBi6Nx2Wh-29gElddz8K6Bep1pfZN3KBG2UqOXxL68fnoYVVLogaiQnAkrsdQW0U_jSIgL72R7rTQI5U1U2o_3mQZNow7kFOwTQ-gXrh-dIUX1_d1R-qZRKtyD7f4QE_W-IokLLeqj_2s-_1LrwbiXFpA2dR1tjQ2yDxsl-XTcpRdXAVFfbxtSVw1QOacon13kIUQFtY7OXtGvSJ9ePMOO0jA0zf-basBG5XYi-ggw
+###
+
+
+PATCH http://localhost:8888/auth/claim/2/roles
+Content-Type: application/json
+//admin token here
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxMSIsInN1YiI6IjEiLCJpYXQiOjE1ODczMDIwMzYsImV4cCI6MTU4NzMwNTYzNiwidHlwZSI6IkFDQ0VTUyIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdfQ.avD0Rllvi2iaWdlSkwdE-_aNxDhrfKpmYdfbBOcLVtWXBG4fDH-Z9q6rFGtmIiujqouqWNJEahULirj4pKTpWVyeSgr5Oxk9XeK5Khe5BqUqr_TSkN8f_PlSpyoDuaiZBs8wYXYDlNeSkTb37QYRczWIbrEWyLBF1IxDCPyiBhiTIYimVVAjCyMDymClOXfELffWZ3o2QIJrOgfNv0RyBmYuOpRC-F4hl8Am4AwPpt1pU1jbIfPknkS6YWJLTMSXnmCrMlXR66uuUlA9XgXjc3goSRlCNTMyrCHdGNZJNNY2h3SO_s04AG4h3OC5wDRu_CFUlEu2Z0RyVCyJi3064A
+
+[
+  "admin",
+  "user"
+]
+
+###
+DELETE http://localhost:8888/auth/clean
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxMSIsInN1YiI6IjEiLCJpYXQiOjE1ODczMDIwMzYsImV4cCI6MTU4NzMwNTYzNiwidHlwZSI6IkFDQ0VTUyIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdfQ.avD0Rllvi2iaWdlSkwdE-_aNxDhrfKpmYdfbBOcLVtWXBG4fDH-Z9q6rFGtmIiujqouqWNJEahULirj4pKTpWVyeSgr5Oxk9XeK5Khe5BqUqr_TSkN8f_PlSpyoDuaiZBs8wYXYDlNeSkTb37QYRczWIbrEWyLBF1IxDCPyiBhiTIYimVVAjCyMDymClOXfELffWZ3o2QIJrOgfNv0RyBmYuOpRC-F4hl8Am4AwPpt1pU1jbIfPknkS6YWJLTMSXnmCrMlXR66uuUlA9XgXjc3goSRlCNTMyrCHdGNZJNNY2h3SO_s04AG4h3OC5wDRu_CFUlEu2Z0RyVCyJi3064A
+###
