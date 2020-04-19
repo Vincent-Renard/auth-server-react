@@ -1,7 +1,8 @@
 package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.PasswordEncoder;
-import com.example.auth.server.authentification.facade.persistence.RepositoryImpl;
+import com.example.auth.server.authentification.facade.persistence.Repository;
+import com.example.auth.server.authentification.facade.persistence.RepositoryInMemory;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.StoreUser;
 import com.example.auth.server.model.dtos.out.Bearers;
@@ -23,7 +24,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private final Predicate<String> passwordChecker = password -> password.length() > MIN_LENGHT_PASSWORD && password.length() < MAX_LENGHT_PASSWORD;
     private final Predicate<String> mailChecker = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).asPredicate();
 
-    private final RepositoryImpl users;
+    private final Repository users;
 
     private final JwtEncoder bearersManager;
 
@@ -44,7 +45,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     public AuthServiceImpl() {
-        users = new RepositoryImpl();
+        users = new RepositoryInMemory();
         this.bearersManager = new JwtEncoder();
         fill();
 
@@ -146,7 +147,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             var usr = user.get();
             usr.setUpdateDate(LocalDateTime.now());
             usr.setRoles(newRoles);
-            users.updateById(iduser, usr);
+            users.update(usr);
             return usr;
         } else {
             throw new NotSuchUserException();
@@ -162,7 +163,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(oldPasssword))) {
                 usr.setUpdateDate(LocalDateTime.now());
                 usr.setPassword(PasswordEncoder.encode(newpasssword));
-                users.updateById(iduser, usr);
+                users.update(usr);
             } else throw new BadPasswordException();
         } else {
             throw new NotSuchUserException();
@@ -183,7 +184,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             usr.setMail(newmail);
             usr.setUpdateDate(LocalDateTime.now());
-            users.updateById(iduser, usr);
+            users.update(usr);
 
         } else {
             throw new NotSuchUserException();

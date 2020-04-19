@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
                 .pathMatchers(HttpMethod.POST, rootUrl+"/login").permitAll()
+                //.pathMatchers(HttpMethod.GET, "/swagger**").permitAll()
                 .pathMatchers(HttpMethod.PATCH, rootUrl+"/login/password").authenticated()
                 .pathMatchers(HttpMethod.PATCH, rootUrl+"/login/mail").authenticated()
                 .pathMatchers(HttpMethod.GET, rootUrl+"/public").permitAll()
