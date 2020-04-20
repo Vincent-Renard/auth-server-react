@@ -54,12 +54,10 @@ public class JwtEncoder implements TokenConstant {
         cls.put(CLAIMS_KEY_TOKEN_ROLES, r);
 
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(cls)
                 .signWith(keys.getKeyChain().getPrivate())
                 .compact();
-
-        return token;
 
     }
 
@@ -74,12 +72,10 @@ public class JwtEncoder implements TokenConstant {
         cls.put(CLAIMS_KEY_TOKEN_TYPE, TokenType.REFRESH);
 
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(cls)
                 .signWith(keys.getKeyChain().getPrivate())
                 .compact();
-
-        return token;
     }
 
     public Bearers genBoth(long iduser, List<String> roles) {

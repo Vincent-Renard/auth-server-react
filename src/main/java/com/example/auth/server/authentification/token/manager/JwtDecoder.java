@@ -36,9 +36,7 @@ public class JwtDecoder implements TokenConstant {
 
             long iduser = Long.parseLong(refreshClaims.getSubject());
 
-            var upat = new UsernamePasswordAuthenticationToken(iduser, null, null);
-
-            return upat;
+            return new UsernamePasswordAuthenticationToken(iduser, null, null);
         } catch (JwtException e) {
             e.printStackTrace();
             throw new InvalidToken();
@@ -56,8 +54,7 @@ public class JwtDecoder implements TokenConstant {
                     .collect(Collectors.toList());
             long iduser = Long.parseLong(accessClaims.getSubject());
 
-            var upat = new UsernamePasswordAuthenticationToken(iduser, null, authorities);
-            return upat;
+            return new UsernamePasswordAuthenticationToken(iduser, null, authorities);
 
         } catch (JwtException e) {
             e.printStackTrace();

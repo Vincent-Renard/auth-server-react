@@ -30,13 +30,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     private String genPassword(int lenght , int chunks){
         String sep = "-";
-        String alphaU = "ABCDEGHIJKLMNOPQRSTUVWXZ";
-        String alpha= alphaU+alphaU.toLowerCase()+"0123456789";
+        String alphaU = "ABCDEGHIJKLMNPQRSTUVWXZ";
+        String alpha = alphaU + alphaU.toLowerCase() + "123456789";
         StringBuilder s = new StringBuilder();
         Random r = new Random();
-        for (int i = 0; i <=lenght ; i++) {
+        for (int i = 0; i <= lenght; i++) {
             s.append(alpha.charAt(r.nextInt(alpha.length())));
-            if (i>0 && i%chunks==0 && i<lenght){
+            if (i > 0 && i % chunks == 0 && i < lenght) {
                 s.append(sep);
             }
 
