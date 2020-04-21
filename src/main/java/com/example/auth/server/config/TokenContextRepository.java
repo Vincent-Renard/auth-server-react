@@ -41,51 +41,14 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
             var upat = bearerDecoder.decode(authorization);
             return Mono.just(new SecurityContextImpl(upat));
         } catch (NoToken noToken) {
-            logger.error("noToken");
+            logger.info("noToken");
         } catch (InvalidToken invalidToken) {
-            logger.error("invalidToken");
+            logger.info("invalidToken");
         } catch (TokenExpired tokenExpired) {
-            logger.error("TokenExpired");
-        }
-        return Mono.empty();
-        /*
-
-
-
-        try {
-            var upat = bearerDecoder.decodeRefresh(authorization);
-            return Mono.just(new SecurityContextImpl(upat));
-        } catch (NoToken noToken) {
-            logger.error(" noRefreshToken ");
-        } catch (InvalidToken invalidToken) {
-            logger.error(" invalidToken ");
-        } catch (RefreshTokenExpired refreshTokenExpired) {
-            logger.error(" refreshTokenExpired ");
-        } catch (NotRefreshToken notRefreshToken) {
-            logger.error(" notRefreshToken ");
-
-            try {
-
-                var upat = bearerDecoder.decodeAccess(authorization);
-                return Mono.just(new SecurityContextImpl(upat));
-
-
-            } catch (NoToken noToken) {
-                logger.error(" noAccessToken ");
-            } catch (NotAccessToken notAccessToken) {
-                logger.error(" notAccessToken ");
-            } catch (InvalidToken invalidToken) {
-                logger.error(" invalidToken ");
-            } catch (AccessTokenExpired accessTokenExpired) {
-                logger.error(" accessTokenExpired ");
-            }
-
-            return Mono.empty();
-
+            logger.info("TokenExpired");
         }
         return Mono.empty();
 
-         */
     }
 
 }

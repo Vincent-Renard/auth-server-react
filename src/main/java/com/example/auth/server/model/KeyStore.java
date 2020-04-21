@@ -15,8 +15,6 @@ import java.util.Base64;
  */
 public class KeyStore {
     private static final Logger log = LoggerFactory.getLogger(KeyStore.class);
-    private final static int KEY_SIZE = 2048;
-    private final static String ALGORITHM = "RSA";
 
     private static KeyStore instance;
     @Getter
