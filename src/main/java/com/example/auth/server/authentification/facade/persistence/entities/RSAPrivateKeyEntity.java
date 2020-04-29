@@ -25,14 +25,14 @@ public class RSAPrivateKeyEntity {
     Long id;
 
     @Column(length = 4096)
-    String key;
+    byte[] key;
 
     LocalDateTime dateTimeInserted;
 
     public RSAPrivateKeyEntity() {
     }
 
-    public RSAPrivateKeyEntity(String cle) {
+    public RSAPrivateKeyEntity(byte[] cle) {
         key = cle;
         dateTimeInserted = LocalDateTime.now();
     }

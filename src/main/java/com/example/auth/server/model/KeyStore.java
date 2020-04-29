@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -30,26 +31,31 @@ public class KeyStore {
     private KeyRepository keyRepository;
 
     @PostConstruct
-    private void genKey() {
-        System.err.println("post construct ");
+    private void genKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (keyChain == null) {
             System.err.println("kay null ");
             Optional<RSAPrivateKeyEntity> k = keyRepository.findById(1L);
             if (!k.isPresent()) {
                 System.err.println("key gen ");
                 keyChain = Keys.keyPairFor(SignatureAlgorithm.RS256);
-                var sk = Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded());
-                // System.err.println(sk);
+                var sk = Base64.getEncoder().encodeToString(keyChain.getPrivate().getEncoded());
 
-                keyRepository.save(new RSAPrivateKeyEntity(sk));
+
+                keyRepository.save(new RSAPrivateKeyEntity(keyChain.getPrivate().getEncoded()));
+
+
             } else {
-                String skey = k.get().getKey();
-                log.debug(skey);
+                byte[] skey = k.get().getKey();
+                System.err.println("key " + Arrays.toString(skey));
+
+                PKCS8EncodedKeySpec secretKeySpec = new PKCS8EncodedKeySpec(skey);
+
+                var kes = KeyFactory.getInstance("RSA").generatePrivate(secretKeySpec);
+                System.err.println(kes.toString());
             }
             log.debug(keyChain.getPublic().toString());
             log.debug(Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded()));
         }
-
     }
 
     public PublicKey getPublicKey() {
