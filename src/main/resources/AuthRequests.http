@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
   "mail": "admin@admin.com",
-  "password": "o9bHI-ON3E-ZRHI-SB2i"
+  "password": "IpM1p-XJho-mTj7-EGqL"
 }
 
 ###
@@ -86,7 +86,15 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:8888/auth/login
+Content-Type: application/json
 
+{
+  "mail": "user2@mail.com",
+  "password": "toto"
+}
+
+###
 
 POST http://localhost:8888/auth/login
 Content-Type: application/json
@@ -100,14 +108,15 @@ Content-Type: application/json
 
 GET http://localhost:8888/auth/refresh
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiI4Iiwic3ViIjoiMiIsImlhdCI6MTU4NzMwMTkzMiwiZXhwIjoxNTg3Mzg4MzMyLCJ0eXBlIjoiUkVGUkVTSCJ9.Gf-vnY-IraV0gjJBw2_8pFIR9vlNjWhXvp9ZtK50aXKb8aANd2gOF4_c9YH2OJJCH-hPJzJLRpfRHdpywg9pRtRhP8EH2HaovdFC_oecl0o4NBi6Nx2Wh-29gElddz8K6Bep1pfZN3KBG2UqOXxL68fnoYVVLogaiQnAkrsdQW0U_jSIgL72R7rTQI5U1U2o_3mQZNow7kFOwTQ-gXrh-dIUX1_d1R-qZRKtyD7f4QE_W-IokLLeqj_2s-_1LrwbiXFpA2dR1tjQ2yDxsl-XTcpRdXAVFfbxtSVw1QOacon13kIUQFtY7OXtGvSJ9ePMOO0jA0zf-basBG5XYi-ggw
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI0Iiwic3ViIjoiMSIsImlhdCI6MTU4ODE3ODQ2NCwiZXhwIjoxNTg4MjY0ODY0LCJ0eXBlIjoiUkVGUkVTSCJ9.OhNcWSeA6SIPvlSyTgHrfI0DdEVY41_LLj4QJ9SwghOYDznT9pW9px2ZANx6KB-PcckukX7Z1W8IXbUjf8On8WfMIdiUuk62ubIkP6Kr5m4__S4TxkJb_3y5RozYOVe4rzJSpIsuhyNi4z9pT2GFz0g2J97GycsgSLwRf6Q-XQY3A4Ss-GLPYI84XhmIz-WdEGZHvUAPViuZckQtG0N2te_JDAaaKbS1Hr1qSNJdtH4qklkt3_ijvfez07MzrWR6kaOmHkwGeFw0He_5uYIUMu_EJrR_SbnUACC9jpsokLsDGtVMauWqALH_EjN-7GB2dRi1Ctg_xq6MEMV_Yr71TA
+
 ###
 
 
 PATCH http://localhost:8888/auth/claim/2/roles
 Content-Type: application/json
 //admin token here
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxMSIsInN1YiI6IjEiLCJpYXQiOjE1ODczMDIwMzYsImV4cCI6MTU4NzMwNTYzNiwidHlwZSI6IkFDQ0VTUyIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdfQ.avD0Rllvi2iaWdlSkwdE-_aNxDhrfKpmYdfbBOcLVtWXBG4fDH-Z9q6rFGtmIiujqouqWNJEahULirj4pKTpWVyeSgr5Oxk9XeK5Khe5BqUqr_TSkN8f_PlSpyoDuaiZBs8wYXYDlNeSkTb37QYRczWIbrEWyLBF1IxDCPyiBhiTIYimVVAjCyMDymClOXfELffWZ3o2QIJrOgfNv0RyBmYuOpRC-F4hl8Am4AwPpt1pU1jbIfPknkS6YWJLTMSXnmCrMlXR66uuUlA9XgXjc3goSRlCNTMyrCHdGNZJNNY2h3SO_s04AG4h3OC5wDRu_CFUlEu2Z0RyVCyJi3064A
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI1Iiwic3ViIjoiMSIsImlhdCI6MTU4ODE3ODQ3OSwiZXhwIjoxNTg4MTgyMDc5LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.ZWmlUtxh7sc9tbk6cxXKciqlxeIAUH9JLqFK8YLuH1UR6xEbVLKNNbxJ7rDmkyf28l8d2o7mRgEK9bCXHmK4rk0zCjnhis5---vZjmQKQVRzqo0eDov4vMBkCz4ADKox5mJt20VgE8TDkLgnpPJRPrPsiiDqvKsOoYrGWgsparfp6-p_oKTBZY69Urg5LB87jEuP760pSwdjwfpFsXPQhqj7QPz3YduyaA1SHB_XAN47ci0-kDwIGC-HOe9o4oJixlSMwuFfi1iESSagzkqlrXGhHV5XL7pbu1ZQ2ljJcWWqkOWTyeg2X2_uc09mMOEEt2fJur06AOJKRIW22uC9EA
 
 [
   "admin",

@@ -1,4 +1,4 @@
-package com.example.auth.server.authentification.facade.persistence;
+package com.example.auth.server.authentification.facade.persistence.repositories;
 
 import com.example.auth.server.model.StoreUser;
 import com.example.auth.server.model.exceptions.ValueCreatingError;
@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * @autor Vincent
  * @date 15/04/2020
  */
 
-public class RepositoryInMemory implements Repository {
+public class UserRepositoryInMemory implements UserRepository {
     private final AtomicLong ids = new AtomicLong(1L);
     private final Map<Long, StoreUser> repo = new HashMap<>();
 

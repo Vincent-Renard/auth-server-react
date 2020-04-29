@@ -23,6 +23,6 @@ public class User {
     LocalDateTime updateDate;
 
     public static User from(StoreUser u) {
-        return new User(u.getIdUser(),u.getInscriptionDate(), u.getRoles(), u.getUpdateDate());
+        return new User(u.getIdUser(), u.getInscriptionDate(), u.getRoles(), u.getUpdateDate());
     }
 }

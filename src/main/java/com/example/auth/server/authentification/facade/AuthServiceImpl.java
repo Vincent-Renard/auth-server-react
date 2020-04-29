@@ -1,12 +1,14 @@
 package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.PasswordEncoder;
-import com.example.auth.server.authentification.facade.persistence.Repository;
-import com.example.auth.server.authentification.facade.persistence.RepositoryInMemory;
+import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
+import com.example.auth.server.authentification.facade.persistence.repositories.UserRepositoryInMemory;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.StoreUser;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.security.PublicKey;
 import java.time.LocalDateTime;
@@ -19,19 +21,30 @@ import java.util.stream.Collectors;
  * @autor Vincent
  * @date 12/03/2020
  */
+@Service
 public class AuthServiceImpl implements AuthService, AuthUtils {
 
     private final Predicate<String> passwordChecker = password -> password.length() > MIN_LENGHT_PASSWORD && password.length() < MAX_LENGHT_PASSWORD;
     private final Predicate<String> mailChecker = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).asPredicate();
 
-    private final Repository users;
+    private final UserRepository users;
 
-    private final JwtEncoder bearersManager;
+    @Autowired
+    private JwtEncoder bearersManager;
 
-    private String genPassword(int lenght , int chunks){
+    public AuthServiceImpl() {
+        users = new UserRepositoryInMemory();
+
+        fill();
+
+    }
+
+    private String genPassword(int lenght, int chunks) {
         String sep = "-";
-        String alphaU = "ABCDEGHIJKLMNPQRSTUVWXZ";
-        String alpha = alphaU + alphaU.toLowerCase() + "123456789";
+        String alphaU = "ABCDEGHIJKLMNOPQRSTUVWXYZ";
+        String alpha = alphaU + alphaU.toLowerCase() + "0123456789";
+        alpha = alpha.replace("0", "")
+                .replace("O", "");
         StringBuilder s = new StringBuilder();
         Random r = new Random();
         for (int i = 0; i <= lenght; i++) {
@@ -44,20 +57,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         return s.toString();
     }
 
-    public AuthServiceImpl() {
-        users = new RepositoryInMemory();
-        this.bearersManager = new JwtEncoder();
-        fill();
-
-    }
-
     private void fill() {
-        var password = genPassword(16,4);
+        var password = genPassword(16, 4);
 
-     //   password="admin";
-        System.out.println("admin@admin.com  "+password);
+        System.out.println("admin@admin.com  " + password);
 
-        var admin = new StoreUser("admin@admin.com",PasswordEncoder.encode(password), List.of("ADMIN", "USER"));
+        var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), List.of("ADMIN", "USER"));
         try {
             users.store(admin);
         } catch (ValueCreatingError ignored) {
@@ -80,14 +85,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         List<String> rolesOfUser = new ArrayList<>();
         rolesOfUser.add("USER");
-        var u = new StoreUser(mailUser,PasswordEncoder.encode(passsword), rolesOfUser);
+        var u = new StoreUser(mailUser, PasswordEncoder.encode(passsword), rolesOfUser);
         try {
             long id = users.store(u);
             return bearersManager.genBoth(id, u.getRoles());
         } catch (ValueCreatingError valueCreatingError) {
             throw new MailAlreadyTakenException();
         }
-
 
 
     }

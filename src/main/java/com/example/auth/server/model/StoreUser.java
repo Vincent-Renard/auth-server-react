@@ -22,7 +22,7 @@ public class StoreUser {
     long idUser;
     @Setter
     String mail;
-    LocalDateTime inscriptionDate;
+    final LocalDateTime inscriptionDate;
     @Setter
     char[] password;
     @Setter
@@ -30,8 +30,8 @@ public class StoreUser {
     @Setter
     LocalDateTime updateDate;
 
-    public StoreUser(String mail,char[] password, List<String> roles) {
-        this.mail=mail;
+    public StoreUser(String mail, char[] password, List<String> roles) {
+        this.mail = mail;
         this.password = password;
         this.roles = roles;
         inscriptionDate = LocalDateTime.now();

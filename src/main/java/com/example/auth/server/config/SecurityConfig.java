@@ -20,10 +20,9 @@ import reactor.core.publisher.Mono;
 public class SecurityConfig {
 
 
+    private static final String rootUrl = "/auth";
     @Autowired
     private ServerSecurityContextRepository securityContextRepository;
-    private static final String rootUrl  = "/auth";
-
 
     @Bean
     ReactiveUserDetailsService noOps() {
@@ -38,15 +37,15 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
-                .pathMatchers(HttpMethod.POST, rootUrl+"/login").permitAll()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
                 //.pathMatchers(HttpMethod.GET, "/swagger**").permitAll()
-                .pathMatchers(HttpMethod.PATCH, rootUrl+"/login/password").authenticated()
-                .pathMatchers(HttpMethod.PATCH, rootUrl+"/login/mail").authenticated()
-                .pathMatchers(HttpMethod.GET, rootUrl+"/public").permitAll()
-                .pathMatchers(HttpMethod.POST, rootUrl+"/claim").permitAll()
-                .pathMatchers(HttpMethod.PATCH, rootUrl+"/claim/**/roles").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.GET, rootUrl+"/refresh").authenticated()
-                .pathMatchers(HttpMethod.DELETE, rootUrl+"/clean").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/password").authenticated()
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/mail").authenticated()
+                .pathMatchers(HttpMethod.GET, rootUrl + "/public").permitAll()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/claim").permitAll()
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/claim/**/roles").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.GET, rootUrl + "/refresh").authenticated()
+                .pathMatchers(HttpMethod.DELETE, rootUrl + "/clean").hasAuthority("ADMIN")
                 .anyExchange().denyAll();
         return http.build();
     }

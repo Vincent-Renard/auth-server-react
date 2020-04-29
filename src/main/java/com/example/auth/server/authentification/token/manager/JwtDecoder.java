@@ -9,12 +9,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +29,9 @@ public class JwtDecoder implements TokenConstant {
     @Value(value = "${auth.token.prefix}")
     private String TOKENS_PREFIX;
 
-    private final PublicKey publicKey = KeyStore.getInstance().getKeyChain().getPublic();
+    @Autowired
+    private KeyStore keyStore;
+
 
     private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidToken {
         try {
@@ -69,7 +71,7 @@ public class JwtDecoder implements TokenConstant {
         if (token.startsWith(TOKENS_PREFIX))
             token = token.replace(TOKENS_PREFIX, "");
         try {
-            Claims body = Jwts.parserBuilder().setSigningKey(publicKey).build()
+            Claims body = Jwts.parserBuilder().setSigningKey(keyStore.getPublicKey()).build()
                     .parseClaimsJws(token).getBody();
 
             TokenType type = TokenType.valueOf(body.get(CLAIMS_KEY_TOKEN_TYPE).toString());

@@ -15,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 public class UpdateMailRequest {
-        String newmail;
-        String password;
+    String newmail;
+    String password;
 }

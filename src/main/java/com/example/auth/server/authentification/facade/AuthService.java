@@ -11,6 +11,7 @@ import java.util.List;
  * @autor Vincent
  * @date 11/03/2020
  */
+
 public interface AuthService {
 
     PublicKey publicKey();
@@ -29,6 +30,6 @@ public interface AuthService {
 
     void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat;
 
-    void updateMail(long iduser, String passsword,String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException;
+    void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException;
 
 }

@@ -5,7 +5,9 @@ import com.example.auth.server.model.KeyStore;
 import com.example.auth.server.model.dtos.out.Bearers;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
@@ -17,25 +19,24 @@ import java.util.stream.Collectors;
  * @autor Vincent
  * @date 22/03/2020
  */
-
+@Component
 public class JwtEncoder implements TokenConstant {
     private static final long AUTH_MS_TTL = 3_600_000;
-
-    private final KeyStore keys;
-    private final AtomicLong idTokenGenerator;
     private static final long REFR_MS_TTL = 86_400_000;
+    private final AtomicLong idTokenGenerator;
+    @Autowired
+    private KeyStore keys;
     @Value(value = "${auth.token.issuer}")
     private String ISSUER;
 
     public JwtEncoder() {
-        keys = KeyStore.getInstance();
         idTokenGenerator = new AtomicLong(1L);
 
     }
 
     public RSAPublicKey getPublicKey() {
 
-        return (RSAPublicKey) keys.getKeyChain().getPublic();
+        return (RSAPublicKey) keys.getPublicKey();
     }
 
     private String encodeAccess(long id, List<String> roles) {
@@ -56,7 +57,7 @@ public class JwtEncoder implements TokenConstant {
 
         return Jwts.builder()
                 .setClaims(cls)
-                .signWith(keys.getKeyChain().getPrivate())
+                .signWith(keys.getPrivateKey())
                 .compact();
 
     }
@@ -74,14 +75,14 @@ public class JwtEncoder implements TokenConstant {
 
         return Jwts.builder()
                 .setClaims(cls)
-                .signWith(keys.getKeyChain().getPrivate())
+                .signWith(keys.getPrivateKey())
                 .compact();
     }
 
     public Bearers genBoth(long iduser, List<String> roles) {
         var at = encodeAccess(iduser, roles);
         var rt = encodeRefresh(iduser);
-        return Bearers.from(at,rt);
+        return Bearers.from(at, rt);
     }
 
 }
