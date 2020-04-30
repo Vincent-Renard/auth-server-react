@@ -7,7 +7,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @autor Vincent
@@ -26,12 +26,12 @@ public class StoreUser {
     @Setter
     char[] password;
     @Setter
-    List<String> roles;
+    Set<String> roles;
     @Setter
     LocalDateTime updateDate;
 
-    public StoreUser(String mail,char[] password, List<String> roles) {
-        this.mail=mail;
+    public StoreUser(String mail, char[] password, Set<String> roles) {
+        this.mail = mail;
         this.password = password;
         this.roles = roles;
         inscriptionDate = LocalDateTime.now();

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,7 @@ public class JwtEncoder implements TokenConstant {
         return (RSAPublicKey) keys.getKeyChain().getPublic();
     }
 
-    private String encodeAccess(long id, List<String> roles) {
+    private String encodeAccess(long id, Set<String> roles) {
 
         long now = System.currentTimeMillis();
         Claims cls = Jwts.claims()
@@ -48,9 +48,9 @@ public class JwtEncoder implements TokenConstant {
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + AUTH_MS_TTL));
         cls.put(CLAIMS_KEY_TOKEN_TYPE, TokenType.ACCESS);
-        List<String> r = roles.stream()
+        Set<String> r = roles.stream()
                 .map(String::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         cls.put(CLAIMS_KEY_TOKEN_ROLES, r);
 
 
@@ -78,10 +78,10 @@ public class JwtEncoder implements TokenConstant {
                 .compact();
     }
 
-    public Bearers genBoth(long iduser, List<String> roles) {
+    public Bearers genBoth(long iduser, Set<String> roles) {
         var at = encodeAccess(iduser, roles);
         var rt = encodeRefresh(iduser);
-        return Bearers.from(at,rt);
+        return Bearers.from(at, rt);
     }
 
 }

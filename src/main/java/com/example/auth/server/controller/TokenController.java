@@ -2,9 +2,7 @@ package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
 import com.example.auth.server.authentification.facade.AuthServiceImpl;
-import com.example.auth.server.model.dtos.in.UpdateMailRequest;
-import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
-import com.example.auth.server.model.dtos.in.UserCredentials;
+import com.example.auth.server.model.dtos.in.*;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.dtos.out.PubKey;
 import com.example.auth.server.model.dtos.out.User;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 /**
  * @autor Vincent
@@ -48,9 +45,9 @@ public class TokenController {
     }
 
     @PatchMapping(value = "/claim/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody List<String> roles) throws NotSuchUserException {
+    public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(User.from(base.updateRoles(idUser, roles)));
+                .body(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
 
     }
 
@@ -77,8 +74,8 @@ public class TokenController {
     }
 
     @DeleteMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user,@RequestBody String password) throws BadPasswordException, NotSuchUserException {
-        base.signOut(Long.parseLong(user.getName()), password);
+    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException {
+        base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
         return ResponseEntity.noContent().build();
     }
 }
