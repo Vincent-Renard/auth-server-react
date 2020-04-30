@@ -14,7 +14,7 @@ public interface Repository {
 
     void deleteById(long id);
 
-    long store(StoreUser value) throws ValueCreatingError;
+    long save(StoreUser value) throws ValueCreatingError;
 
     StoreUser update(StoreUser value);
 

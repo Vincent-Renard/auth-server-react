@@ -27,7 +27,7 @@ public class RepositoryInMemory implements Repository {
     }
 
     @Override
-    public long store(StoreUser value) throws ValueCreatingError {
+    public long save(StoreUser value) throws ValueCreatingError {
         if (repo.values().stream().anyMatch(u -> u.getMail().equals(value.getMail()))) {
             throw new ValueCreatingError();
         }
