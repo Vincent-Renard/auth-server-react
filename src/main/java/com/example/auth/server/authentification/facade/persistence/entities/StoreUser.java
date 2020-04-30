@@ -1,4 +1,4 @@
-package com.example.auth.server.model;
+package com.example.auth.server.authentification.facade.persistence.entities;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -6,8 +6,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @autor Vincent
@@ -17,21 +18,32 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @ToString
+@Entity
 public class StoreUser {
-    @Setter
-    long idUser;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long idUser;
+
+
+    @Column(unique = true, nullable = false)
     @Setter
     String mail;
-    final LocalDateTime inscriptionDate;
+    LocalDateTime inscriptionDate;
+    @Column(nullable = false)
     @Setter
     char[] password;
+
     @Setter
+    @ElementCollection
     Set<String> roles;
     @Setter
     LocalDateTime updateDate;
 
+    public StoreUser() {
+    }
+
     public StoreUser(String mail, char[] password, Set<String> roles) {
-        this.mail = mail;
+        this.mail = mail.toLowerCase();
         this.password = password;
         this.roles = roles;
         inscriptionDate = LocalDateTime.now();

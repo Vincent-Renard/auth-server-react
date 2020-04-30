@@ -1,6 +1,6 @@
 package com.example.auth.server.model.dtos.out;
 
-import com.example.auth.server.model.StoreUser;
+import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

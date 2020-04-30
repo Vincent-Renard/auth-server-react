@@ -1,10 +1,10 @@
 package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.PasswordEncoder;
+import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepositoryInMemory;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
-import com.example.auth.server.model.StoreUser;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;

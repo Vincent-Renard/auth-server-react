@@ -1,7 +1,7 @@
 package com.example.auth.server.authentification.token.manager;
 
+import com.example.auth.server.authentification.KeyStore;
 import com.example.auth.server.authentification.token.TokenType;
-import com.example.auth.server.model.KeyStore;
 import com.example.auth.server.model.exceptions.InvalidToken;
 import com.example.auth.server.model.exceptions.NoToken;
 import com.example.auth.server.model.exceptions.TokenExpired;

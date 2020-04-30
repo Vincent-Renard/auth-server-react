@@ -1,4 +1,4 @@
-package com.example.auth.server.model;
+package com.example.auth.server.authentification;
 
 import com.example.auth.server.authentification.facade.persistence.entities.RSAKeyEntity;
 import com.example.auth.server.authentification.facade.persistence.repositories.KeyRepository;

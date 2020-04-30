@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification.facade;
 
-import com.example.auth.server.model.StoreUser;
+import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 
