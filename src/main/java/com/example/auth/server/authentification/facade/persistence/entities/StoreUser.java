@@ -1,5 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.entities;
 
+import com.example.auth.server.authentification.facade.persistence.UserRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,11 +35,15 @@ public class StoreUser {
     char[] password;
 
     @Setter
+    Set<UserRole> roles;
     @ElementCollection
     Set<String> roles;
     @Setter
     LocalDateTime updateDate;
 
+    public StoreUser(String mail, char[] password, Set<UserRole> roles) {
+        this.mail = mail;
+    }
     public StoreUser() {
     }
 

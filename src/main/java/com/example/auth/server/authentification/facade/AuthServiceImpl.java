@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), Set.of("ADMIN", "USER"));
         try {
-            users.store(admin);
+            users.save(admin);
         } catch (ValueCreatingError ignored) {
 
         }
@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Set<String> rolesOfUser = Set.of("USER");
         var u = new StoreUser(mailUser, PasswordEncoder.encode(passsword), rolesOfUser);
         try {
-            long id = users.store(u);
+            long id = users.save(u);
             return bearersManager.genBoth(id, u.getRoles());
         } catch (ValueCreatingError valueCreatingError) {
             throw new MailAlreadyTakenException();
