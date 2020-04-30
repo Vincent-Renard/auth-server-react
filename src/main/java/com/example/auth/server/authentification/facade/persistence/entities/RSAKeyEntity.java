@@ -17,23 +17,28 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
+@Table(name = "rsa_key")
 @ToString
-public class RSAPrivateKeyEntity {
+public class RSAKeyEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    @Column(length = 4096)
-    byte[] key;
+    @Column(length = 2048, unique = true, nullable = false)
+    String privateKey;
+
+    @Column(length = 2048, unique = true, nullable = false)
+    String publicKey;
 
     LocalDateTime dateTimeInserted;
 
-    public RSAPrivateKeyEntity() {
+    public RSAKeyEntity() {
     }
 
-    public RSAPrivateKeyEntity(byte[] cle) {
-        key = cle;
+    public RSAKeyEntity(String sk, String pk) {
+        privateKey = sk;
+        publicKey = pk;
         dateTimeInserted = LocalDateTime.now();
     }
 

@@ -28,7 +28,6 @@ public class TokenController {
 
     @Autowired
     private AuthService base;
-    //= new AuthServiceImpl();
 
     @GetMapping(value = "/public", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<PubKey> pubkey() {

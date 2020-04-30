@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
   "mail": "admin@admin.com",
-  "password": "IpM1p-XJho-mTj7-EGqL"
+  "password": "eSvnw-dhs5-79Bk-z8JB"
 }
 
 ###
@@ -127,4 +127,16 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI1Iiwic
 DELETE http://localhost:8888/auth/clean
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxMSIsInN1YiI6IjEiLCJpYXQiOjE1ODczMDIwMzYsImV4cCI6MTU4NzMwNTYzNiwidHlwZSI6IkFDQ0VTUyIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdfQ.avD0Rllvi2iaWdlSkwdE-_aNxDhrfKpmYdfbBOcLVtWXBG4fDH-Z9q6rFGtmIiujqouqWNJEahULirj4pKTpWVyeSgr5Oxk9XeK5Khe5BqUqr_TSkN8f_PlSpyoDuaiZBs8wYXYDlNeSkTb37QYRczWIbrEWyLBF1IxDCPyiBhiTIYimVVAjCyMDymClOXfELffWZ3o2QIJrOgfNv0RyBmYuOpRC-F4hl8Am4AwPpt1pU1jbIfPknkS6YWJLTMSXnmCrMlXR66uuUlA9XgXjc3goSRlCNTMyrCHdGNZJNNY2h3SO_s04AG4h3OC5wDRu_CFUlEu2Z0RyVCyJi3064A
+
+###
+
+DELETE http://localhost:8888/auth/login
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4ODI0MzIyNSwiZXhwIjoxNTg4MjQ2ODI1LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.Ek1o0fZGcSAWq8I-Fc-IA8Jb9IB_zc0KOFRNloCCvZiLocEqtnWogVayzHFJeE7tY_s3_YjOD0lRl7hgNUrB4bTpTmLdTpGHzYDYGAdB4zrOAfV7yWhFw549V509QnXz_zRNgU2TktvVwjGpHkMaf7GgmGS9Xe3uMG2Z70jL4Y8M-CTKiVVItGtLuxXzn0vqlJDvsOf3a_ECZGSQWQGPVaN7-vGsnD5DDglB8WB-0uqgAXbU_PJvF2wWX_wgzeXDTix7bkbG5Bhf-oYuUmWvq84J-s8JymymDh28mqlScAniy0tPT1aESXRl_8JclXr5rtFASNDpCkis8SqO62dXTw
+
+{
+  "password": "eSvnw-dhs5-79Bk-z8JB"
+}
+
+
 ###

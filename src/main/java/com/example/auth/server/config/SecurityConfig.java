@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
                 //.pathMatchers(HttpMethod.GET, "/swagger**").permitAll()
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/password").authenticated()
+                .pathMatchers(HttpMethod.DELETE, rootUrl + "/login").authenticated()
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/mail").authenticated()
                 .pathMatchers(HttpMethod.GET, rootUrl + "/public").permitAll()
                 .pathMatchers(HttpMethod.POST, rootUrl + "/claim").permitAll()

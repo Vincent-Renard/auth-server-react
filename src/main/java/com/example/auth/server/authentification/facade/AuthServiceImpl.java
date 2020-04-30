@@ -49,9 +49,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Random r = new Random();
         for (int i = 0; i <= lenght; i++) {
             s.append(alpha.charAt(r.nextInt(alpha.length())));
-            if (i > 0 && i % chunks == 0 && i < lenght) {
+            if (i > 0 && i % chunks == 0 && i < lenght)
                 s.append(sep);
-            }
 
         }
         return s.toString();
@@ -133,9 +132,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Optional<StoreUser> user = users.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
-            if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
+            if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password))) {
                 users.deleteById(iduser);
-            else throw new BadPasswordException();
+            } else throw new BadPasswordException();
 
         } else {
             throw new NotSuchUserException();

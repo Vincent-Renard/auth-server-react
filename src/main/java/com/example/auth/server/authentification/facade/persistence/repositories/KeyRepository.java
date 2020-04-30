@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.repositories;
 
-import com.example.auth.server.authentification.facade.persistence.entities.RSAPrivateKeyEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.RSAKeyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * @date 29/04/2020
  */
 @Repository
-public interface KeyRepository extends JpaRepository<RSAPrivateKeyEntity, Long> {
+public interface KeyRepository extends JpaRepository<RSAKeyEntity, Long> {
 
 }
