@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @autor Vincent
@@ -19,7 +19,7 @@ import java.util.List;
 public class User {
     long id;
     LocalDateTime inscriptionDate;
-    List<String> roles;
+    Collection<String> roles;
     LocalDateTime updateDate;
 
     public static User from(StoreUser u) {

@@ -1,6 +1,8 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
+import com.example.auth.server.authentification.facade.AuthServiceImpl;
+import com.example.auth.server.model.dtos.in.*;
 import com.example.auth.server.model.dtos.in.UpdateMailRequest;
 import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
 import com.example.auth.server.model.dtos.in.UserCredentials;
@@ -49,9 +51,9 @@ public class TokenController {
     }
 
     @PatchMapping(value = "/claim/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody List<String> roles) throws NotSuchUserException {
+    public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(User.from(base.updateRoles(idUser, roles)));
+                .body(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
 
     }
 
@@ -61,13 +63,12 @@ public class TokenController {
         return ResponseEntity.ok().build();
 
     }
-
     @PatchMapping(value = "/login/mail", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException {
         base.updateMail(Long.parseLong(user.getName()), mailRequest.getPassword(), mailRequest.getNewmail());
         return ResponseEntity.ok().build();
     }
-
+    
     @GetMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> refresh(Principal user) throws NotSuchUserException {
         return ResponseEntity.ok(base.refresh(Long.parseLong(user.getName())));
@@ -79,8 +80,8 @@ public class TokenController {
     }
 
     @DeleteMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user, @RequestBody String password) throws BadPasswordException, NotSuchUserException {
-        base.signOut(Long.parseLong(user.getName()), password);
+    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException {
+        base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
         return ResponseEntity.noContent().build();
     }
 }

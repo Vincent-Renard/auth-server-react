@@ -26,11 +26,11 @@ public class StoreUser {
     @Setter
     char[] password;
     @Setter
-    List<String> roles;
+    Set<String> roles;
     @Setter
     LocalDateTime updateDate;
 
-    public StoreUser(String mail, char[] password, List<String> roles) {
+    public StoreUser(String mail, char[] password, Set<String> roles) {
         this.mail = mail;
         this.password = password;
         this.roles = roles;

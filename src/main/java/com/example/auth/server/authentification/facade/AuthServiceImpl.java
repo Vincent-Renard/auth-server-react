@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.security.PublicKey;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,8 +52,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Random r = new Random();
         for (int i = 0; i <= lenght; i++) {
             s.append(alpha.charAt(r.nextInt(alpha.length())));
-            if (i > 0 && i % chunks == 0 && i < lenght)
+            if (i > 0 && i % chunks == 0 && i < lenght) {
                 s.append(sep);
+            }
 
         }
         return s.toString();
@@ -61,7 +65,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         System.out.println("admin@admin.com  " + password);
 
-        var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), List.of("ADMIN", "USER"));
+        var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), Set.of("ADMIN", "USER"));
         try {
             users.store(admin);
         } catch (ValueCreatingError ignored) {
@@ -82,8 +86,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         if (!mailChecker.test(mailUser))
             throw new InvalidMail();
 
-        List<String> rolesOfUser = new ArrayList<>();
-        rolesOfUser.add("USER");
+        Set<String> rolesOfUser = Set.of("USER");
         var u = new StoreUser(mailUser, PasswordEncoder.encode(passsword), rolesOfUser);
         try {
             long id = users.store(u);
@@ -91,6 +94,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         } catch (ValueCreatingError valueCreatingError) {
             throw new MailAlreadyTakenException();
         }
+
 
 
     }
@@ -132,9 +136,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Optional<StoreUser> user = users.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
-            if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password))) {
+            if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
                 users.deleteById(iduser);
-            } else throw new BadPasswordException();
+            else throw new BadPasswordException();
 
         } else {
             throw new NotSuchUserException();
@@ -142,10 +146,10 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public StoreUser updateRoles(long iduser, List<String> newRoles) throws NotSuchUserException {
+    public StoreUser updateRoles(long iduser, Set<String> newRoles) throws NotSuchUserException {
         Optional<StoreUser> user = users.findById(iduser);
         if (user.isPresent()) {
-            newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toList());
+            newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
 
             var usr = user.get();
             usr.setUpdateDate(LocalDateTime.now());
