@@ -3,6 +3,7 @@ package com.example.auth.server.model.dtos.in;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UpdateRolesRequest {
     Set<String> roles;
 }

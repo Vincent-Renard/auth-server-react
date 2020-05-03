@@ -15,9 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -48,8 +48,8 @@ public class JwtDecoder implements TokenConstant {
 
     private UsernamePasswordAuthenticationToken decodeAccess(Claims accessClaims) throws InvalidToken {
         try {
-            var userroles = accessClaims.get(CLAIMS_KEY_TOKEN_ROLES, Set.class);
-            Set<String> roles = new HashSet<>();
+            var userroles = accessClaims.get(CLAIMS_KEY_TOKEN_ROLES, List.class);
+            List<String> roles = new ArrayList<>();
             userroles.forEach(r -> roles.add((String) r));
 
             Collection<SimpleGrantedAuthority> authorities = roles.stream()

@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -41,7 +40,6 @@ public class JwtEncoder implements TokenConstant {
     }
 
     private String encodeAccess(long id, Collection<String> roles) {
-        System.err.println(id + "  " + Arrays.toString(roles.toArray()));
         long now = System.currentTimeMillis();
         Claims cls = Jwts.claims()
                 .setIssuer(ISSUER)
@@ -51,7 +49,7 @@ public class JwtEncoder implements TokenConstant {
                 .setExpiration(new Date(now + AUTH_MS_TTL));
         cls.put(CLAIMS_KEY_TOKEN_TYPE, TokenType.ACCESS);
 
-        var r = new HashSet<>(roles);
+        var r = new ArrayList<>(roles);
         cls.put(CLAIMS_KEY_TOKEN_ROLES, r);
 
 

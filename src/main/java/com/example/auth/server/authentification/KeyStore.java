@@ -43,12 +43,12 @@ public class KeyStore {
 
                 keyRepository.save(new RSAKeyEntity(sk, pk));
 
-                System.err.println("Keys saved ");
+                System.out.println("Keys saved");
 
             } else {
                 String sk = k.get().getPrivateKey();
                 String pk = k.get().getPublicKey();
-                System.err.println("key " + k.get().toString());
+                //  System.out.println("key " + k.get().toString());
                 byte[] pkcs8EncodedBytes = Base64.getDecoder().decode(sk);
                 byte[] X509EncodedByes = Base64.getDecoder().decode(pk);
 
@@ -61,8 +61,7 @@ public class KeyStore {
                 var publicKey = keyFactory.generatePublic(publicKeySpec);
 
 
-                keyChain = new KeyPair(publicKey
-                        , privateKey);
+                keyChain = new KeyPair(publicKey, privateKey);
 
 
             }

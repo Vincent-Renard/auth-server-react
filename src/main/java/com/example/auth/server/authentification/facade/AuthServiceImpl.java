@@ -26,7 +26,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     private final Predicate<String> passwordChecker = password -> password.length() > MIN_LENGHT_PASSWORD && password.length() < MAX_LENGHT_PASSWORD;
     private final Predicate<String> mailChecker = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).asPredicate();
-
+    private final String mailAdmin = "admin@admin.com";
 
     private final Set<String> BASE_ROLES = Set.of("USER");
     private final Set<String> POSSILBES_ROLES = Set.of("ADMIN", "USER");
@@ -62,14 +62,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private void fill() {
         var password = genPassword(16, 4);
 
-        System.out.println("admin@admin.com  " + password);
+        if (!userRepository.existsByMail(mailAdmin)) {
 
-        var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), Set.of("USER", "ADMIN"));
-        userRepository.save(admin);
-
-        var u = userRepository.findByMail("admin@admin.com");
-        System.err.println(u.get().toString());
-
+            var admin = new StoreUser(mailAdmin, PasswordEncoder.encode(password), Set.of("USER", "ADMIN"));
+            userRepository.save(admin);
+            System.out.println(mailAdmin + "  " + password);
+        }
     }
 
     @Override
@@ -102,8 +100,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Optional<StoreUser> u = userRepository.findByMail(mail);
         if (u.isPresent()) {
             var user = u.get();
-            System.err.println(user.toString());
-
             if (!Arrays.equals(PasswordEncoder.encode(passsword), user.getPassword()))
                 throw new BadPasswordException();
 
@@ -167,6 +163,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat {
         Optional<StoreUser> user = userRepository.findById(iduser);
+
         if (user.isPresent()) {
             var usr = user.get();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
@@ -189,9 +186,10 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new BadPasswordException();
             if (!mailChecker.test(newmail))
                 throw new InvalidMail();
-            if (userRepository.findByMail(newmail).isPresent())
+            if (userRepository.existsByMail(newmail))
                 throw new MailAlreadyTakenException();
-
+            if (usr.getMail().equals(mailAdmin))
+                newmail = mailAdmin;
             usr.setMail(newmail);
             usr.setUpdateDate(LocalDateTime.now());
             userRepository.save(usr);

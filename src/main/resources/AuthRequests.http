@@ -7,10 +7,22 @@ Content-Type: application/json
 
 {
   "mail": "admin@admin.com",
-  "password": "J8b7Q-WTtT-dBBx-Q6sG"
+  "password": "XjcwL-uNV8-hoUk-83Xa"
 }
 
 ###
+
+PATCH http://localhost:8888/auth/login/password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4ODUyNzY4NCwiZXhwIjoxNTg4NTMxMjg0LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl19.NKT5hlugjreDpWAWA_q31fvvGEDEln8fFCAet7f0c0wJGUE-_gIcNZjt9RO-8BWxyQVZg9rHcGujC24SV8vSwHcfYUcsKBbHxvNtwTrROt7dP2AmtY88NSyUmIkpdQRiwdx7yh7tFKLWA-l7NL_88KXZ9oRmfJRVgDhusf69Ovgrt0fYKzLQQuASeOxQIjhLkAYgQ4JN6i55S0GC9mWHL47yG1bddFdnx7iXHJfkdXHQOmhOewSIfF1cBV3AP0SVMpQTRDd04j9BjwfHJ2P2qDqhYxOSpjxZO3V8CTqpUKNVtASuQZ-Y2Q36UFptmZwdOhSZZKxmJcsKde_ezbWS5A
+
+{
+  "oldPassword": "rgmWL-em86-Ecyp-GmEH",
+  "newPassword": "admin1"
+}
+
+###
+
 POST http://localhost:8888/auth/login
 Content-Type: application/json
 
@@ -21,32 +33,24 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8888/auth/login
+
+
+PATCH http://localhost:8888/auth/login/mail
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI1Iiwic3ViIjoiMSIsImlhdCI6MTU4ODUyNzg5NCwiZXhwIjoxNTg4NTMxNDk0LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl19.Gtslw6JSSmt3BlQ2iDsiXpMGuMolNadhcl8dsFiYayxhj512mPXRJGB0WYDiTe6pCU50m_kNSFkybN1ZBY4rAZNe3HX3Wlj9UskuzQDdPOf0L1Tit6_1F51wf6D01SRJQV-ItHd8HrsfzcBsUfFcZi8rHa42HAxFqkxIbg7fA8lr9hPJ-upRcFDYOGWF0fILQs9norO000FMRAGbG1S5-qHnXMjAVB60FRSH_iALj-Juk0KAWKE6O8NifMkYIMftMJ0XmEo_qQMH9_Dkjaau_aFaLlef3fKlu-t9cV4iJem8ZxcsMDPDm4xYMJXAeQ5pPj7Ygldbk8T_n8VPbh93cg
 
 {
-  "mail": "admin@mail.com",
+  "newmail": "admin@youmail.com",
   "password": "admin1"
 }
 
 ###
-PATCH http://localhost:8888/auth/login/password
+
+POST http://localhost:8888/auth/login
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4NzMwMTg2OCwiZXhwIjoxNTg3MzA1NDY4LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.RXTMPBurB2d_CFOSOGmaW4hmedZPvnDFZhsLZow8zPsVek4XLpes5A30oHNHQx1kWuHMSQqfJ1Y_AC0W0oxE5MOncIYmrAtW_K82evRbq1uYMlQYtmzmMGhOlAHNDNZ6_f8nQ_YRgRyZboKYkhJETAUbcY50BZD2bAU5hifDLJ0HvY3M7IhXTk48tEgLk5xYURONJyW91HfPBDpFtJcDp3GzkulMArRl8-fO1Ri9v3dPe9mCIKxjAQPrhLU7QpPJFMju-lt_pP3Id2wBPdsDKBOluZ6tPQC3mJhDk-QIXLiJjlPC8lVmewBditk_dn1G3eIi_ESJsPSCQuLPotfZCw
 
 {
-  "oldPassword": "ohDpM-HJBI-o93M-8UxI",
-  "newPassword": "admin1"
-}
-
-###
-
-PATCH http://localhost:8888/auth/login/mail
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4NzMwMTg2OCwiZXhwIjoxNTg3MzA1NDY4LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.RXTMPBurB2d_CFOSOGmaW4hmedZPvnDFZhsLZow8zPsVek4XLpes5A30oHNHQx1kWuHMSQqfJ1Y_AC0W0oxE5MOncIYmrAtW_K82evRbq1uYMlQYtmzmMGhOlAHNDNZ6_f8nQ_YRgRyZboKYkhJETAUbcY50BZD2bAU5hifDLJ0HvY3M7IhXTk48tEgLk5xYURONJyW91HfPBDpFtJcDp3GzkulMArRl8-fO1Ri9v3dPe9mCIKxjAQPrhLU7QpPJFMju-lt_pP3Id2wBPdsDKBOluZ6tPQC3mJhDk-QIXLiJjlPC8lVmewBditk_dn1G3eIi_ESJsPSCQuLPotfZCw
-
-{
-  "newmail": "admin@mail.com",
+  "mail": "admin@youmail.com",
   "password": "admin1"
 }
 
@@ -108,15 +112,14 @@ Content-Type: application/json
 
 GET http://localhost:8888/auth/refresh
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI0Iiwic3ViIjoiMSIsImlhdCI6MTU4ODE3ODQ2NCwiZXhwIjoxNTg4MjY0ODY0LCJ0eXBlIjoiUkVGUkVTSCJ9.OhNcWSeA6SIPvlSyTgHrfI0DdEVY41_LLj4QJ9SwghOYDznT9pW9px2ZANx6KB-PcckukX7Z1W8IXbUjf8On8WfMIdiUuk62ubIkP6Kr5m4__S4TxkJb_3y5RozYOVe4rzJSpIsuhyNi4z9pT2GFz0g2J97GycsgSLwRf6Q-XQY3A4Ss-GLPYI84XhmIz-WdEGZHvUAPViuZckQtG0N2te_JDAaaKbS1Hr1qSNJdtH4qklkt3_ijvfez07MzrWR6kaOmHkwGeFw0He_5uYIUMu_EJrR_SbnUACC9jpsokLsDGtVMauWqALH_EjN-7GB2dRi1Ctg_xq6MEMV_Yr71TA
-
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIyIiwic3ViIjoiMSIsImlhdCI6MTU4ODUyNjEyMSwiZXhwIjoxNTg4NjEyNTIxLCJ0eXBlIjoiUkVGUkVTSCJ9.EhoSSbbKNx2vNW3SPzVU36IT4imhz23f_UAZwXNoIhfKWvpEQqjAkMMHP_wRdy2Ra6eQcjJpZB7eUoYuuHf5rGjA3cX3voo0hHmClextf2zlY0ewDdfp9zsL5i663rOHPY4nU527Fr-Cog_OriBvbA69aXPBO36LKE7do7cqtY9zZovGmggRThpPFdCk0uVwqflCECEpTnxa85s6pozkF2eqJO7tbwXmXk_yXDKmrMiFpl0gjb5tbJeLx5U1AfdNTqV5FLTQ8mKZ-e_in9-qhTTwi_qUZfFGZZ3hRmAI31RVMX4yfsKTf2WhoNDh5yRz43y2aTt7iBpnc7bHv3BBDQ
 ###
 
 
 PATCH http://localhost:8888/auth/claim/2/roles
 Content-Type: application/json
 //admin token here
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI1Iiwic3ViIjoiMSIsImlhdCI6MTU4ODE3ODQ3OSwiZXhwIjoxNTg4MTgyMDc5LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.ZWmlUtxh7sc9tbk6cxXKciqlxeIAUH9JLqFK8YLuH1UR6xEbVLKNNbxJ7rDmkyf28l8d2o7mRgEK9bCXHmK4rk0zCjnhis5---vZjmQKQVRzqo0eDov4vMBkCz4ADKox5mJt20VgE8TDkLgnpPJRPrPsiiDqvKsOoYrGWgsparfp6-p_oKTBZY69Urg5LB87jEuP760pSwdjwfpFsXPQhqj7QPz3YduyaA1SHB_XAN47ci0-kDwIGC-HOe9o4oJixlSMwuFfi1iESSagzkqlrXGhHV5XL7pbu1ZQ2ljJcWWqkOWTyeg2X2_uc09mMOEEt2fJur06AOJKRIW22uC9EA
+Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4ODUyODA3NywiZXhwIjoxNTg4NTMxNjc3LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl19.hRYLg1EwtyMSB6AZx1-ddqqG9MweCjvlYVQxS0I7y8p8QWi0qdPI84vIcVE9JAOinREY1PK1Ovd-XLV9Sb7ipkcrvWdgkRo-o3UrxxH2Yhpg08KAwa5cx6uEi02K9IpZW33NE-jUdANcJRrfXz58jjHpM9Z8uXXveQo1Tbv6LoDBIpKtoFiXKpr0pqG-fUs5PKLZPzKKECJndFckqRRzk6v84uLHABvURIaZTUmyDqztZlE_vsMP4X-YsctOWk6htmQCy9LeiefTmxNsGF6noVSTb9Ixy5hMBdE9n_Dfzi5JR2bL_-SRAUpXVhQMX_NDjk1owgLBI1xbsJwZvARnDQ
 
 {
   "roles": [
