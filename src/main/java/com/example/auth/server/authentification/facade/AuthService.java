@@ -5,7 +5,7 @@ import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 
 import java.security.PublicKey;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * @autor Vincent
@@ -26,7 +26,8 @@ public interface AuthService {
 
     void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException;
 
-    StoreUser updateRoles(long iduser, Set<String> newRoles) throws NotSuchUserException;
+
+    StoreUser updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
 
     void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat;
 

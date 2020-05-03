@@ -3,19 +3,16 @@ package com.example.auth.server.authentification.facade;
 import com.example.auth.server.authentification.PasswordEncoder;
 import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
-import com.example.auth.server.authentification.facade.persistence.repositories.UserRepositoryInMemory;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,16 +27,18 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private final Predicate<String> passwordChecker = password -> password.length() > MIN_LENGHT_PASSWORD && password.length() < MAX_LENGHT_PASSWORD;
     private final Predicate<String> mailChecker = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).asPredicate();
 
-    private final UserRepository users;
+
+    private final Set<String> BASE_ROLES = Set.of("USER");
+    private final Set<String> POSSILBES_ROLES = Set.of("ADMIN", "USER");
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private JwtEncoder bearersManager;
 
-    public AuthServiceImpl() {
-        users = new UserRepositoryInMemory();
-
+    @PostConstruct
+    private void init() {
         fill();
-
     }
 
     private String genPassword(int lenght, int chunks) {
@@ -65,12 +64,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         System.out.println("admin@admin.com  " + password);
 
-        var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), Set.of("ADMIN", "USER"));
-        try {
-            users.save(admin);
-        } catch (ValueCreatingError ignored) {
+        var admin = new StoreUser("admin@admin.com", PasswordEncoder.encode(password), Set.of("USER", "ADMIN"));
+        userRepository.save(admin);
 
-        }
+        var u = userRepository.findByMail("admin@admin.com");
+        System.err.println(u.get().toString());
+
     }
 
     @Override
@@ -86,24 +85,25 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         if (!mailChecker.test(mailUser))
             throw new InvalidMail();
 
-        Set<String> rolesOfUser = Set.of("USER");
-        var u = new StoreUser(mailUser, PasswordEncoder.encode(passsword), rolesOfUser);
-        try {
-            long id = users.save(u);
-            return bearersManager.genBoth(id, u.getRoles());
-        } catch (ValueCreatingError valueCreatingError) {
+        mailUser = mailUser.toLowerCase();
+        if (userRepository.existsByMail(mailUser))
             throw new MailAlreadyTakenException();
-        }
 
+        Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
+        var u = new StoreUser(mailUser, PasswordEncoder.encode(passsword), rolesOfUser);
+        var user = userRepository.save(u);
 
+        return bearersManager.genBoth(user.getIdUser(), user.getRoles());
     }
 
     @Override
     public Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException {
-        Optional<StoreUser> u = users.findByMail(mail);
+        Optional<StoreUser> u = userRepository.findByMail(mail);
         if (u.isPresent()) {
             var user = u.get();
+            System.err.println(user.toString());
+
             if (!Arrays.equals(PasswordEncoder.encode(passsword), user.getPassword()))
                 throw new BadPasswordException();
 
@@ -115,7 +115,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public Bearers refresh(long iduser) throws NotSuchUserException {
 
-        Optional<StoreUser> user = users.findById(iduser);
+        Optional<StoreUser> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             return bearersManager.genBoth(iduser, user.get().getRoles());
 
@@ -127,17 +127,17 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void clear() {
-        users.clear();
+        userRepository.deleteAll();
         fill();
     }
 
     @Override
     public void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException {
-        Optional<StoreUser> user = users.findById(iduser);
+        Optional<StoreUser> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
             if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
-                users.deleteById(iduser);
+                userRepository.deleteById(iduser);
             else throw new BadPasswordException();
 
         } else {
@@ -146,31 +146,34 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public StoreUser updateRoles(long iduser, Set<String> newRoles) throws NotSuchUserException {
-        Optional<StoreUser> user = users.findById(iduser);
-        if (user.isPresent()) {
-            newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
-
-            var usr = user.get();
-            usr.setUpdateDate(LocalDateTime.now());
-            usr.setRoles(newRoles);
-            users.update(usr);
-            return usr;
-        } else {
+    public StoreUser updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException {
+        Optional<StoreUser> user = userRepository.findById(iduser);
+        newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
+        if (!user.isPresent()) {
             throw new NotSuchUserException();
+        } else {
+            if (POSSILBES_ROLES.containsAll(newRoles)) {
+                var usr = user.get();
+                usr.setUpdateDate(LocalDateTime.now());
+                usr.setRoles(newRoles);
+                usr = userRepository.save(usr);
+                return usr;
+
+            }
         }
+        return user.get();
     }
 
     @Override
     public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat {
-        Optional<StoreUser> user = users.findById(iduser);
+        Optional<StoreUser> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
             if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(oldPasssword))) {
                 usr.setUpdateDate(LocalDateTime.now());
                 usr.setPassword(PasswordEncoder.encode(newpasssword));
-                users.update(usr);
+                userRepository.save(usr);
             } else throw new BadPasswordException();
         } else {
             throw new NotSuchUserException();
@@ -179,19 +182,19 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException {
-        Optional<StoreUser> user = users.findById(iduser);
+        Optional<StoreUser> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
             if (!Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
                 throw new BadPasswordException();
             if (!mailChecker.test(newmail))
                 throw new InvalidMail();
-            if (users.findByMail(newmail).isPresent())
+            if (userRepository.findByMail(newmail).isPresent())
                 throw new MailAlreadyTakenException();
 
             usr.setMail(newmail);
             usr.setUpdateDate(LocalDateTime.now());
-            users.update(usr);
+            userRepository.save(usr);
 
         } else {
             throw new NotSuchUserException();

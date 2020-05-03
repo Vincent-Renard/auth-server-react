@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 /**
  * @autor Vincent
@@ -39,8 +40,8 @@ public class JwtEncoder implements TokenConstant {
         return (RSAPublicKey) keys.getPublicKey();
     }
 
-    private String encodeAccess(long id, Set<String> roles) {
-
+    private String encodeAccess(long id, Collection<String> roles) {
+        System.err.println(id + "  " + Arrays.toString(roles.toArray()));
         long now = System.currentTimeMillis();
         Claims cls = Jwts.claims()
                 .setIssuer(ISSUER)
@@ -49,9 +50,8 @@ public class JwtEncoder implements TokenConstant {
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + AUTH_MS_TTL));
         cls.put(CLAIMS_KEY_TOKEN_TYPE, TokenType.ACCESS);
-        Set<String> r = roles.stream()
-                .map(String::new)
-                .collect(Collectors.toSet());
+
+        var r = new HashSet<>(roles);
         cls.put(CLAIMS_KEY_TOKEN_ROLES, r);
 
 
@@ -79,7 +79,7 @@ public class JwtEncoder implements TokenConstant {
                 .compact();
     }
 
-    public Bearers genBoth(long iduser, Set<String> roles) {
+    public Bearers genBoth(long iduser, Collection<String> roles) {
         var at = encodeAccess(iduser, roles);
         var rt = encodeRefresh(iduser);
         return Bearers.from(at, rt);

@@ -66,7 +66,6 @@ public class KeyStore {
 
 
             }
-            System.err.println(keyChain == null);
             log.debug(keyChain.getPublic().toString());
             log.debug(Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded()));
         }

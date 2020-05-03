@@ -7,7 +7,7 @@ Content-Type: application/json
 
 {
   "mail": "admin@admin.com",
-  "password": "eSvnw-dhs5-79Bk-z8JB"
+  "password": "J8b7Q-WTtT-dBBx-Q6sG"
 }
 
 ###
@@ -118,10 +118,13 @@ Content-Type: application/json
 //admin token here
 Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI1Iiwic3ViIjoiMSIsImlhdCI6MTU4ODE3ODQ3OSwiZXhwIjoxNTg4MTgyMDc5LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.ZWmlUtxh7sc9tbk6cxXKciqlxeIAUH9JLqFK8YLuH1UR6xEbVLKNNbxJ7rDmkyf28l8d2o7mRgEK9bCXHmK4rk0zCjnhis5---vZjmQKQVRzqo0eDov4vMBkCz4ADKox5mJt20VgE8TDkLgnpPJRPrPsiiDqvKsOoYrGWgsparfp6-p_oKTBZY69Urg5LB87jEuP760pSwdjwfpFsXPQhqj7QPz3YduyaA1SHB_XAN47ci0-kDwIGC-HOe9o4oJixlSMwuFfi1iESSagzkqlrXGhHV5XL7pbu1ZQ2ljJcWWqkOWTyeg2X2_uc09mMOEEt2fJur06AOJKRIW22uC9EA
 
-[
-  "admin",
-  "user"
-]
+{
+  "roles": [
+    "ADMIN",
+    "USER"
+  ]
+}
+
 
 ###
 DELETE http://localhost:8888/auth/clean
