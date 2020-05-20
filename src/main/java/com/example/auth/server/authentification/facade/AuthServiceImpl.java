@@ -13,8 +13,6 @@ import javax.annotation.PostConstruct;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -24,12 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class AuthServiceImpl implements AuthService, AuthUtils {
 
-    private final Predicate<String> passwordChecker = password -> password.length() > MIN_LENGHT_PASSWORD && password.length() < MAX_LENGHT_PASSWORD;
-    private final Predicate<String> mailChecker = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).asPredicate();
+
     private final String mailAdmin = "admin@admin.com";
 
-    private final Set<String> BASE_ROLES = Set.of("USER");
-    private final Set<String> POSSILBES_ROLES = Set.of("ADMIN", "USER");
     @Autowired
     private UserRepository userRepository;
 
