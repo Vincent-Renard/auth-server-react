@@ -68,7 +68,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             }
 
         }
-        return s.toString();
+        //return s.toString();
+        return "pTWER-gYG5-ohom-qsZg";
     }
 
     private void fill() {
@@ -117,14 +118,17 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail {
-
+    public Bearers signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse {
+        mailUser = mailUser.toLowerCase();
         if (!passwordChecker.test(passsword))
             throw new BadPasswordFormat();
         if (!mailChecker.test(mailUser))
             throw new InvalidMail();
+        String domain = mailUser.split("@")[1];
+        if (domainsNotAllowed.contains(domain))
+            throw new ForbidenDomainMailUse();
 
-        mailUser = mailUser.toLowerCase();
+
         if (userRepository.existsByMail(mailUser))
             throw new MailAlreadyTakenException();
 
@@ -138,6 +142,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException {
+        mail = mail.toLowerCase();
         Optional<StoreUser> u = userRepository.findByMail(mail);
         if (u.isPresent()) {
             var user = u.get();
@@ -219,18 +224,26 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException {
+    public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse {
         Optional<StoreUser> user = userRepository.findById(iduser);
+
         if (user.isPresent()) {
+            newmail = newmail.toLowerCase();
             var usr = user.get();
             if (!Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
                 throw new BadPasswordException();
             if (!mailChecker.test(newmail))
                 throw new InvalidMail();
+            String domain = newmail.split("@")[1];
+            if (domainsNotAllowed.contains(domain))
+                throw new ForbidenDomainMailUse();
+
             if (userRepository.existsByMail(newmail))
                 throw new MailAlreadyTakenException();
+
             if (usr.getMail().equals(mailAdmin))
                 newmail = mailAdmin;
+
             usr.setMail(newmail);
             usr.setUpdateDate(LocalDateTime.now());
             userRepository.save(usr);

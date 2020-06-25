@@ -23,7 +23,7 @@ public interface AuthService {
 
     Collection<ForbidenDomainEntity> getAllDomainNotAllowed();
 
-    Bearers signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail;
+    Bearers signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse;
 
     Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException;
 
@@ -37,6 +37,6 @@ public interface AuthService {
 
     void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat;
 
-    void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException;
+    void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse;
 
 }

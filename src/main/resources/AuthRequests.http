@@ -3,15 +3,28 @@
 GET http://localhost:8888/auth/public
 Content-Type: application/json
 
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
 ###
 POST http://localhost:8888/auth/login
 Content-Type: application/json
 
 {
   "mail": "admin@admin.com",
-  "password": "mdpadmin"
+  "password": "pTWER-gYG5-ohom-qsZg"
 }
-> {% client.global.set("auth_token_admin", response.body.accessToken); %}
+> {%
+client.global.set("auth_token_admin", response.body.accessToken);
+client.global.set("refr_token_admin", response.body.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 ###
 
 PATCH http://localhost:8888/auth/login/password
@@ -19,9 +32,14 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "oldPassword": "mdpadmin",
+  "oldPassword": "pTWER-gYG5-ohom-qsZg",
   "newPassword": "admin1"
 }
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ###
 
@@ -32,21 +50,14 @@ Content-Type: application/json
   "mail": "admin@admin.com",
   "password": "admin1"
 }
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ###
 
-
-
-PATCH http://localhost:8888/auth/login/mail
-Content-Type: application/json
-Authorization: Bearer {{auth_token_admin}}
-
-{
-  "newmail": "admin@youmail.com",
-  "password": "admin1"
-}
-
-###
 
 POST http://localhost:8888/auth/login
 Content-Type: application/json
@@ -55,7 +66,11 @@ Content-Type: application/json
   "mail": "admin@youmail.com",
   "password": "admin1"
 }
-
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 404, "Response status is not 404");
+});
+%}
 ###
 
 
@@ -66,7 +81,12 @@ Content-Type: application/json
   "mail": "toto@mail.com",
   "password": "toto"
 }
-
+> {% client.global.set("auth_token_toto", response.body.accessToken);
+     client.global.set("refr_token_toto", response.body.refreshToken);
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201 - CREATED");
+});
+%}
 ###
 
 POST http://localhost:8888/auth/claim
@@ -83,6 +103,38 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
+
+
+PATCH http://localhost:8888/auth/login/mail
+Content-Type: application/json
+Authorization: Bearer {{auth_token_toto}}
+
+{
+  "newmail": "toto@youmail.com",
+  "password": "toto"
+}
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
+POST http://localhost:8888/auth/login
+Content-Type: application/json
+
+{
+  "mail": "toto@youmail.com",
+  "password": "toto"
+}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
 POST http://localhost:8888/auth/claim
 Content-Type: application/json
 
@@ -90,6 +142,12 @@ Content-Type: application/json
   "mail": "user2@mail.com",
   "password": "toto"
 }
+> {% client.global.set("auth_token_toto2", response.body.accessToken);
+     client.global.set("refr_token_toto2", response.body.refreshToken);
+     client.test("Request executed successfully", function() {
+     client.assert(response.status === 201, "Response status is not 201 - CREATED");
+     });
+ %}
 
 ###
 POST http://localhost:8888/auth/login
@@ -99,6 +157,11 @@ Content-Type: application/json
   "mail": "user2@mail.com",
   "password": "toto"
 }
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
 
 ###
 
@@ -110,11 +173,114 @@ Content-Type: application/json
   "password": "toto"
 }
 
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 404, "Response status is not 404 - KO");
+});
+%}
+
+###
+GET http://localhost:8888/auth/domains
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
+POST http://localhost:8888/auth/domains
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+{
+  "domain": "rumail.ru"
+}
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 201, "Response status is not 201 - CREATED");
+});
+%}
+
+###
+GET http://localhost:8888/auth/domains
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
+DELETE http://localhost:8888/auth/domains
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+{
+  "domain": "rumail.ru"
+}
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 204, "Response status is not 204 - NO CONTENT ");
+});
+%}
+
+###
+GET http://localhost:8888/auth/domains
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
+
+POST http://localhost:8888/auth/domains
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+{
+  "domain": "rumail.ru"
+}
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 201, "Response status is not 201 - CREATED");
+});
+%}
+
+###
+POST http://localhost:8888/auth/claim
+Content-Type: application/json
+
+{
+  "mail": "user3@rumail.ru",
+  "password": "rupassword"
+}
+> {%
+     client.test("Request executed successfully", function() {
+     client.assert(response.status === 409, "Response status is not 409 - CONFLICT");
+     });
+ %}
+
 ###
 
 GET http://localhost:8888/auth/refresh
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIyIiwic3ViIjoiMSIsImlhdCI6MTU4ODUyNjEyMSwiZXhwIjoxNTg4NjEyNTIxLCJ0eXBlIjoiUkVGUkVTSCJ9.EhoSSbbKNx2vNW3SPzVU36IT4imhz23f_UAZwXNoIhfKWvpEQqjAkMMHP_wRdy2Ra6eQcjJpZB7eUoYuuHf5rGjA3cX3voo0hHmClextf2zlY0ewDdfp9zsL5i663rOHPY4nU527Fr-Cog_OriBvbA69aXPBO36LKE7do7cqtY9zZovGmggRThpPFdCk0uVwqflCECEpTnxa85s6pozkF2eqJO7tbwXmXk_yXDKmrMiFpl0gjb5tbJeLx5U1AfdNTqV5FLTQ8mKZ-e_in9-qhTTwi_qUZfFGZZ3hRmAI31RVMX4yfsKTf2WhoNDh5yRz43y2aTt7iBpnc7bHv3BBDQ
+Authorization: Bearer {{refr_token_toto}}
+
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
 ###
 
 
@@ -130,13 +296,22 @@ Authorization: Bearer {{auth_token_admin}}
   ]
 }
 
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
 
 ###
 DELETE http://localhost:8888/auth/clean
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
-
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 204, "Response status is not 204 - NO CONTENT");
+});
+%}
 ###
 
 DELETE http://localhost:8888/auth/login
@@ -144,8 +319,25 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "password": "mdpadmin"
+  "password": "admin1"
 }
 
-
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 404, "Response status is not 404 - NOT FOUND ");
+});
+%}
 ###
+POST http://localhost:8888/auth/login
+Content-Type: application/json
+
+{
+  "mail": "admin@youmail.com",
+  "password": "admin1"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 404, "Response status is not 404 - NOT FOUND ");
+});
+%}

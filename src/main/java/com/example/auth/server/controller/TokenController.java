@@ -39,16 +39,17 @@ public class TokenController {
 
 
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail {
+    public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(base.signIn(login.getMail(), login.getPassword()));
 
     }
 
+
     @PatchMapping(value = "/claim/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
+        return ResponseEntity
+                .ok(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
 
     }
 
@@ -60,7 +61,7 @@ public class TokenController {
     }
 
     @PatchMapping(value = "/login/mail", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException {
+    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse {
         base.updateMail(Long.parseLong(user.getName()), mailRequest.getPassword(), mailRequest.getNewmail());
         return ResponseEntity.ok().build();
     }
