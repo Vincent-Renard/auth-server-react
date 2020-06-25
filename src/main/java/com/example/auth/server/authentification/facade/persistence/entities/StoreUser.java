@@ -40,7 +40,7 @@ public class StoreUser {
 
     @Column(nullable = false)
     @Setter
-    char[] password;
+    String password;
 
 
     @Setter
@@ -53,7 +53,7 @@ public class StoreUser {
     protected StoreUser() {
     }
 
-    public StoreUser(String mail, char[] password, Collection<String> roles) {
+    public StoreUser(String mail, String password, Collection<String> roles) {
 
         this.mail = mail.toLowerCase();
         this.password = password;
