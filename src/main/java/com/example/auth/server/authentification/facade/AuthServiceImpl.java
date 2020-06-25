@@ -1,7 +1,9 @@
 package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.PasswordEncoder;
+import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
 import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
+import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.Bearers;
@@ -29,11 +31,26 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private UserRepository userRepository;
 
     @Autowired
+    private ForbidenDomainRepository domainRepository;
+
+    @Autowired
     private JwtEncoder bearersManager;
+
+    private Set<String> domainsNotAllowed;
 
     @PostConstruct
     private void init() {
+
         fill();
+        updateInternDomains();
+
+    }
+
+    private void updateInternDomains() {
+        domainsNotAllowed = domainRepository.findAll()
+                .stream()
+                .map(ForbidenDomainEntity::getDomain)
+                .collect(Collectors.toSet());
     }
 
     private String genPassword(int lenght, int chunks) {
@@ -68,6 +85,35 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public PublicKey publicKey() {
         return bearersManager.getPublicKey();
+    }
+
+    @Override
+    public ForbidenDomainEntity addForbidenDomain(String domain) {
+        domain = domain.toLowerCase();
+        if (!domainsNotAllowed.contains(domain)) {
+            domainRepository.save(new ForbidenDomainEntity(domain));
+            updateInternDomains();
+        }
+
+        return domainRepository.getOne(domain);
+    }
+
+    @Override
+    public void delForbidenDomain(String domain) {
+        domain = domain.toLowerCase();
+
+        if (domainsNotAllowed.contains(domain)) {
+
+            domainRepository.deleteById(domain);
+            domainsNotAllowed.remove(domain);
+            updateInternDomains();
+        }
+    }
+
+    @Override
+    public Collection<ForbidenDomainEntity> getAllDomainNotAllowed() {
+
+        return domainRepository.findAll();
     }
 
     @Override

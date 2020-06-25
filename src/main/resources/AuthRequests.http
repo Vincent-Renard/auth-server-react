@@ -1,3 +1,5 @@
+
+###
 GET http://localhost:8888/auth/public
 Content-Type: application/json
 
@@ -7,17 +9,17 @@ Content-Type: application/json
 
 {
   "mail": "admin@admin.com",
-  "password": "XjcwL-uNV8-hoUk-83Xa"
+  "password": "mdpadmin"
 }
-
+> {% client.global.set("auth_token_admin", response.body.accessToken); %}
 ###
 
 PATCH http://localhost:8888/auth/login/password
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4ODUyNzY4NCwiZXhwIjoxNTg4NTMxMjg0LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl19.NKT5hlugjreDpWAWA_q31fvvGEDEln8fFCAet7f0c0wJGUE-_gIcNZjt9RO-8BWxyQVZg9rHcGujC24SV8vSwHcfYUcsKBbHxvNtwTrROt7dP2AmtY88NSyUmIkpdQRiwdx7yh7tFKLWA-l7NL_88KXZ9oRmfJRVgDhusf69Ovgrt0fYKzLQQuASeOxQIjhLkAYgQ4JN6i55S0GC9mWHL47yG1bddFdnx7iXHJfkdXHQOmhOewSIfF1cBV3AP0SVMpQTRDd04j9BjwfHJ2P2qDqhYxOSpjxZO3V8CTqpUKNVtASuQZ-Y2Q36UFptmZwdOhSZZKxmJcsKde_ezbWS5A
+Authorization: Bearer {{auth_token_admin}}
 
 {
-  "oldPassword": "rgmWL-em86-Ecyp-GmEH",
+  "oldPassword": "mdpadmin",
   "newPassword": "admin1"
 }
 
@@ -37,7 +39,7 @@ Content-Type: application/json
 
 PATCH http://localhost:8888/auth/login/mail
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiI1Iiwic3ViIjoiMSIsImlhdCI6MTU4ODUyNzg5NCwiZXhwIjoxNTg4NTMxNDk0LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl19.Gtslw6JSSmt3BlQ2iDsiXpMGuMolNadhcl8dsFiYayxhj512mPXRJGB0WYDiTe6pCU50m_kNSFkybN1ZBY4rAZNe3HX3Wlj9UskuzQDdPOf0L1Tit6_1F51wf6D01SRJQV-ItHd8HrsfzcBsUfFcZi8rHa42HAxFqkxIbg7fA8lr9hPJ-upRcFDYOGWF0fILQs9norO000FMRAGbG1S5-qHnXMjAVB60FRSH_iALj-Juk0KAWKE6O8NifMkYIMftMJ0XmEo_qQMH9_Dkjaau_aFaLlef3fKlu-t9cV4iJem8ZxcsMDPDm4xYMJXAeQ5pPj7Ygldbk8T_n8VPbh93cg
+Authorization: Bearer {{auth_token_admin}}
 
 {
   "newmail": "admin@youmail.com",
@@ -119,7 +121,7 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIyIiwic
 PATCH http://localhost:8888/auth/claim/2/roles
 Content-Type: application/json
 //admin token here
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4ODUyODA3NywiZXhwIjoxNTg4NTMxNjc3LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl19.hRYLg1EwtyMSB6AZx1-ddqqG9MweCjvlYVQxS0I7y8p8QWi0qdPI84vIcVE9JAOinREY1PK1Ovd-XLV9Sb7ipkcrvWdgkRo-o3UrxxH2Yhpg08KAwa5cx6uEi02K9IpZW33NE-jUdANcJRrfXz58jjHpM9Z8uXXveQo1Tbv6LoDBIpKtoFiXKpr0pqG-fUs5PKLZPzKKECJndFckqRRzk6v84uLHABvURIaZTUmyDqztZlE_vsMP4X-YsctOWk6htmQCy9LeiefTmxNsGF6noVSTb9Ixy5hMBdE9n_Dfzi5JR2bL_-SRAUpXVhQMX_NDjk1owgLBI1xbsJwZvARnDQ
+Authorization: Bearer {{auth_token_admin}}
 
 {
   "roles": [
@@ -132,16 +134,17 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic
 ###
 DELETE http://localhost:8888/auth/clean
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiIxMSIsInN1YiI6IjEiLCJpYXQiOjE1ODczMDIwMzYsImV4cCI6MTU4NzMwNTYzNiwidHlwZSI6IkFDQ0VTUyIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdfQ.avD0Rllvi2iaWdlSkwdE-_aNxDhrfKpmYdfbBOcLVtWXBG4fDH-Z9q6rFGtmIiujqouqWNJEahULirj4pKTpWVyeSgr5Oxk9XeK5Khe5BqUqr_TSkN8f_PlSpyoDuaiZBs8wYXYDlNeSkTb37QYRczWIbrEWyLBF1IxDCPyiBhiTIYimVVAjCyMDymClOXfELffWZ3o2QIJrOgfNv0RyBmYuOpRC-F4hl8Am4AwPpt1pU1jbIfPknkS6YWJLTMSXnmCrMlXR66uuUlA9XgXjc3goSRlCNTMyrCHdGNZJNNY2h3SO_s04AG4h3OC5wDRu_CFUlEu2Z0RyVCyJi3064A
+Authorization:Bearer {{auth_token_admin}}
+
 
 ###
 
 DELETE http://localhost:8888/auth/login
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJJU1NVRVIiLCJqdGkiOiIxIiwic3ViIjoiMSIsImlhdCI6MTU4ODI0MzIyNSwiZXhwIjoxNTg4MjQ2ODI1LCJ0eXBlIjoiQUNDRVNTIiwicm9sZXMiOlsiQURNSU4iLCJVU0VSIl19.Ek1o0fZGcSAWq8I-Fc-IA8Jb9IB_zc0KOFRNloCCvZiLocEqtnWogVayzHFJeE7tY_s3_YjOD0lRl7hgNUrB4bTpTmLdTpGHzYDYGAdB4zrOAfV7yWhFw549V509QnXz_zRNgU2TktvVwjGpHkMaf7GgmGS9Xe3uMG2Z70jL4Y8M-CTKiVVItGtLuxXzn0vqlJDvsOf3a_ECZGSQWQGPVaN7-vGsnD5DDglB8WB-0uqgAXbU_PJvF2wWX_wgzeXDTix7bkbG5Bhf-oYuUmWvq84J-s8JymymDh28mqlScAniy0tPT1aESXRl_8JclXr5rtFASNDpCkis8SqO62dXTw
+Authorization: Bearer {{auth_token_admin}}
 
 {
-  "password": "eSvnw-dhs5-79Bk-z8JB"
+  "password": "mdpadmin"
 }
 
 
