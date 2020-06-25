@@ -1,6 +1,5 @@
 package com.example.auth.server.authentification.facade;
 
-import com.example.auth.server.authentification.PasswordEncoder;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
 import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
@@ -9,6 +8,7 @@ import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +26,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
 
     private final String mailAdmin = "admin@admin.com";
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -77,7 +80,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         if (!userRepository.existsByMail(mailAdmin)) {
 
-            var admin = new StoreUser(mailAdmin, PasswordEncoder.encode(password), Set.of("USER", "ADMIN"));
+            var admin = new StoreUser(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
             userRepository.save(admin);
             System.out.println(mailAdmin + "  " + password);
         }
@@ -134,7 +137,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
-        var u = new StoreUser(mailUser, PasswordEncoder.encode(passsword), rolesOfUser);
+        var u = new StoreUser(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
         var user = userRepository.save(u);
 
         return bearersManager.genBoth(user.getIdUser(), user.getRoles());
@@ -146,7 +149,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Optional<StoreUser> u = userRepository.findByMail(mail);
         if (u.isPresent()) {
             var user = u.get();
-            if (!Arrays.equals(PasswordEncoder.encode(passsword), user.getPassword()))
+            if (!passwordEncoder.matches(passsword, user.getPassword()))
                 throw new BadPasswordException();
 
             return bearersManager.genBoth(user.getIdUser(), user.getRoles());
@@ -178,7 +181,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Optional<StoreUser> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
-            if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
+            if (passwordEncoder.matches(password, usr.getPassword()))
                 userRepository.deleteById(iduser);
             else throw new BadPasswordException();
 
@@ -213,9 +216,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         if (user.isPresent()) {
             var usr = user.get();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
-            if (Arrays.equals(usr.getPassword(), PasswordEncoder.encode(oldPasssword))) {
+            if (passwordEncoder.matches(oldPasssword, usr.getPassword())) {
                 usr.setUpdateDate(LocalDateTime.now());
-                usr.setPassword(PasswordEncoder.encode(newpasssword));
+                usr.setPassword(passwordEncoder.encode(newpasssword));
                 userRepository.save(usr);
             } else throw new BadPasswordException();
         } else {
@@ -230,7 +233,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         if (user.isPresent()) {
             newmail = newmail.toLowerCase();
             var usr = user.get();
-            if (!Arrays.equals(usr.getPassword(), PasswordEncoder.encode(password)))
+            if (!passwordEncoder.matches(password, usr.getPassword()))
                 throw new BadPasswordException();
             if (!mailChecker.test(newmail))
                 throw new InvalidMail();
