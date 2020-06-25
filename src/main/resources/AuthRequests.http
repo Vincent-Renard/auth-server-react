@@ -286,7 +286,6 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 PATCH http://localhost:8888/auth/claim/2/roles
 Content-Type: application/json
-//admin token here
 Authorization: Bearer {{auth_token_admin}}
 
 {
