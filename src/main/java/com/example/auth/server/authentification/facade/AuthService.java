@@ -36,6 +36,8 @@ public interface AuthService {
 
     UserEntity updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
 
+    UserEntity showUser(long iduser) throws NotSuchUserException;
+
     void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan;
 
     void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan;

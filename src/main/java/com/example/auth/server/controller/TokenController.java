@@ -80,6 +80,17 @@ public class TokenController {
         base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<User> showMe(Principal principal) throws NotSuchUserException {
+        return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(principal.getName()))));
+    }
+
+    @GetMapping(value = "/login/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<User> showUser(@PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
+        return ResponseEntity.ok(User.from(base.showUser(idUser)));
+    }
+
 }
 
 

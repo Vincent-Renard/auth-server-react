@@ -220,6 +220,16 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
+    public UserEntity showUser(long iduser) throws NotSuchUserException {
+        Optional<UserEntity> user = userRepository.findById(iduser);
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new NotSuchUserException();
+        }
+    }
+
+    @Override
     public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
         Optional<UserEntity> user = userRepository.findById(iduser);
 
