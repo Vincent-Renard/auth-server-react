@@ -23,7 +23,7 @@ import java.util.TreeSet;
 @ToString
 @Entity
 @Table(name = "users")
-public class StoreUser {
+public class UserEntity {
 
 
     @Id
@@ -38,6 +38,7 @@ public class StoreUser {
     @NotNull
     LocalDateTime inscriptionDate;
 
+
     @Column(nullable = false)
     @Setter
     String password;
@@ -50,10 +51,16 @@ public class StoreUser {
     @Setter
     LocalDateTime updateDate;
 
-    protected StoreUser() {
+
+    @OneToOne(cascade = CascadeType.ALL, optional = true)
+    @Setter
+    //@JoinColumn(name = "ban_fk")
+    private BanishmentEntity banishment;
+
+    protected UserEntity() {
     }
 
-    public StoreUser(String mail, String password, Collection<String> roles) {
+    public UserEntity(String mail, String password, Collection<String> roles) {
 
         this.mail = mail.toLowerCase();
         this.password = password;

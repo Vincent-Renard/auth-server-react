@@ -302,7 +302,44 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
 
+###BAN TEST
+POST http://localhost:8888/auth/claim
+Content-Type: application/json
+
+{
+  "mail": "userToBan@mail.com",
+  "password": "utb"
+}
+> {% client.global.set("auth_token_bu", response.body.accessToken);
+     client.global.set("refr_token_bu", response.body.refreshToken);
+     client.test("Request executed successfully", function() {
+     client.assert(response.status === 201, "Response status is not 201 - CREATED");
+     });
+ %}
+
+
 ###
+POST http://localhost:8888/auth/login/3/ban
+Content-Type: application/json
+Authorization:Bearer {{auth_token_admin}}
+
+
+{
+  "reason": "SPAM"
+}
+> {%
+     client.test("Request executed successfully", function() {
+     client.assert(response.status === 200, "Response status is not 200 - CREATED");
+     });
+ %}
+
+### TODO suite
+
+
+
+###
+
+
 DELETE http://localhost:8888/auth/clean
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
