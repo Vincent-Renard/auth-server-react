@@ -24,21 +24,21 @@ public interface AuthService {
 
     Collection<ForbidenDomainEntity> getAllDomainNotAllowed();
 
-    Bearers signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse;
+    Bearers signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
 
-    Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException;
+    Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan;
 
-    Bearers refresh(long iduser) throws NotSuchUserException;
+    Bearers refresh(long iduser) throws NotSuchUserException, UserBan;
 
     void clear();
 
-    void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException;
+    void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException, UserBan;
 
     UserEntity updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
 
-    void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat;
+    void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan;
 
-    void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse;
+    void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan;
 
     UserEntity banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 

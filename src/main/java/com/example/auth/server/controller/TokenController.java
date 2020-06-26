@@ -39,14 +39,13 @@ public class TokenController {
 
 
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse {
+    public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(base.signIn(login.getMail(), login.getPassword()));
 
     }
 
-//TODO remplacer claim par login
-    @PatchMapping(value = "/claim/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PatchMapping(value = "/login/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
         return ResponseEntity
                 .ok(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
@@ -54,30 +53,30 @@ public class TokenController {
     }
 
     @PatchMapping(value = "/login/password", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordException, BadPasswordFormat {
+    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
         base.updatePassword(Long.parseLong(user.getName()), updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
         return ResponseEntity.ok().build();
 
     }
 
     @PatchMapping(value = "/login/mail", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse {
+    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse, UserBan {
         base.updateMail(Long.parseLong(user.getName()), mailRequest.getPassword(), mailRequest.getNewmail());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> refresh(Principal user) throws NotSuchUserException {
+    public ResponseEntity<Bearers> refresh(Principal user) throws NotSuchUserException, UserBan {
         return ResponseEntity.ok(base.refresh(Long.parseLong(user.getName())));
     }
 
     @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> log(@RequestBody UserCredentials login) throws BadPasswordException, NotSuchUserException {
+    public ResponseEntity<Bearers> log(@RequestBody UserCredentials login) throws BadPasswordException, NotSuchUserException, UserBan {
         return ResponseEntity.ok(base.logIn(login.getMail(), login.getPassword()));
     }
 
     @DeleteMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException {
+    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException, UserBan {
         base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
         return ResponseEntity.noContent().build();
     }

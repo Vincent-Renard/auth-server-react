@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/mail").authenticated()
                 .pathMatchers(HttpMethod.GET, rootUrl + "/public").permitAll()
                 .pathMatchers(HttpMethod.POST, rootUrl + "/claim").permitAll()
-                .pathMatchers(HttpMethod.PATCH, rootUrl + "/claim/**/roles").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/**/roles").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + "/domains").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + "/domains").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + "/login/**/ban").hasAuthority("ADMIN")
