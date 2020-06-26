@@ -150,6 +150,32 @@ Content-Type: application/json
  %}
 
 ###
+GET http://localhost:8888/auth/login
+Content-Type: application/json
+Authorization: Bearer {{auth_token_toto2}}
+
+
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+GET http://localhost:8888/auth/login/2
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
 POST http://localhost:8888/auth/login
 Content-Type: application/json
 
