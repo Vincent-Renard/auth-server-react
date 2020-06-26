@@ -1,7 +1,9 @@
 package com.example.auth.server.authentification.facade;
 
+import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
+import com.example.auth.server.authentification.facade.persistence.entities.BanishmentEntity;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
-import com.example.auth.server.authentification.facade.persistence.entities.StoreUser;
+import com.example.auth.server.authentification.facade.persistence.entities.UserEntity;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
@@ -80,7 +82,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         if (!userRepository.existsByMail(mailAdmin)) {
 
-            var admin = new StoreUser(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
+            var admin = new UserEntity(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
             userRepository.save(admin);
             System.out.println(mailAdmin + "  " + password);
         }
@@ -121,7 +123,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse {
+    public Bearers signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
         mailUser = mailUser.toLowerCase();
         if (!passwordChecker.test(passsword))
             throw new BadPasswordFormat();
@@ -130,25 +132,29 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         String domain = mailUser.split("@")[1];
         if (domainsNotAllowed.contains(domain))
             throw new ForbidenDomainMailUse();
-
-
-        if (userRepository.existsByMail(mailUser))
+        if (userRepository.existsByMail(mailUser)) {
+            if (userRepository.findByMail(mailUser).get().getBanishment() != null)
+                throw new UserBan();
             throw new MailAlreadyTakenException();
+        }
+
 
         Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
-        var u = new StoreUser(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
+        var u = new UserEntity(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
         var user = userRepository.save(u);
 
         return bearersManager.genBoth(user.getIdUser(), user.getRoles());
     }
 
     @Override
-    public Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException {
+    public Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan {
         mail = mail.toLowerCase();
-        Optional<StoreUser> u = userRepository.findByMail(mail);
+        Optional<UserEntity> u = userRepository.findByMail(mail);
         if (u.isPresent()) {
             var user = u.get();
+            if (user.getBanishment() != null)
+                throw new UserBan();
             if (!passwordEncoder.matches(passsword, user.getPassword()))
                 throw new BadPasswordException();
 
@@ -158,10 +164,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers refresh(long iduser) throws NotSuchUserException {
+    public Bearers refresh(long iduser) throws NotSuchUserException, UserBan {
 
-        Optional<StoreUser> user = userRepository.findById(iduser);
+        Optional<UserEntity> user = userRepository.findById(iduser);
         if (user.isPresent()) {
+            if (user.get().getBanishment() != null)
+                throw new UserBan();
             return bearersManager.genBoth(iduser, user.get().getRoles());
 
         } else {
@@ -177,10 +185,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException {
-        Optional<StoreUser> user = userRepository.findById(iduser);
+    public void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException, UserBan {
+        Optional<UserEntity> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
+            if (usr.getBanishment() != null)
+                throw new UserBan();
             if (passwordEncoder.matches(password, usr.getPassword()))
                 userRepository.deleteById(iduser);
             else throw new BadPasswordException();
@@ -191,8 +201,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public StoreUser updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException {
-        Optional<StoreUser> user = userRepository.findById(iduser);
+    public UserEntity updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException {
+        Optional<UserEntity> user = userRepository.findById(iduser);
         newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
         if (!user.isPresent()) {
             throw new NotSuchUserException();
@@ -210,11 +220,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat {
-        Optional<StoreUser> user = userRepository.findById(iduser);
+    public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
+        Optional<UserEntity> user = userRepository.findById(iduser);
 
         if (user.isPresent()) {
             var usr = user.get();
+            if (usr.getBanishment() != null)
+                throw new UserBan();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
             if (passwordEncoder.matches(oldPasssword, usr.getPassword())) {
                 usr.setUpdateDate(LocalDateTime.now());
@@ -227,12 +239,15 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse {
-        Optional<StoreUser> user = userRepository.findById(iduser);
+    public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan {
+        Optional<UserEntity> user = userRepository.findById(iduser);
 
         if (user.isPresent()) {
+
             newmail = newmail.toLowerCase();
             var usr = user.get();
+            if (usr.getBanishment() != null)
+                throw new UserBan();
             if (!passwordEncoder.matches(password, usr.getPassword()))
                 throw new BadPasswordException();
             if (!mailChecker.test(newmail))
@@ -249,6 +264,39 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             usr.setMail(newmail);
             usr.setUpdateDate(LocalDateTime.now());
+            userRepository.save(usr);
+
+        } else {
+            throw new NotSuchUserException();
+        }
+    }
+
+    @Override
+    public UserEntity banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
+        Optional<UserEntity> user = userRepository.findById(idUser);
+
+        if (user.isPresent()) {
+            var usr = user.get();
+            long i = usr.getIdUser();
+            if (usr.getBanishment() != null) throw new UserAlreadyBanException();
+
+            BanishmentEntity be = new BanishmentEntity(reason);
+            usr.setBanishment(be);
+            userRepository.save(usr);
+            return usr;
+        } else {
+            throw new NotSuchUserException();
+        }
+    }
+
+    @Override
+    public void unBanUser(long idUser, long idAdmin) throws NotSuchUserException {
+        Optional<UserEntity> user = userRepository.findById(idUser);
+
+        if (user.isPresent()) {
+
+            var usr = user.get();
+            usr.setBanishment(null);
             userRepository.save(usr);
 
         } else {
