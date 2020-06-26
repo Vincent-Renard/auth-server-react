@@ -282,7 +282,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             BanishmentEntity be = new BanishmentEntity(reason);
             usr.setBanishment(be);
-            userRepository.save(usr);
+            if (!usr.getMail().equals(mailAdmin))
+                userRepository.save(usr);
             return usr;
         } else {
             throw new NotSuchUserException();
