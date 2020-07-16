@@ -56,18 +56,19 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/**/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/clean").hasAuthority("ADMIN")
 //TOKEN PART
-                .pathMatchers(HttpMethod.GET, rootUrl + "/refresh").authenticated()
-                .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
-                .pathMatchers(HttpMethod.POST, rootUrl + "/claim").permitAll()
-                //.pathMatchers(HttpMethod.GET, "**/swagger**").permitAll()
+                .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/refresh").authenticated()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/login").permitAll()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/claim").permitAll()
 
-                .pathMatchers(HttpMethod.GET, rootUrl + "/login").authenticated()
+                .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/login").authenticated()
+
 //USER PART
 
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/password").authenticated()
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/mail").authenticated()
                 .pathMatchers(HttpMethod.GET, rootUrl + "/users/me").authenticated()
                 .pathMatchers(HttpMethod.DELETE, rootUrl + "/users/me").authenticated()
+                //.pathMatchers(HttpMethod.GET, rootUrl + "/users/**").authenticated()
 
 
                 .anyExchange().denyAll();

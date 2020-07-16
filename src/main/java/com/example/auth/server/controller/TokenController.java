@@ -1,16 +1,17 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
+import com.example.auth.server.authentification.facade.UserToken;
 import com.example.auth.server.model.dtos.in.UserCredentials;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.security.Principal;
 
 /**
@@ -19,7 +20,7 @@ import java.security.Principal;
  */
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/tokens")
 public class TokenController {
 
     @Autowired
@@ -29,12 +30,11 @@ public class TokenController {
 
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(base.signIn(login.getMail(), login.getPassword()));
+        UserToken ut = base.signIn(login.getMail(), login.getPassword());
 
+        return ResponseEntity.created(URI.create("/auth/users/" + ut.getIdUser()))
+                .body(ut.getBearers());
     }
-
-
 
 
     @GetMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})

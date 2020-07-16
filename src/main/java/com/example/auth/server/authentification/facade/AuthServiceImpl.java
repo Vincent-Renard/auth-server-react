@@ -123,7 +123,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
+    public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
         mailUser = mailUser.toLowerCase();
         if (!passwordChecker.test(passsword))
             throw new BadPasswordFormat();
@@ -144,7 +144,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         var u = new Credentials(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
         var user = userRepository.save(u);
 
-        return bearersManager.genBoth(user.getIdUser(), user.getRoles());
+        Bearers tokens = bearersManager.genBoth(user.getIdUser(), user.getRoles());
+        return new UserToken(user.getIdUser(), tokens);
     }
 
     @Override
