@@ -3,7 +3,6 @@ package com.example.auth.server.controller;
 import com.example.auth.server.authentification.facade.AuthService;
 import com.example.auth.server.model.dtos.in.*;
 import com.example.auth.server.model.dtos.out.Bearers;
-import com.example.auth.server.model.dtos.out.PubKey;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,6 @@ public class TokenController {
     @Autowired
     private AuthService base;
 
-    @GetMapping(value = "/public", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<PubKey> pubkey() {
-        return ResponseEntity.ok(PubKey.from(base.publicKey().getEncoded()));
-    }
 
     @DeleteMapping(value = "/clean")
     public ResponseEntity<Void> clear() {
