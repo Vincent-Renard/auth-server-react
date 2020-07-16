@@ -1,7 +1,10 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.model.dtos.in.*;
+import com.example.auth.server.model.dtos.in.DeleteCredentialsRequest;
+import com.example.auth.server.model.dtos.in.UpdateMailRequest;
+import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
+import com.example.auth.server.model.dtos.in.UserCredentials;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.*;
@@ -26,12 +29,6 @@ public class TokenController {
     private AuthService base;
 
 
-    @DeleteMapping(value = "/clean")
-    public ResponseEntity<Void> clear() {
-        base.clear();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
 
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
@@ -40,12 +37,7 @@ public class TokenController {
 
     }
 
-    @PatchMapping(value = "/login/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
-        return ResponseEntity
-                .ok(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
 
-    }
 
     @PatchMapping(value = "/login/password", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
@@ -81,6 +73,7 @@ public class TokenController {
         return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(principal.getName()))));
     }
 
+    //TODO must be ok for principal==iduser
     @GetMapping(value = "/login/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> showUser(@PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
         return ResponseEntity.ok(User.from(base.showUser(idUser)));

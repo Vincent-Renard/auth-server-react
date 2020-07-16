@@ -163,7 +163,7 @@ Authorization: Bearer {{auth_token_toto2}}
 %}
 
 ###
-GET http://localhost:8888/auth/login/2
+GET http://localhost:8888/auth/admin/users/2
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -217,7 +217,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-POST http://localhost:8888/auth/domains
+POST http://localhost:8888/auth/admin/domains
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -242,7 +242,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-DELETE http://localhost:8888/auth/domains
+DELETE http://localhost:8888/auth/admin/domains
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -268,7 +268,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 ###
 
-POST http://localhost:8888/auth/domains
+POST http://localhost:8888/auth/admin/domains
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -310,7 +310,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 ###
 
 
-PATCH http://localhost:8888/auth/login/2/roles
+PATCH http://localhost:8888/auth/admin/users/2/roles
 Content-Type: application/json
 //admin token here
 Authorization: Bearer {{auth_token_admin}}
@@ -345,7 +345,7 @@ Content-Type: application/json
 
 
 ### BAN USER
-POST http://localhost:8888/auth/login/4/ban
+POST http://localhost:8888/auth/admin/users/4/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
@@ -387,7 +387,7 @@ client.assert(response.status === 403, "Response status is not 403 - Forbidden")
 %}
 
 ### UNBAN USER
-DELETE http://localhost:8888/auth/login/4/ban
+DELETE http://localhost:8888/auth/admin/users/4/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
@@ -427,7 +427,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 ###
 
 
-DELETE http://localhost:8888/auth/clean
+DELETE http://localhost:8888/auth/admin/clean
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
