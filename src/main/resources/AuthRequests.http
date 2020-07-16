@@ -27,7 +27,7 @@ client.test("Request executed successfully", function() {
 %}
 ###
 
-PATCH http://localhost:8888/auth/login/password
+PATCH http://localhost:8888/auth/users/password
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -67,7 +67,7 @@ Content-Type: application/json
   "password": "admin1"
 }
 > {%
-client.test("Request executed successfully", function() {
+  client.test("Request executed successfully", function() {
   client.assert(response.status === 404, "Response status is not 404");
 });
 %}
@@ -105,7 +105,7 @@ client.test("Request executed successfully", function() {
 ###
 
 
-PATCH http://localhost:8888/auth/login/mail
+PATCH http://localhost:8888/auth/users/mail
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto}}
 
@@ -176,6 +176,18 @@ Authorization: Bearer {{auth_token_admin}}
 %}
 
 ###
+GET http://localhost:8888/auth/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token_toto}}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+
 POST http://localhost:8888/auth/login
 Content-Type: application/json
 
@@ -438,7 +450,7 @@ client.assert(response.status === 204, "Response status is not 204 - NO CONTENT"
 %}
 ###
 
-DELETE http://localhost:8888/auth/login
+DELETE http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 

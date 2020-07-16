@@ -1,9 +1,6 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.model.dtos.in.DeleteCredentialsRequest;
-import com.example.auth.server.model.dtos.in.UpdateMailRequest;
-import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
 import com.example.auth.server.model.dtos.in.UserCredentials;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.dtos.out.User;
@@ -39,18 +36,6 @@ public class TokenController {
 
 
 
-    @PatchMapping(value = "/login/password", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
-        base.updatePassword(Long.parseLong(user.getName()), updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
-        return ResponseEntity.ok().build();
-
-    }
-
-    @PatchMapping(value = "/login/mail", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse, UserBan {
-        base.updateMail(Long.parseLong(user.getName()), mailRequest.getPassword(), mailRequest.getNewmail());
-        return ResponseEntity.ok().build();
-    }
 
     @GetMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> refresh(Principal user) throws NotSuchUserException, UserBan {
@@ -62,22 +47,12 @@ public class TokenController {
         return ResponseEntity.ok(base.logIn(login.getMail(), login.getPassword()));
     }
 
-    @DeleteMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException, UserBan {
-        base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
-        return ResponseEntity.noContent().build();
-    }
 
     @GetMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> showMe(Principal principal) throws NotSuchUserException {
         return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(principal.getName()))));
     }
 
-    //TODO must be ok for principal==iduser
-    @GetMapping(value = "/login/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> showUser(@PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
-        return ResponseEntity.ok(User.from(base.showUser(idUser)));
-    }
 
 }
 

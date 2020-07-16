@@ -58,14 +58,17 @@ public class SecurityConfig {
 //TOKEN PART
                 .pathMatchers(HttpMethod.GET, rootUrl + "/refresh").authenticated()
                 .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
-                //.pathMatchers(HttpMethod.GET, "**/swagger**").permitAll()
-                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/password").authenticated()
-                .pathMatchers(HttpMethod.GET, rootUrl + "/login").authenticated()
-
-                .pathMatchers(HttpMethod.DELETE, rootUrl + "/login").authenticated()
-                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/mail").authenticated()
-
                 .pathMatchers(HttpMethod.POST, rootUrl + "/claim").permitAll()
+                //.pathMatchers(HttpMethod.GET, "**/swagger**").permitAll()
+
+                .pathMatchers(HttpMethod.GET, rootUrl + "/login").authenticated()
+//USER PART
+
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/password").authenticated()
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/mail").authenticated()
+                .pathMatchers(HttpMethod.GET, rootUrl + "/users/me").authenticated()
+                .pathMatchers(HttpMethod.DELETE, rootUrl + "/users/me").authenticated()
+
 
                 .anyExchange().denyAll();
         return http.build();
