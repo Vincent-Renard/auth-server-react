@@ -44,10 +44,10 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
-
+//PUBLIC PART
                 .pathMatchers(HttpMethod.GET, rootUrl + "/public").permitAll()
                 .pathMatchers(HttpMethod.GET, rootUrl + "/domains").permitAll()
-
+//ADMIN PART
                 .pathMatchers(HttpMethod.GET, rootUrl + adminUrl + "/users/**").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.PATCH, rootUrl + adminUrl + "/users/**/roles").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/users/**/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/**/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/clean").hasAuthority("ADMIN")
-
+//TOKEN PART
                 .pathMatchers(HttpMethod.GET, rootUrl + "/refresh").authenticated()
                 .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
                 //.pathMatchers(HttpMethod.GET, "**/swagger**").permitAll()
