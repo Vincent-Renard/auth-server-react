@@ -22,8 +22,8 @@ import java.util.TreeSet;
 @Getter
 @ToString
 @Entity
-@Table(name = "users")
-public class UserEntity {
+@Table(name = "credentials")
+public class Credentials {
 
 
     @Id
@@ -57,10 +57,10 @@ public class UserEntity {
     //@JoinColumn(name = "ban_fk")
     private BanishmentEntity banishment;
 
-    protected UserEntity() {
+    protected Credentials() {
     }
 
-    public UserEntity(String mail, String password, Collection<String> roles) {
+    public Credentials(String mail, String password, Collection<String> roles) {
 
         this.mail = mail.toLowerCase();
         this.password = password;

@@ -1,6 +1,6 @@
 package com.example.auth.server.model.dtos.out;
 
-import com.example.auth.server.authentification.facade.persistence.entities.UserEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,7 +23,7 @@ public class User {
     LocalDateTime updateDate;
     UserBanishment userBanishment;
 
-    public static User from(UserEntity u) {
+    public static User from(Credentials u) {
         return new User(u.getIdUser(), u.getInscriptionDate(),
                 u.getRoles(),
                 u.getUpdateDate(), u.getBanishment() == null ? null : UserBanishment.from(u.getBanishment()));

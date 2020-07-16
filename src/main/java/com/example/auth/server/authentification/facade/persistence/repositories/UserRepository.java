@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.repositories;
 
-import com.example.auth.server.authentification.facade.persistence.entities.UserEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +11,8 @@ import java.util.Optional;
  * @date 19/04/2020
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByMail(String mail);
+public interface UserRepository extends JpaRepository<Credentials, Long> {
+    Optional<Credentials> findByMail(String mail);
 
     boolean existsByMail(String mail);
 

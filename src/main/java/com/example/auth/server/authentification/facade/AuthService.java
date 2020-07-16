@@ -1,8 +1,8 @@
 package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
+import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
-import com.example.auth.server.authentification.facade.persistence.entities.UserEntity;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 
@@ -34,15 +34,15 @@ public interface AuthService {
 
     void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException, UserBan;
 
-    UserEntity updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
+    Credentials updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
 
-    UserEntity showUser(long iduser) throws NotSuchUserException;
+    Credentials showUser(long iduser) throws NotSuchUserException;
 
     void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan;
 
     void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan;
 
-    UserEntity banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
+    Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 
     void unBanUser(long idUser, long idAdmin) throws NotSuchUserException;
 }
