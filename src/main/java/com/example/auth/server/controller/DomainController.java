@@ -10,9 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 /**
  * @autor Vincent
  * @date 25/06/2020
@@ -38,12 +35,5 @@ public class DomainController {
 
     }
 
-    @GetMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Collection<ForbidenDomain>> getDomains() {
-        return ResponseEntity
-                .ok(base.getAllDomainNotAllowed()
-                        .stream().map(ForbidenDomain::from)
-                        .collect(Collectors.toList()));
 
-    }
 }

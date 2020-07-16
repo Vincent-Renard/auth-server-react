@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .authorizeExchange()
 
                 .pathMatchers(HttpMethod.GET, rootUrl + "/public").permitAll()
+                .pathMatchers(HttpMethod.GET, rootUrl + "/domains").permitAll()
+
                 .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
                 //.pathMatchers(HttpMethod.GET, "**/swagger**").permitAll()
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/password").authenticated()
@@ -59,7 +61,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.DELETE, rootUrl + "/domains").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + "/login/**/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + "/login/**/ban").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.GET, rootUrl + "/domains").permitAll()
+
                 .pathMatchers(HttpMethod.GET, rootUrl + "/refresh").authenticated()
                 .pathMatchers(HttpMethod.DELETE, rootUrl + "/clean").hasAuthority("ADMIN")
                 .anyExchange().denyAll();
