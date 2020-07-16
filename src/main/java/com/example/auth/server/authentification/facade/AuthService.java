@@ -24,7 +24,7 @@ public interface AuthService {
 
     Collection<ForbidenDomainEntity> getAllDomainNotAllowed();
 
-    Bearers signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
+    UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
 
     Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan;
 

@@ -23,6 +23,7 @@ public class SecurityConfig {
 
 
     private static final String rootUrl = "/auth";
+    private static final String adminUrl = "/admin";
     @Autowired
     private ServerSecurityContextRepository securityContextRepository;
 
@@ -43,23 +44,33 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
-                .pathMatchers(HttpMethod.POST, rootUrl + "/login").permitAll()
-                //.pathMatchers(HttpMethod.GET, "**/swagger**").permitAll()
-                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/password").authenticated()
-                .pathMatchers(HttpMethod.GET, rootUrl + "/login").authenticated()
-                .pathMatchers(HttpMethod.GET, rootUrl + "/login/**").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.DELETE, rootUrl + "/login").authenticated()
-                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/mail").authenticated()
+//PUBLIC PART
                 .pathMatchers(HttpMethod.GET, rootUrl + "/public").permitAll()
-                .pathMatchers(HttpMethod.POST, rootUrl + "/claim").permitAll()
-                .pathMatchers(HttpMethod.PATCH, rootUrl + "/login/**/roles").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.POST, rootUrl + "/domains").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.DELETE, rootUrl + "/domains").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.POST, rootUrl + "/login/**/ban").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.DELETE, rootUrl + "/login/**/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.GET, rootUrl + "/domains").permitAll()
-                .pathMatchers(HttpMethod.GET, rootUrl + "/refresh").authenticated()
-                .pathMatchers(HttpMethod.DELETE, rootUrl + "/clean").hasAuthority("ADMIN")
+//ADMIN PART
+                .pathMatchers(HttpMethod.GET, rootUrl + adminUrl + "/users/**").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.PATCH, rootUrl + adminUrl + "/users/*/roles").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/clean").hasAuthority("ADMIN")
+//TOKEN PART
+                .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/refresh").authenticated()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/login").permitAll()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/claim").permitAll()
+
+                .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/login").authenticated()
+
+//USER PART
+
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/password").authenticated()
+                .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/mail").authenticated()
+                .pathMatchers(HttpMethod.GET, rootUrl + "/users/me").authenticated()
+                .pathMatchers(HttpMethod.DELETE, rootUrl + "/users/me").authenticated()
+                //.pathMatchers(HttpMethod.GET, rootUrl + "/users/**").authenticated()
+
+
                 .anyExchange().denyAll();
         return http.build();
     }

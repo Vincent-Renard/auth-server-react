@@ -10,7 +10,7 @@ client.test("Request executed successfully", function() {
 %}
 
 ###
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ client.test("Request executed successfully", function() {
 %}
 ###
 
-PATCH http://localhost:8888/auth/login/password
+PATCH http://localhost:8888/auth/users/password
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -43,7 +43,7 @@ client.test("Request executed successfully", function() {
 
 ###
 
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -59,7 +59,7 @@ client.test("Request executed successfully", function() {
 ###
 
 
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -67,14 +67,14 @@ Content-Type: application/json
   "password": "admin1"
 }
 > {%
-client.test("Request executed successfully", function() {
+  client.test("Request executed successfully", function() {
   client.assert(response.status === 404, "Response status is not 404");
 });
 %}
 ###
 
 
-POST http://localhost:8888/auth/claim
+POST http://localhost:8888/auth/tokens/claim
 Content-Type: application/json
 
 {
@@ -89,7 +89,7 @@ client.test("Request executed successfully", function() {
 %}
 ###
 
-POST http://localhost:8888/auth/claim
+POST http://localhost:8888/auth/tokens/claim
 Content-Type: application/json
 
 {
@@ -105,7 +105,7 @@ client.test("Request executed successfully", function() {
 ###
 
 
-PATCH http://localhost:8888/auth/login/mail
+PATCH http://localhost:8888/auth/users/mail
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto}}
 
@@ -120,7 +120,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -135,7 +135,7 @@ Content-Type: application/json
 %}
 
 ###
-POST http://localhost:8888/auth/claim
+POST http://localhost:8888/auth/tokens/claim
 Content-Type: application/json
 
 {
@@ -150,7 +150,7 @@ Content-Type: application/json
  %}
 
 ###
-GET http://localhost:8888/auth/login
+GET http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto2}}
 
@@ -163,7 +163,7 @@ Authorization: Bearer {{auth_token_toto2}}
 %}
 
 ###
-GET http://localhost:8888/auth/login/2
+GET http://localhost:8888/auth/admin/users/2
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -176,7 +176,19 @@ Authorization: Bearer {{auth_token_admin}}
 %}
 
 ###
-POST http://localhost:8888/auth/login
+GET http://localhost:8888/auth/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token_toto}}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -191,7 +203,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 ###
 
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -217,7 +229,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-POST http://localhost:8888/auth/domains
+POST http://localhost:8888/auth/admin/domains
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -242,7 +254,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-DELETE http://localhost:8888/auth/domains
+DELETE http://localhost:8888/auth/admin/domains
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -268,7 +280,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 ###
 
-POST http://localhost:8888/auth/domains
+POST http://localhost:8888/auth/admin/domains
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -282,7 +294,7 @@ client.assert(response.status === 201, "Response status is not 201 - CREATED");
 %}
 
 ###
-POST http://localhost:8888/auth/claim
+POST http://localhost:8888/auth/tokens/claim
 Content-Type: application/json
 
 {
@@ -297,7 +309,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8888/auth/refresh
+GET http://localhost:8888/auth/tokens/refresh
 Content-Type: application/json
 Authorization: Bearer {{refr_token_toto}}
 
@@ -310,7 +322,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 ###
 
 
-PATCH http://localhost:8888/auth/login/2/roles
+PATCH http://localhost:8888/auth/admin/users/2/roles
 Content-Type: application/json
 //admin token here
 Authorization: Bearer {{auth_token_admin}}
@@ -329,7 +341,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###BAN TEST
-POST http://localhost:8888/auth/claim
+POST http://localhost:8888/auth/tokens/claim
 Content-Type: application/json
 
 {
@@ -345,7 +357,7 @@ Content-Type: application/json
 
 
 ### BAN USER
-POST http://localhost:8888/auth/login/4/ban
+POST http://localhost:8888/auth/admin/users/4/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
@@ -360,7 +372,7 @@ Authorization:Bearer {{auth_token_admin}}
  %}
 
 ### TEST LOG user ban
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -375,7 +387,7 @@ client.assert(response.status === 403, "Response status is not 403 - Forbidden")
 
 ###
 
-GET http://localhost:8888/auth/refresh
+GET http://localhost:8888/auth/tokens/refresh
 Content-Type: application/json
 Authorization: Bearer {{refr_token_bu}}
 
@@ -387,7 +399,7 @@ client.assert(response.status === 403, "Response status is not 403 - Forbidden")
 %}
 
 ### UNBAN USER
-DELETE http://localhost:8888/auth/login/4/ban
+DELETE http://localhost:8888/auth/admin/users/4/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
@@ -398,7 +410,7 @@ Authorization:Bearer {{auth_token_admin}}
  %}
 
 ### TEST LOG user UNban
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
@@ -413,7 +425,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 ###REFRESH usr unban
 
-GET http://localhost:8888/auth/refresh
+GET http://localhost:8888/auth/tokens/refresh
 Content-Type: application/json
 Authorization: Bearer {{refr_token_bu}}
 
@@ -427,7 +439,7 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 ###
 
 
-DELETE http://localhost:8888/auth/clean
+DELETE http://localhost:8888/auth/admin/clean
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
@@ -438,7 +450,7 @@ client.assert(response.status === 204, "Response status is not 204 - NO CONTENT"
 %}
 ###
 
-DELETE http://localhost:8888/auth/login
+DELETE http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
@@ -452,7 +464,7 @@ client.assert(response.status === 404, "Response status is not 404 - NOT FOUND "
 });
 %}
 ###
-POST http://localhost:8888/auth/login
+POST http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 
 {
