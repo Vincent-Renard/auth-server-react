@@ -49,11 +49,11 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, rootUrl + "/domains").permitAll()
 //ADMIN PART
                 .pathMatchers(HttpMethod.GET, rootUrl + adminUrl + "/users/**").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.PATCH, rootUrl + adminUrl + "/users/**/roles").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.PATCH, rootUrl + adminUrl + "/users/*/roles").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/users/**/ban").hasAuthority("ADMIN")
-                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/**/ban").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/clean").hasAuthority("ADMIN")
 //TOKEN PART
                 .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/refresh").authenticated()
