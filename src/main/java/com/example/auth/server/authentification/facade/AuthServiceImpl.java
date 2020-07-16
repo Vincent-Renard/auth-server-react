@@ -2,8 +2,8 @@ package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.BanishmentEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
-import com.example.auth.server.authentification.facade.persistence.entities.UserEntity;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         if (!userRepository.existsByMail(mailAdmin)) {
 
-            var admin = new UserEntity(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
+            var admin = new Credentials(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
             userRepository.save(admin);
             System.out.println(mailAdmin + "  " + password);
         }
@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
-        var u = new UserEntity(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
+        var u = new Credentials(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
         var user = userRepository.save(u);
 
         return bearersManager.genBoth(user.getIdUser(), user.getRoles());
@@ -150,7 +150,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan {
         mail = mail.toLowerCase();
-        Optional<UserEntity> u = userRepository.findByMail(mail);
+        Optional<Credentials> u = userRepository.findByMail(mail);
         if (u.isPresent()) {
             var user = u.get();
             if (user.getBanishment() != null)
@@ -166,7 +166,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public Bearers refresh(long iduser) throws NotSuchUserException, UserBan {
 
-        Optional<UserEntity> user = userRepository.findById(iduser);
+        Optional<Credentials> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             if (user.get().getBanishment() != null)
                 throw new UserBan();
@@ -186,7 +186,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException, UserBan {
-        Optional<UserEntity> user = userRepository.findById(iduser);
+        Optional<Credentials> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             var usr = user.get();
             if (usr.getBanishment() != null)
@@ -201,8 +201,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public UserEntity updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException {
-        Optional<UserEntity> user = userRepository.findById(iduser);
+    public Credentials updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException {
+        Optional<Credentials> user = userRepository.findById(iduser);
         newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
         if (!user.isPresent()) {
             throw new NotSuchUserException();
@@ -220,8 +220,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public UserEntity showUser(long iduser) throws NotSuchUserException {
-        Optional<UserEntity> user = userRepository.findById(iduser);
+    public Credentials showUser(long iduser) throws NotSuchUserException {
+        Optional<Credentials> user = userRepository.findById(iduser);
         if (user.isPresent()) {
             return user.get();
         } else {
@@ -231,7 +231,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
-        Optional<UserEntity> user = userRepository.findById(iduser);
+        Optional<Credentials> user = userRepository.findById(iduser);
 
         if (user.isPresent()) {
             var usr = user.get();
@@ -250,7 +250,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan {
-        Optional<UserEntity> user = userRepository.findById(iduser);
+        Optional<Credentials> user = userRepository.findById(iduser);
 
         if (user.isPresent()) {
 
@@ -282,8 +282,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public UserEntity banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
-        Optional<UserEntity> user = userRepository.findById(idUser);
+    public Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
+        Optional<Credentials> user = userRepository.findById(idUser);
 
         if (user.isPresent()) {
             var usr = user.get();
@@ -302,7 +302,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void unBanUser(long idUser, long idAdmin) throws NotSuchUserException {
-        Optional<UserEntity> user = userRepository.findById(idUser);
+        Optional<Credentials> user = userRepository.findById(idUser);
 
         if (user.isPresent()) {
 
