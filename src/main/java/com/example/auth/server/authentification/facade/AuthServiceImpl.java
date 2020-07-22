@@ -6,10 +6,10 @@ import com.example.auth.server.authentification.facade.persistence.entities.Cred
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
-import com.example.auth.server.authentification.facade.pojos.AuthServerStateAdmin;
-import com.example.auth.server.authentification.facade.pojos.AuthServerStatePublic;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
+import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
+import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;

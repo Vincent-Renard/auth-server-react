@@ -1,10 +1,10 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.authentification.facade.pojos.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.in.BanDomainRequest;
 import com.example.auth.server.model.dtos.in.BanUserRequest;
 import com.example.auth.server.model.dtos.in.UpdateRolesRequest;
+import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.ForbidenDomain;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.ForbidenDomainMailUse;

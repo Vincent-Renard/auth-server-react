@@ -1,4 +1,4 @@
-package com.example.auth.server.authentification.facade.pojos;
+package com.example.auth.server.model.dtos.out;
 
 import lombok.AccessLevel;
 import lombok.Getter;

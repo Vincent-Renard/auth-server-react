@@ -1,7 +1,7 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.authentification.facade.pojos.AuthServerStatePublic;
+import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
 import com.example.auth.server.model.dtos.out.ForbidenDomain;
 import com.example.auth.server.model.dtos.out.PubKey;
 import org.springframework.beans.factory.annotation.Autowired;
