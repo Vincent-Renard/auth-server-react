@@ -21,8 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Component
 public class JwtEncoder implements TokenConstant {
-    private static final long AUTH_MS_TTL = 3_600_000;
-    private static final long REFR_MS_TTL = 86_400_000;
+
     private final AtomicLong idTokenGenerator;
     @Autowired
     private KeyStore keys;
@@ -32,6 +31,14 @@ public class JwtEncoder implements TokenConstant {
     public JwtEncoder() {
         idTokenGenerator = new AtomicLong(1L);
 
+    }
+
+    public long getAuthTTL() {
+        return AUTH_MS_TTL;
+    }
+
+    public long getRefreshTTL() {
+        return REFR_MS_TTL;
     }
 
     public RSAPublicKey getPublicKey() {

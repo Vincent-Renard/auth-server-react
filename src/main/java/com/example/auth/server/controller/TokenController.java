@@ -1,7 +1,7 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.authentification.facade.UserToken;
+import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.model.dtos.in.UserCredentials;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.dtos.out.User;

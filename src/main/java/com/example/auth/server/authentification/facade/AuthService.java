@@ -3,6 +3,9 @@ package com.example.auth.server.authentification.facade;
 import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
+import com.example.auth.server.authentification.facade.pojos.AuthServerStateAdmin;
+import com.example.auth.server.authentification.facade.pojos.AuthServerStatePublic;
+import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
 
@@ -17,6 +20,10 @@ import java.util.Collection;
 public interface AuthService {
 
     PublicKey publicKey();
+
+    AuthServerStatePublic getServerStatePublic();
+
+    AuthServerStateAdmin getServerStateAdmin();
 
     ForbidenDomainEntity addForbidenDomain(String domain);
 

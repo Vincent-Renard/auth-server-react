@@ -6,6 +6,9 @@ import com.example.auth.server.authentification.facade.persistence.entities.Cred
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.UserRepository;
+import com.example.auth.server.authentification.facade.pojos.AuthServerStateAdmin;
+import com.example.auth.server.authentification.facade.pojos.AuthServerStatePublic;
+import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
@@ -39,13 +42,14 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private ForbidenDomainRepository domainRepository;
 
     @Autowired
-    private JwtEncoder bearersManager;
+    private JwtEncoder tokenEncoder;
 
     private Set<String> domainsNotAllowed;
+    private LocalDateTime startDate;
 
     @PostConstruct
     private void init() {
-
+        startDate = LocalDateTime.now();
         fill();
         updateInternDomains();
 
@@ -90,8 +94,38 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public PublicKey publicKey() {
-        return bearersManager.getPublicKey();
+        return tokenEncoder.getPublicKey();
     }
+
+    @Override
+    public AuthServerStatePublic getServerStatePublic() {
+        AuthServerStatePublic p = new AuthServerStatePublic();
+
+        p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
+        p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
+        p.setStartDateServer(startDate);
+        p.setForbidenDomains(domainsNotAllowed);
+        p.setKey(tokenEncoder.getPublicKey().getEncoded());
+
+        return p;
+    }
+
+    @Override
+    public AuthServerStateAdmin getServerStateAdmin() {
+        AuthServerStateAdmin p = new AuthServerStateAdmin();
+
+        p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
+        p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
+        p.setStartDateServer(startDate);
+        p.setForbidenDomains(domainsNotAllowed);
+        p.setKey(tokenEncoder.getPublicKey().getEncoded());
+        Collection<Credentials> credentials = userRepository.findAll();
+        p.setNbUsersRegistered(credentials.size());
+        p.setNbUsersAdminsRegistered(credentials.stream().filter(c -> c.getRoles().contains("ADMIN")).count());
+
+        return p;
+    }
+
 
     @Override
     public ForbidenDomainEntity addForbidenDomain(String domain) {
@@ -144,7 +178,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         var u = new Credentials(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
         var user = userRepository.save(u);
 
-        Bearers tokens = bearersManager.genBoth(user.getIdUser(), user.getRoles());
+        Bearers tokens = tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
         return new UserToken(user.getIdUser(), tokens);
     }
 
@@ -159,7 +193,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (!passwordEncoder.matches(passsword, user.getPassword()))
                 throw new BadPasswordException();
 
-            return bearersManager.genBoth(user.getIdUser(), user.getRoles());
+            return tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
         } else throw new NotSuchUserException();
 
     }
@@ -171,7 +205,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         if (user.isPresent()) {
             if (user.get().getBanishment() != null)
                 throw new UserBan();
-            return bearersManager.genBoth(iduser, user.get().getRoles());
+            return tokenEncoder.genBoth(iduser, user.get().getRoles());
 
         } else {
             throw new NotSuchUserException();

@@ -1,6 +1,7 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
+import com.example.auth.server.authentification.facade.pojos.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.in.BanDomainRequest;
 import com.example.auth.server.model.dtos.in.BanUserRequest;
 import com.example.auth.server.model.dtos.in.UpdateRolesRequest;
@@ -42,6 +43,10 @@ public class AdminController {
 
     }
 
+    @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<AuthServerStateAdmin> stateAdmin() {
+        return ResponseEntity.ok(base.getServerStateAdmin());
+    }
 
     @GetMapping(value = "/users/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> showUser(@PathVariable(name = "iduser") long idUser) throws NotSuchUserException {

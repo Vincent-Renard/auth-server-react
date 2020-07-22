@@ -1,6 +1,7 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
+import com.example.auth.server.authentification.facade.pojos.AuthServerStatePublic;
 import com.example.auth.server.model.dtos.out.ForbidenDomain;
 import com.example.auth.server.model.dtos.out.PubKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ import java.util.stream.Collectors;
 public class PublicController {
     @Autowired
     private AuthService base;
+
+    @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<AuthServerStatePublic> state() {
+        return ResponseEntity.ok(base.getServerStatePublic());
+    }
 
     @GetMapping(value = "/public", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<PubKey> pubkey() {

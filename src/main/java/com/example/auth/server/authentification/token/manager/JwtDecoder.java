@@ -33,6 +33,13 @@ public class JwtDecoder implements TokenConstant {
     @Autowired
     private KeyStore keyStore;
 
+    public long getAuthTTL() {
+        return AUTH_MS_TTL;
+    }
+
+    public long getRefreshTTL() {
+        return REFR_MS_TTL;
+    }
 
     private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidToken {
         try {
