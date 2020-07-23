@@ -82,7 +82,6 @@ public class JwtEncoder implements TokenConstant {
         cls.put(CLAIMS_KEY_TOKEN_ROLES, r);
 
         var t = tokenRepo.getOne(1L);
-        System.err.println("AT id " + t.toString());
         t.setIdAccessToken(idAccessTokenGenerator.get());
         tokenRepo.save(t);
 
@@ -105,7 +104,6 @@ public class JwtEncoder implements TokenConstant {
 
 
         var t = tokenRepo.getOne(1L);
-        System.err.println("RT id " + t.toString());
 
         t.setIdRefreshToken(idRefreshTokenGenerator.get());
         tokenRepo.save(t);
