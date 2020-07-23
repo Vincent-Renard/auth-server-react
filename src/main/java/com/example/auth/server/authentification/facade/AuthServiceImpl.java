@@ -12,6 +12,8 @@ import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
 import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class AuthServiceImpl implements AuthService, AuthUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final String mailAdmin = "admin@admin.com";
 
@@ -88,7 +91,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             var admin = new Credentials(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
             userRepository.save(admin);
-            System.out.println(mailAdmin + "  " + password);
+            logger.info(mailAdmin + "  " + password);
         }
     }
 
@@ -104,7 +107,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
         p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
         p.setStartDateServer(startDate);
-        p.setForbidenDomains(domainsNotAllowed);
         p.setKey(tokenEncoder.getPublicKey().getEncoded());
 
         return p;
@@ -128,14 +130,27 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
 
     @Override
-    public ForbidenDomainEntity addForbidenDomain(String domain) {
+    public void addForbidenDomain(String domain) {
         domain = domain.toLowerCase();
         if (!domainsNotAllowed.contains(domain)) {
             domainRepository.save(new ForbidenDomainEntity(domain));
             updateInternDomains();
         }
 
-        return domainRepository.getOne(domain);
+
+    }
+
+    @Override
+    public void addForbidenDomains(Collection<String> domains) {
+        Set<ForbidenDomainEntity> ds = domains.stream()
+                .filter(d -> !domainsNotAllowed.contains(d))
+                .map(String::toLowerCase)
+                .map(ForbidenDomainEntity::new)
+                .collect(Collectors.toSet());
+        domainRepository.saveAll(ds);
+
+        updateInternDomains();
+
     }
 
     @Override

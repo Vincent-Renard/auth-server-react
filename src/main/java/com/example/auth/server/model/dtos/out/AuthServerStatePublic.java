@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 /**
  * @autor Vincent
@@ -23,5 +22,5 @@ public class AuthServerStatePublic {
     byte[] key;
     long authTokenTTL;
     long refreshTokenTTL;
-    Collection<String> forbidenDomains;
+
 }

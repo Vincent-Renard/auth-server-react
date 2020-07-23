@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Collection;
+
 /**
  * @autor Vincent
  * @date 22/07/2020
@@ -18,5 +20,6 @@ public class AuthServerStateAdmin extends AuthServerStatePublic {
 
     long nbUsersRegistered;
     long nbUsersAdminsRegistered;
+    Collection<String> forbidenDomains;
 
 }

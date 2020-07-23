@@ -25,7 +25,9 @@ public interface AuthService {
 
     AuthServerStateAdmin getServerStateAdmin();
 
-    ForbidenDomainEntity addForbidenDomain(String domain);
+    void addForbidenDomain(String domain);
+
+    void addForbidenDomains(Collection<String> domains);
 
     void delForbidenDomain(String domain);
 

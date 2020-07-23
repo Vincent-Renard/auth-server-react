@@ -238,7 +238,7 @@ Authorization: Bearer {{auth_token_admin}}
 }
 > {%
 client.test("Request executed successfully", function() {
-client.assert(response.status === 201, "Response status is not 201 - CREATED");
+client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
 
@@ -289,7 +289,7 @@ Authorization: Bearer {{auth_token_admin}}
 }
 > {%
 client.test("Request executed successfully", function() {
-client.assert(response.status === 201, "Response status is not 201 - CREATED");
+client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
 

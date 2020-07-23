@@ -35,7 +35,6 @@ public class KeyStore {
         if (keyChain == null) {
             Optional<RSAKeyEntity> k = keyRepository.findById(1L);
             if (!k.isPresent()) {
-                System.err.println("Keys generation");
                 keyChain = Keys.keyPairFor(SignatureAlgorithm.RS256);
                 var sk = Base64.getEncoder().encodeToString(keyChain.getPrivate().getEncoded());
 
@@ -43,12 +42,10 @@ public class KeyStore {
 
                 keyRepository.save(new RSAKeyEntity(sk, pk));
 
-                System.out.println("Keys saved");
 
             } else {
                 String sk = k.get().getPrivateKey();
                 String pk = k.get().getPublicKey();
-                //  System.out.println("key " + k.get().toString());
                 byte[] pkcs8EncodedBytes = Base64.getDecoder().decode(sk);
                 byte[] X509EncodedByes = Base64.getDecoder().decode(pk);
 
