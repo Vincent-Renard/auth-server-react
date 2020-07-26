@@ -1,6 +1,5 @@
 package com.example.auth.server.model.dtos.out;
 
-import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,7 +20,7 @@ public class ForbidenDomain {
     LocalDateTime dateInsert;
 
 
-    public static ForbidenDomain from(ForbidenDomainEntity d) {
+    public static ForbidenDomain from(com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain d) {
         return new ForbidenDomain(d.getDomain(), d.getDateTimeInserted());
     }
 }

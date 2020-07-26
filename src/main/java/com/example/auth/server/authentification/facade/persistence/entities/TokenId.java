@@ -18,7 +18,7 @@ import javax.persistence.Id;
 @Getter
 @ToString
 @Entity
-public class TokenIdEntity {
+public class TokenId {
     @Id
     @Setter
     Long id;

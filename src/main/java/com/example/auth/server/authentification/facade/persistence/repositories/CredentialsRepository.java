@@ -11,7 +11,7 @@ import java.util.Optional;
  * @date 19/04/2020
  */
 @Repository
-public interface UserRepository extends JpaRepository<Credentials, Long> {
+public interface CredentialsRepository extends JpaRepository<Credentials, Long> {
     Optional<Credentials> findByMail(String mail);
 
     boolean existsByMail(String mail);

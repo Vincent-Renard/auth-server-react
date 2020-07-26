@@ -1,7 +1,7 @@
 package com.example.auth.server.authentification.token.manager;
 
 import com.example.auth.server.authentification.KeyStore;
-import com.example.auth.server.authentification.facade.persistence.entities.TokenIdEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.TokenId;
 import com.example.auth.server.authentification.facade.persistence.repositories.TokenRepository;
 import com.example.auth.server.authentification.token.TokenType;
 import com.example.auth.server.model.dtos.out.Bearers;
@@ -39,13 +39,13 @@ public class JwtEncoder implements TokenConstant {
     @PostConstruct
     public void init() {
 
-        Optional<TokenIdEntity> last = tokenRepo.findById(1L);
-        TokenIdEntity ids;
+        Optional<TokenId> last = tokenRepo.findById(1L);
+        TokenId ids;
         if (last.isPresent()) {
             ids = last.get();
 
         } else {
-            ids = new TokenIdEntity();
+            ids = new TokenId();
             ids.setIdAccessToken(1L);
             ids.setIdRefreshToken(1L);
             ids.setId(1L);

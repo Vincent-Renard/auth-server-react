@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.repositories;
 
-import com.example.auth.server.authentification.facade.persistence.entities.TokenIdEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.TokenId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @date 22/07/2020
  */
 @Repository
-public interface TokenRepository extends JpaRepository<TokenIdEntity, Long> {
+public interface TokenRepository extends JpaRepository<TokenId, Long> {
 }

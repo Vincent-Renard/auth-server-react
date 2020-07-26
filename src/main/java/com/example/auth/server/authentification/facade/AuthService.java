@@ -2,7 +2,7 @@ package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
-import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomainEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
@@ -31,7 +31,7 @@ public interface AuthService {
 
     void delForbidenDomain(String domain);
 
-    Collection<ForbidenDomainEntity> getAllDomainNotAllowed();
+    Collection<ForbidenDomain> getAllDomainNotAllowed();
 
     UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
 

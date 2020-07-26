@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification;
 
-import com.example.auth.server.authentification.facade.persistence.entities.RSAKeyEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.RSAKey;
 import com.example.auth.server.authentification.facade.persistence.repositories.KeyRepository;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -33,14 +33,14 @@ public class KeyStore {
     @PostConstruct
     private void genKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (keyChain == null) {
-            Optional<RSAKeyEntity> k = keyRepository.findById(1L);
+            Optional<RSAKey> k = keyRepository.findById(1L);
             if (!k.isPresent()) {
                 keyChain = Keys.keyPairFor(SignatureAlgorithm.RS256);
                 var sk = Base64.getEncoder().encodeToString(keyChain.getPrivate().getEncoded());
 
                 var pk = Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded());
 
-                keyRepository.save(new RSAKeyEntity(sk, pk));
+                keyRepository.save(new RSAKey(sk, pk));
 
 
             } else {

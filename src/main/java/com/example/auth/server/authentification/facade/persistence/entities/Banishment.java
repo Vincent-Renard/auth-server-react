@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Entity
-public class BanishmentEntity {
+public class Banishment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +27,13 @@ public class BanishmentEntity {
     @Enumerated(EnumType.STRING)
     BanReason reason;
 
-
+    @CreationTimestamp
     LocalDateTime date;
 
-    public BanishmentEntity() {
+    public Banishment() {
     }
 
-    public BanishmentEntity(BanReason reason) {
+    public Banishment(BanReason reason) {
         this.reason = reason;
-        date = LocalDateTime.now();
     }
 }
