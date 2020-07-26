@@ -42,14 +42,12 @@ public class UserController {
 
     @GetMapping(value = "/me", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> showUser(Principal user) throws NotSuchUserException {
-
         return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(user.getName()))));
     }
 
 
     @DeleteMapping(value = "/me", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException, UserBan {
-
         base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
         return ResponseEntity.noContent().build();
     }

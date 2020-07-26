@@ -2,9 +2,10 @@ package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
 import com.example.auth.server.model.dtos.in.BanDomainRequest;
+import com.example.auth.server.model.dtos.in.BanDomainsRequest;
 import com.example.auth.server.model.dtos.in.BanUserRequest;
 import com.example.auth.server.model.dtos.in.UpdateRolesRequest;
-import com.example.auth.server.model.dtos.out.ForbidenDomain;
+import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.ForbidenDomainMailUse;
 import com.example.auth.server.model.exceptions.NotSuchUserException;
@@ -29,11 +30,20 @@ public class AdminController {
 
 
     @PostMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ForbidenDomain> addDomain(@RequestBody BanDomainRequest domain) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ForbidenDomain.from(base.addForbidenDomain(domain.getDomain())));
+    public ResponseEntity<Void> addDomain(@RequestBody BanDomainRequest domain) {
+        base.addForbidenDomain(domain.getDomain());
+        return ResponseEntity.ok().build();
 
     }
+
+    @PostMapping(value = "/domains/list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> addDomains(@RequestBody BanDomainsRequest request) {
+
+        base.addForbidenDomains(request.getDomains());
+        return ResponseEntity.ok().build();
+
+    }
+
 
     @DeleteMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> delDomain(@RequestBody BanDomainRequest domain) throws ForbidenDomainMailUse {
@@ -42,6 +52,10 @@ public class AdminController {
 
     }
 
+    @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<AuthServerStateAdmin> stateAdmin() {
+        return ResponseEntity.ok(base.getServerStateAdmin());
+    }
 
     @GetMapping(value = "/users/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> showUser(@PathVariable(name = "iduser") long idUser) throws NotSuchUserException {

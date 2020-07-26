@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,9 +18,8 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-@Table(name = "rsa_key")
 @ToString
-public class RSAKeyEntity {
+public class RSAKey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,15 +31,15 @@ public class RSAKeyEntity {
     @Column(length = 2048, unique = true, nullable = false)
     String publicKey;
 
+    @CreationTimestamp
     LocalDateTime dateTimeInserted;
 
-    public RSAKeyEntity() {
+    public RSAKey() {
     }
 
-    public RSAKeyEntity(String sk, String pk) {
+    public RSAKey(String sk, String pk) {
         privateKey = sk;
         publicKey = pk;
-        dateTimeInserted = LocalDateTime.now();
     }
 
 

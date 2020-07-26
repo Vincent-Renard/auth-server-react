@@ -1,7 +1,7 @@
 package com.example.auth.server.model.dtos.out;
 
 import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
-import com.example.auth.server.authentification.facade.persistence.entities.BanishmentEntity;
+import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,7 +20,7 @@ public class UserBanishment {
     BanReason reason;
     LocalDateTime date;
 
-    public static UserBanishment from(BanishmentEntity b) {
+    public static UserBanishment from(Banishment b) {
         return new UserBanishment(b.getReason(), b.getDate());
     }
 }

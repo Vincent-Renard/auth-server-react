@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
@@ -19,21 +19,20 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-@Table(name = "forbiden_domains")
 @ToString
-public class ForbidenDomainEntity {
+public class ForbidenDomain {
 
     @Id
     @Column(length = 512, unique = true, nullable = false)
     String domain;
 
+    @CreationTimestamp
     LocalDateTime dateTimeInserted;
 
-    public ForbidenDomainEntity(String dom) {
+    public ForbidenDomain(String dom) {
         this.domain = dom;
-        this.dateTimeInserted = LocalDateTime.now();
     }
 
-    public ForbidenDomainEntity() {
+    public ForbidenDomain() {
     }
 }

@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.TreeSet;
@@ -22,7 +23,6 @@ import java.util.TreeSet;
 @Getter
 @ToString
 @Entity
-@Table(name = "credentials")
 public class Credentials {
 
 
@@ -35,7 +35,7 @@ public class Credentials {
     @Email
     String mail;
 
-    @NotNull
+    @CreationTimestamp
     LocalDateTime inscriptionDate;
 
 
@@ -48,14 +48,13 @@ public class Credentials {
     @ElementCollection
     Collection<String> roles = new TreeSet<>();
 
-    @Setter
+    @UpdateTimestamp
     LocalDateTime updateDate;
 
 
     @OneToOne(cascade = CascadeType.ALL, optional = true)
     @Setter
-    //@JoinColumn(name = "ban_fk")
-    private BanishmentEntity banishment;
+    private Banishment banishment;
 
     protected Credentials() {
     }
@@ -65,7 +64,5 @@ public class Credentials {
         this.mail = mail.toLowerCase();
         this.password = password;
         this.roles = roles;
-        inscriptionDate = LocalDateTime.now();
-        updateDate = inscriptionDate;
     }
 }
