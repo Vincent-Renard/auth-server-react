@@ -500,3 +500,14 @@ client.test("Request executed successfully", function() {
 client.assert(response.status === 404, "Response status is not 404 - NOT FOUND ");
 });
 %}
+
+###RESET admin password
+
+PATCH http://localhost:8888/auth/users/password
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+{
+  "newPassword": "pTWER-gYG5-ohom-qsZg",
+  "oldPassword": "admin1"
+}
