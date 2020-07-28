@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example.auth</groupId>
     <artifactId>auth-server-react</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
     <name>auth-server</name>
     <description>Serveur d'authentification Oauth2 version réactive</description>
     <properties>
