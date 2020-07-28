@@ -1,5 +1,6 @@
 
 ###
+
 GET http://localhost:8888/auth/public
 Content-Type: application/json
 
@@ -508,6 +509,6 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "newPassword": "pTWER-gYG5-ohom-qsZg",
+  "newPassword": {{original_passwordAdmin}},
   "oldPassword": "admin1"
 }
