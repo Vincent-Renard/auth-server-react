@@ -1,11 +1,10 @@
 package com.example.auth.server.authentification.facade;
 
+import com.example.auth.server.authentification.facade.persistence.PersistenceEngine;
 import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
-import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
-import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
@@ -17,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -39,13 +37,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     final String mailAdmin = "admin@admin.com";
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    CredentialsRepository credentialsRepository;
-
-    @Autowired
-    ForbidenDomainRepository domainRepository;
+    PersistenceEngine base;
 
     @Autowired
     JwtEncoder tokenEncoder;
@@ -83,10 +75,10 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private void fill() {
         var password = genPassword(16, 4);
 
-        if (!credentialsRepository.existsByMail(mailAdmin)) {
+        if (!base.credentialsExistsWithMail(mailAdmin)) {
 
-            var admin = new Credentials(mailAdmin, passwordEncoder.encode(password), Set.of("USER", "ADMIN"));
-            credentialsRepository.save(admin);
+            var admin = new Credentials(mailAdmin, base.encodePassword(password), Set.of("USER", "ADMIN"));
+            base.saveCredentials(admin);
             logger.info(mailAdmin + "  " + password);
         }
     }
@@ -116,9 +108,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
         p.setStartDateServer(startDate);
 
-        p.setForbidenDomains(domainRepository.findAll().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet()));
+        p.setForbidenDomains(base.findAllDomains().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet()));
         p.setKey(tokenEncoder.getPublicKey().getEncoded());
-        Collection<Credentials> credentials = credentialsRepository.findAll();
+        Collection<Credentials> credentials = base.findAllCredentials();
         p.setNbUsersRegistered(credentials.size());
         p.setNbUsersAdminsRegistered(credentials.stream().filter(c -> c.getRoles().contains("ADMIN")).count());
 
@@ -129,54 +121,39 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public void addForbidenDomain(String domain) {
         domain = domain.toLowerCase();
-
-        domainRepository.save(new ForbidenDomain(domain));
-
-
+        base.saveDomain(new ForbidenDomain(domain));
     }
 
     @Override
     public void addForbidenDomains(Collection<String> domains) {
-        Set<String> deja = domainRepository.findAll()
-                .stream()
-                .map(ForbidenDomain::getDomain)
-                .collect(Collectors.toSet());
 
-        Set<ForbidenDomain> ds = domains
-                .stream()
-                .map(String::toLowerCase)
-                .filter(d -> !deja.contains(d))
-                .map(ForbidenDomain::new)
-                .collect(Collectors.toSet());
-        domainRepository.saveAll(ds);
+        base.saveAllDomains(domains);
 
 
     }
 
     @Override
     public void delForbidenDomain(String domain) {
-        domain = domain.toLowerCase();
-        domainRepository.deleteById(domain);
+        base.deleteDomainById(domain);
 
     }
 
     @Override
     public Collection<ForbidenDomain> getAllDomainNotAllowed() {
 
-        return domainRepository.findAll();
+        return base.findAllDomains();
     }
 
     @Override
     public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
-        mailUser = mailUser.toLowerCase();
         if (!passwordChecker.test(passsword))
             throw new BadPasswordFormat();
         if (!mailChecker.test(mailUser))
             throw new InvalidMail();
         String domain = mailUser.split("@")[1];
-        if (domainRepository.existsByDomain(domain))
+        if (base.existDomainByName(domain))
             throw new ForbidenDomainMailUse();
-        Optional<Credentials> c = credentialsRepository.findByMail(mailUser);
+        Optional<Credentials> c = base.findCredentialsByMail(mailUser);
 
         if (c.isPresent()) {
             if (c.get().getBanishment() != null)
@@ -187,37 +164,36 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
         Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
-        var credentials = new Credentials(mailUser, passwordEncoder.encode(passsword), rolesOfUser);
-        var user = credentialsRepository.save(credentials);
+        var credentials = new Credentials(mailUser, base.encodePassword(passsword), rolesOfUser);
+        var user = base.saveCredentials(credentials);
 
         Bearers tokens = tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
         return new UserToken(user.getIdUser(), tokens);
     }
 
     @Override
-    public Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan {
-        mail = mail.toLowerCase();
-        Optional<Credentials> u = credentialsRepository.findByMail(mail);
-        if (u.isPresent()) {
-            var user = u.get();
-            if (user.getBanishment() != null)
+    public Bearers logIn(String mail, String password) throws BadPasswordException, NotSuchUserException, UserBan {
+        Optional<Credentials> optCredentials = base.findCredentialsByMail(mail);
+        if (optCredentials.isPresent()) {
+            var credentials = optCredentials.get();
+            if (credentials.getBanishment() != null)
                 throw new UserBan();
-            if (!passwordEncoder.matches(passsword, user.getPassword()))
+            if (!base.passwordMatches(password, credentials.getPassword()))
                 throw new BadPasswordException();
 
-            return tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
+            return tokenEncoder.genBoth(credentials.getIdUser(), credentials.getRoles());
         } else throw new NotSuchUserException();
 
     }
 
     @Override
-    public Bearers refresh(long iduser) throws NotSuchUserException, UserBan {
+    public Bearers refresh(long idUser) throws NotSuchUserException, UserBan {
 
-        Optional<Credentials> user = credentialsRepository.findById(iduser);
-        if (user.isPresent()) {
-            if (user.get().getBanishment() != null)
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+        if (optCredentials.isPresent()) {
+            if (optCredentials.get().getBanishment() != null)
                 throw new UserBan();
-            return tokenEncoder.genBoth(iduser, user.get().getRoles());
+            return tokenEncoder.genBoth(idUser, optCredentials.get().getRoles());
 
         } else {
             throw new NotSuchUserException();
@@ -227,19 +203,19 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void clear() {
-        credentialsRepository.deleteAll();
+        base.deleteAllCredentials();
         fill();
     }
 
     @Override
-    public void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException, UserBan {
-        Optional<Credentials> user = credentialsRepository.findById(iduser);
-        if (user.isPresent()) {
-            var usr = user.get();
-            if (usr.getBanishment() != null)
+    public void signOut(long idUser, String password) throws BadPasswordException, NotSuchUserException, UserBan {
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+        if (optCredentials.isPresent()) {
+            var credentials = optCredentials.get();
+            if (credentials.getBanishment() != null)
                 throw new UserBan();
-            if (passwordEncoder.matches(password, usr.getPassword()))
-                credentialsRepository.deleteById(iduser);
+            if (base.passwordMatches(password, credentials.getPassword()))
+                base.deleteCredentialsById(idUser);
             else throw new BadPasswordException();
 
         } else {
@@ -248,45 +224,46 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Credentials updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException {
-        Optional<Credentials> user = credentialsRepository.findById(iduser);
+    public Credentials updateRoles(long idUser, Collection<String> newRoles) throws NotSuchUserException {
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
-        if (!user.isPresent()) {
+
+        if (!optCredentials.isPresent()) {
             throw new NotSuchUserException();
         } else {
             if (POSSILBES_ROLES.containsAll(newRoles)) {
-                var usr = user.get();
-                usr.setRoles(newRoles);
-                usr = credentialsRepository.save(usr);
-                return usr;
+                var credentials = optCredentials.get();
+                credentials.setRoles(newRoles);
+                credentials = base.saveCredentials(credentials);
+                return credentials;
 
             }
         }
-        return user.get();
+        return optCredentials.get();
     }
 
     @Override
-    public Credentials showUser(long iduser) throws NotSuchUserException {
-        Optional<Credentials> user = credentialsRepository.findById(iduser);
-        if (user.isPresent()) {
-            return user.get();
+    public Credentials showUser(long idUser) throws NotSuchUserException {
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+        if (optCredentials.isPresent()) {
+            return optCredentials.get();
         } else {
             throw new NotSuchUserException();
         }
     }
 
     @Override
-    public void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
-        Optional<Credentials> user = credentialsRepository.findById(iduser);
+    public void updatePassword(long idUser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
-        if (user.isPresent()) {
-            var usr = user.get();
-            if (usr.getBanishment() != null)
+        if (optCredentials.isPresent()) {
+            var credentials = optCredentials.get();
+            if (credentials.getBanishment() != null)
                 throw new UserBan();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
-            if (passwordEncoder.matches(oldPasssword, usr.getPassword())) {
-                usr.setPassword(passwordEncoder.encode(newpasssword));
-                credentialsRepository.save(usr);
+            if (base.passwordMatches(oldPasssword, credentials.getPassword())) {
+                credentials.setPassword(base.encodePassword(newpasssword));
+                base.saveCredentials(credentials);
             } else throw new BadPasswordException();
         } else {
             throw new NotSuchUserException();
@@ -294,31 +271,30 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void updateMail(long iduser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan {
-        Optional<Credentials> user = credentialsRepository.findById(iduser);
+    public void updateMail(long idUser, String password, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan {
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
-        if (user.isPresent()) {
+        if (optCredentials.isPresent()) {
 
-            newmail = newmail.toLowerCase();
-            var usr = user.get();
+            var usr = optCredentials.get();
             if (usr.getBanishment() != null)
                 throw new UserBan();
-            if (!passwordEncoder.matches(password, usr.getPassword()))
+            if (!base.passwordMatches(password, usr.getPassword()))
                 throw new BadPasswordException();
             if (!mailChecker.test(newmail))
                 throw new InvalidMail();
             String domain = newmail.split("@")[1];
-            if (domainRepository.existsByDomain(domain))
+            if (base.existDomainByName(domain))
                 throw new ForbidenDomainMailUse();
 
-            if (credentialsRepository.existsByMail(newmail))
+            if (base.credentialsExistsWithMail(newmail))
                 throw new MailAlreadyTakenException();
 
             if (usr.getMail().equals(mailAdmin))
                 newmail = mailAdmin;
 
             usr.setMail(newmail);
-            credentialsRepository.save(usr);
+            base.saveCredentials(usr);
 
         } else {
             throw new NotSuchUserException();
@@ -327,18 +303,17 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
-        Optional<Credentials> user = credentialsRepository.findById(idUser);
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
-        if (user.isPresent()) {
-            var usr = user.get();
-            long i = usr.getIdUser();
-            if (usr.getBanishment() != null) throw new UserAlreadyBanException();
+        if (optCredentials.isPresent()) {
+            var credentials = optCredentials.get();
+            if (credentials.getBanishment() != null) throw new UserAlreadyBanException();
 
             Banishment be = new Banishment(reason);
-            usr.setBanishment(be);
-            if (!usr.getMail().equals(mailAdmin))
-                credentialsRepository.save(usr);
-            return usr;
+            credentials.setBanishment(be);
+            if (!credentials.getMail().equals(mailAdmin))
+                base.saveCredentials(credentials);
+            return credentials;
         } else {
             throw new NotSuchUserException();
         }
@@ -346,13 +321,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void unBanUser(long idUser, long idAdmin) throws NotSuchUserException {
-        Optional<Credentials> user = credentialsRepository.findById(idUser);
+        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
-        if (user.isPresent()) {
+        if (optCredentials.isPresent()) {
 
-            var usr = user.get();
-            usr.setBanishment(null);
-            credentialsRepository.save(usr);
+            var credentials = optCredentials.get();
+            credentials.setBanishment(null);
+            base.saveCredentials(credentials);
 
         } else {
             throw new NotSuchUserException();
