@@ -27,8 +27,8 @@ public class UserController {
 
 
     @PatchMapping(value = "/password", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
-        base.updatePassword(Long.parseLong(user.getName()), updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
+    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordFormat, UserBan {
+        base.updatePassword(Long.parseLong(user.getName()), updatePasswordRequest.getNewPassword());
         return ResponseEntity.ok().build();
 
     }

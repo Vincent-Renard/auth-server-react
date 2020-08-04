@@ -47,7 +47,7 @@ public interface AuthService {
 
     Credentials showUser(long iduser) throws NotSuchUserException;
 
-    void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan;
+    void updatePassword(long iduser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan;
 
     void updateMail(long iduser, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, ForbidenDomainMailUse, UserBan;
 

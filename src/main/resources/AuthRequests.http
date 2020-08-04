@@ -33,7 +33,6 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "oldPassword": "pTWER-gYG5-ohom-qsZg",
   "newPassword": "admin1"
 }
 > {%
@@ -502,6 +501,5 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "newPassword": {{original_passwordAdmin}},
-  "oldPassword": "admin1"
+  "newPassword": {{original_passwordAdmin}}
 }

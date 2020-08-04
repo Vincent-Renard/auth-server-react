@@ -252,7 +252,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void updatePassword(long idUser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
+    public void updatePassword(long idUser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
         if (optCredentials.isPresent()) {
@@ -260,10 +260,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (credentials.getBanishment() != null)
                 throw new UserBan();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
-            if (base.passwordMatches(oldPasssword, credentials.getPassword())) {
-                credentials.setPassword(base.encodePassword(newpasssword));
-                base.saveCredentials(credentials);
-            } else throw new BadPasswordException();
+            credentials.setPassword(base.encodePassword(newpasssword));
+
+            base.saveCredentials(credentials);
         } else {
             throw new NotSuchUserException();
         }
