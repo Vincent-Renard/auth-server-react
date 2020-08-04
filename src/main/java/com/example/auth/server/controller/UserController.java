@@ -1,7 +1,6 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.model.dtos.in.DeleteCredentialsRequest;
 import com.example.auth.server.model.dtos.in.UpdateMailRequest;
 import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
 import com.example.auth.server.model.dtos.out.Bearers;
@@ -28,15 +27,15 @@ public class UserController {
 
 
     @PatchMapping(value = "/password", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan {
-        base.updatePassword(Long.parseLong(user.getName()), updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
+    public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordFormat, UserBan {
+        base.updatePassword(Long.parseLong(user.getName()), updatePasswordRequest.getNewPassword());
         return ResponseEntity.ok().build();
 
     }
 
     @PatchMapping(value = "/mail", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse, UserBan {
-        base.updateMail(Long.parseLong(user.getName()), mailRequest.getPassword(), mailRequest.getNewmail());
+    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse, UserBan {
+        base.updateMail(Long.parseLong(user.getName()), mailRequest.getNewmail());
         return ResponseEntity.ok().build();
     }
 
@@ -47,8 +46,8 @@ public class UserController {
 
 
     @DeleteMapping(value = "/me", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException, UserBan {
-        base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
+    public ResponseEntity<Bearers> erase(Principal user) throws NotSuchUserException, UserBan {
+        base.signOut(Long.parseLong(user.getName()));
         return ResponseEntity.noContent().build();
     }
 

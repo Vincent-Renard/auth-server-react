@@ -33,7 +33,6 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "oldPassword": "pTWER-gYG5-ohom-qsZg",
   "newPassword": "admin1"
 }
 > {%
@@ -84,6 +83,7 @@ Content-Type: application/json
 }
 > {% client.global.set("auth_token_toto", response.body.accessToken);
      client.global.set("refr_token_toto", response.body.refreshToken);
+
 client.test("Request executed successfully", function() {
   client.assert(response.status === 201, "Response status is not 201 - CREATED");
 });
@@ -111,8 +111,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_toto}}
 
 {
-  "newmail": "toto@youmail.com",
-  "password": "toto"
+  "newmail": "toto@youmail.com"
 }
 > {%
 client.test("Request executed successfully", function() {
@@ -154,8 +153,6 @@ Content-Type: application/json
 GET http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto2}}
-
-
 
 > {%
   client.test("Request executed successfully", function() {
@@ -325,7 +322,6 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 PATCH http://localhost:8888/auth/admin/users/2/roles
 Content-Type: application/json
-//admin token here
 Authorization: Bearer {{auth_token_admin}}
 
 {
@@ -478,10 +474,6 @@ DELETE http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
-{
-  "password": "admin1"
-}
-
 > {%
 client.test("Request executed successfully", function() {
 client.assert(response.status === 404, "Response status is not 404 - NOT FOUND ");
@@ -509,6 +501,5 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "newPassword": {{original_passwordAdmin}},
-  "oldPassword": "admin1"
+  "newPassword": {{original_passwordAdmin}}
 }
