@@ -1,4 +1,4 @@
-package com.example.auth.server.authentification.facade.persistence.entities;
+package com.example.auth.server.authentification.facade.persistence.entities.enums;
 
 /**
  * @autor Vincent

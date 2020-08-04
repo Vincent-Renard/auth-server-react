@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.entities;
 
-import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,29 +12,29 @@ import java.time.LocalDateTime;
 
 /**
  * @autor Vincent
- * @date 26/06/2020
+ * @date 30/07/2020
  */
+
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @ToString
 @Entity
-public class Banishment {
+public class UserLog {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Enumerated(EnumType.STRING)
-    BanReason reason;
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    Credentials credentials;
+
+    @Enumerated
+    LogStatus status;
 
     @CreationTimestamp
     LocalDateTime date;
 
-    public Banishment() {
-    }
 
-    public Banishment(BanReason reason) {
-        this.reason = reason;
-    }
 }

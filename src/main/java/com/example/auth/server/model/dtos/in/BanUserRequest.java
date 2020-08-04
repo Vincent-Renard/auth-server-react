@@ -1,6 +1,6 @@
 package com.example.auth.server.model.dtos.in;
 
-import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

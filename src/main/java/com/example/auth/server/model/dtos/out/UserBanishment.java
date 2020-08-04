@@ -1,7 +1,7 @@
 package com.example.auth.server.model.dtos.out;
 
-import com.example.auth.server.authentification.facade.persistence.entities.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
