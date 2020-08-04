@@ -41,7 +41,7 @@ public interface AuthService {
 
     void clear();
 
-    void signOut(long iduser) throws BadPasswordException, NotSuchUserException, UserBan;
+    void signOut(long iduser) throws NotSuchUserException, UserBan;
 
     Credentials updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
 
@@ -49,7 +49,7 @@ public interface AuthService {
 
     void updatePassword(long iduser, String oldPasssword, String newpasssword) throws NotSuchUserException, BadPasswordException, BadPasswordFormat, UserBan;
 
-    void updateMail(long iduser, String passsword, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, BadPasswordException, ForbidenDomainMailUse, UserBan;
+    void updateMail(long iduser, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, ForbidenDomainMailUse, UserBan;
 
     Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 

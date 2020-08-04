@@ -34,8 +34,8 @@ public class UserController {
     }
 
     @PatchMapping(value = "/mail", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, BadPasswordException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse, UserBan {
-        base.updateMail(Long.parseLong(user.getName()), mailRequest.getPassword(), mailRequest.getNewmail());
+    public ResponseEntity<Void> updateMail(Principal user, @RequestBody UpdateMailRequest mailRequest) throws NotSuchUserException, InvalidMail, MailAlreadyTakenException, ForbidenDomainMailUse, UserBan {
+        base.updateMail(Long.parseLong(user.getName()), mailRequest.getNewmail());
         return ResponseEntity.ok().build();
     }
 
@@ -46,7 +46,7 @@ public class UserController {
 
 
     @DeleteMapping(value = "/me", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user) throws BadPasswordException, NotSuchUserException, UserBan {
+    public ResponseEntity<Bearers> erase(Principal user) throws NotSuchUserException, UserBan {
         base.signOut(Long.parseLong(user.getName()));
         return ResponseEntity.noContent().build();
     }
