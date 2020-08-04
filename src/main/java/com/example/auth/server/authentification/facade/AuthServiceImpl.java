@@ -6,6 +6,7 @@ import com.example.auth.server.authentification.facade.persistence.entities.Bani
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
+import com.example.auth.server.authentification.token.manager.JwtDecoder;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
@@ -41,6 +42,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Autowired
     JwtEncoder tokenEncoder;
+
+    @Autowired
+    JwtDecoder tokenDecoder;
 
     LocalDateTime startDate;
 
@@ -187,8 +191,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers refresh(long idUser) throws NotSuchUserException, UserBan {
-
+    public Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired {
+        System.out.println("hello refresh");
+        long idUser = tokenDecoder.decodeRefreshToken(token);
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         if (optCredentials.isPresent()) {
             if (optCredentials.get().getBanishment() != null)

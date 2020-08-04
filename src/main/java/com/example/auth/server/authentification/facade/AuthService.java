@@ -37,7 +37,7 @@ public interface AuthService {
 
     Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan;
 
-    Bearers refresh(long iduser) throws NotSuchUserException, UserBan;
+    Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired;
 
     void clear();
 
