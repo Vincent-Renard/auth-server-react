@@ -1,7 +1,6 @@
 package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.model.dtos.in.DeleteCredentialsRequest;
 import com.example.auth.server.model.dtos.in.UpdateMailRequest;
 import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
 import com.example.auth.server.model.dtos.out.Bearers;
@@ -47,8 +46,8 @@ public class UserController {
 
 
     @DeleteMapping(value = "/me", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user, @RequestBody DeleteCredentialsRequest deleteCredentialsRequest) throws BadPasswordException, NotSuchUserException, UserBan {
-        base.signOut(Long.parseLong(user.getName()), deleteCredentialsRequest.getPassword());
+    public ResponseEntity<Bearers> erase(Principal user) throws BadPasswordException, NotSuchUserException, UserBan {
+        base.signOut(Long.parseLong(user.getName()));
         return ResponseEntity.noContent().build();
     }
 

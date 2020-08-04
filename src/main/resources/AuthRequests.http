@@ -84,6 +84,7 @@ Content-Type: application/json
 }
 > {% client.global.set("auth_token_toto", response.body.accessToken);
      client.global.set("refr_token_toto", response.body.refreshToken);
+
 client.test("Request executed successfully", function() {
   client.assert(response.status === 201, "Response status is not 201 - CREATED");
 });
@@ -154,8 +155,6 @@ Content-Type: application/json
 GET http://localhost:8888/auth/tokens/login
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto2}}
-
-
 
 > {%
   client.test("Request executed successfully", function() {
@@ -325,7 +324,6 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 PATCH http://localhost:8888/auth/admin/users/2/roles
 Content-Type: application/json
-//admin token here
 Authorization: Bearer {{auth_token_admin}}
 
 {
@@ -477,10 +475,6 @@ client.assert(response.status === 204, "Response status is not 204 - NO CONTENT"
 DELETE http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
-
-{
-  "password": "admin1"
-}
 
 > {%
 client.test("Request executed successfully", function() {

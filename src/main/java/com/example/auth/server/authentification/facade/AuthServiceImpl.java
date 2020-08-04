@@ -208,15 +208,14 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void signOut(long idUser, String password) throws BadPasswordException, NotSuchUserException, UserBan {
+    public void signOut(long idUser) throws NotSuchUserException, UserBan {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         if (optCredentials.isPresent()) {
             var credentials = optCredentials.get();
             if (credentials.getBanishment() != null)
                 throw new UserBan();
-            if (base.passwordMatches(password, credentials.getPassword()))
-                base.deleteCredentialsById(idUser);
-            else throw new BadPasswordException();
+
+            base.deleteCredentialsById(idUser);
 
         } else {
             throw new NotSuchUserException();

@@ -41,7 +41,7 @@ public interface AuthService {
 
     void clear();
 
-    void signOut(long iduser, String password) throws BadPasswordException, NotSuchUserException, UserBan;
+    void signOut(long iduser) throws BadPasswordException, NotSuchUserException, UserBan;
 
     Credentials updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
 
