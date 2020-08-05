@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @autor Vincent
@@ -62,6 +64,10 @@ public class AdminController {
         return ResponseEntity.ok(User.from(base.showUser(idUser)));
     }
 
+    @GetMapping(value = "/users/", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Collection<User>> showUsersWithDomain(@RequestParam(name = "domain") String domain) throws NotSuchUserException {
+        return ResponseEntity.ok(base.getAllUsersWithDomain(domain).stream().map(User::from).collect(Collectors.toSet()));
+    }
 
     @PatchMapping(value = "/users/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {

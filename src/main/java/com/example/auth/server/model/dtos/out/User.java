@@ -18,13 +18,16 @@ import java.util.Collection;
 @Setter
 public class User {
     long id;
+    String mail;
     LocalDateTime inscriptionDate;
     Collection<String> roles;
     LocalDateTime updateDate;
     UserBanishment userBanishment;
 
     public static User from(Credentials u) {
-        return new User(u.getIdUser(), u.getInscriptionDate(),
+        return new User(u.getIdUser(),
+                u.getMail(),
+                u.getInscriptionDate(),
                 u.getRoles(),
                 u.getUpdateDate(), u.getBanishment() == null ? null : UserBanishment.from(u.getBanishment()));
     }

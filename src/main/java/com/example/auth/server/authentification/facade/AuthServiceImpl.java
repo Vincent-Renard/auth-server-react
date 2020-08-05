@@ -149,6 +149,18 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
+    public Collection<Credentials> getAllUsersWithDomainsNotAllowed() {
+
+        return base.findCredentialsWithFordindenDomainMail();
+    }
+
+    @Override
+    public Collection<Credentials> getAllUsersWithDomain(String domain) {
+        domain = domain.toLowerCase();
+        return base.findCredentialsByDomainMail(domain);
+    }
+
+    @Override
     public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
         if (!passwordChecker.test(passsword))
             throw new BadPasswordFormat();
@@ -192,7 +204,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired {
-        System.out.println("hello refresh");
         long idUser = tokenDecoder.decodeRefreshToken(token);
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         if (optCredentials.isPresent()) {

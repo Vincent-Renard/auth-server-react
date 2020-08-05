@@ -478,6 +478,18 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
 
+###Get server state admin
+GET http://localhost:8888/auth/admin/users/?domain=mail.com
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+
 ###
 DELETE http://localhost:8888/auth/admin/clean
 Content-Type: application/json
@@ -488,7 +500,6 @@ client.test("Request executed successfully", function() {
 client.assert(response.status === 204, "Response status is not 204 - NO CONTENT");
 });
 %}
-
 ###
 
 DELETE http://localhost:8888/auth/users/me
