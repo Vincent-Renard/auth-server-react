@@ -58,4 +58,6 @@ public interface AuthService {
     Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 
     void unBanUser(long idUser, long idAdmin) throws NotSuchUserException;
+
+    Collection<Credentials> getAllUsersWithRole(String role);
 }

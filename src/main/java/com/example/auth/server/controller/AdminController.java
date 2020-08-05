@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -65,8 +66,39 @@ public class AdminController {
     }
 
     @GetMapping(value = "/users/", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Collection<User>> showUsersWithDomain(@RequestParam(name = "domain") String domain) throws NotSuchUserException {
-        return ResponseEntity.ok(base.getAllUsersWithDomain(domain).stream().map(User::from).collect(Collectors.toSet()));
+    public ResponseEntity<Collection<User>> searchUsers(@RequestParam(name = "maildomain", required = false) String domain
+            , @RequestParam(required = false, name = "role") String role) {
+
+
+        HashSet<User> e = new HashSet<>();
+
+
+        if (domain != null) {
+            HashSet<User> r = base.getAllUsersWithDomain(domain)
+                    .stream()
+                    .map(User::from)
+                    .collect(Collectors.toCollection(HashSet::new));
+            if (e.isEmpty())
+                e.addAll(r);
+            else
+                e.retainAll(r);
+
+
+        }
+        if (role != null) {
+            HashSet<User> r = base.getAllUsersWithRole(role)
+                    .stream()
+                    .map(User::from)
+                    .collect(Collectors.toCollection(HashSet::new));
+
+            if (e.isEmpty())
+                e.addAll(r);
+            else
+                e.retainAll(r);
+
+
+        }
+        return ResponseEntity.ok(e);
     }
 
     @PatchMapping(value = "/users/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})

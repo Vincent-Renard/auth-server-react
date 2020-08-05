@@ -123,4 +123,8 @@ public class PersistenceEngine {
                 .filter(uc -> fds.contains(uc.getMail().split("@")[1]))
                 .collect(Collectors.toSet());
     }
+
+    public Collection<Credentials> getUsersWithRole(String role) {
+        return userCredentials.findAll().stream().filter(uc -> uc.getRoles().contains(role)).collect(Collectors.toSet());
+    }
 }

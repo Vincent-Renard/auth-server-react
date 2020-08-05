@@ -56,7 +56,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
 
-
     private String genPassword(int lenght, int chunks) {
         String sep = "-";
         String alphaU = "ABCDEGHIJKLMNOPQRSTUVWXYZ";
@@ -154,11 +153,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         return base.findCredentialsWithFordindenDomainMail();
     }
 
-    @Override
-    public Collection<Credentials> getAllUsersWithDomain(String domain) {
-        domain = domain.toLowerCase();
-        return base.findCredentialsByDomainMail(domain);
-    }
 
     @Override
     public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
@@ -265,6 +259,23 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         } else {
             throw new NotSuchUserException();
         }
+    }
+
+    @Override
+    public Collection<Credentials> getAllUsersWithDomain(String domain) {
+        domain = domain.toLowerCase();
+        return base.findCredentialsByDomainMail(domain);
+    }
+
+    @Override
+    public Collection<Credentials> getAllUsersWithRole(String role) {
+        role = role.toUpperCase();
+
+        if (POSSILBES_ROLES.contains(role)) {
+            return base.getUsersWithRole(role);
+        }
+
+        return new HashSet<>();
     }
 
     @Override
