@@ -1,5 +1,6 @@
 
 ###
+
 GET http://localhost:8888/auth/public
 Content-Type: application/json
 
@@ -32,10 +33,10 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 {
-  "oldPassword": "pTWER-gYG5-ohom-qsZg",
   "newPassword": "admin1"
 }
 > {%
+client.global.set("original_passwordAdmin","pTWER-gYG5-ohom-qsZg" );
 client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not 200");
 });
@@ -83,6 +84,7 @@ Content-Type: application/json
 }
 > {% client.global.set("auth_token_toto", response.body.accessToken);
      client.global.set("refr_token_toto", response.body.refreshToken);
+
 client.test("Request executed successfully", function() {
   client.assert(response.status === 201, "Response status is not 201 - CREATED");
 });
@@ -110,8 +112,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_toto}}
 
 {
-  "newmail": "toto@youmail.com",
-  "password": "toto"
+  "newmail": "toto@youmail.com"
 }
 > {%
 client.test("Request executed successfully", function() {
@@ -150,11 +151,9 @@ Content-Type: application/json
  %}
 
 ###
-GET http://localhost:8888/auth/tokens/login
+GET http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto2}}
-
-
 
 > {%
   client.test("Request executed successfully", function() {
@@ -254,13 +253,10 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-DELETE http://localhost:8888/auth/admin/domains
+DELETE http://localhost:8888/auth/admin/domains/rumail.ru
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
-{
-  "domain": "rumail.ru"
-}
 > {%
 client.test("Request executed successfully", function() {
 client.assert(response.status === 204, "Response status is not 204 - NO CONTENT ");
@@ -308,23 +304,37 @@ Content-Type: application/json
  %}
 
 ###
-
-GET http://localhost:8888/auth/tokens/refresh
+POST http://localhost:8888/auth/tokens/refresh
 Content-Type: application/json
-Authorization: Bearer {{refr_token_toto}}
 
+{
+   "refreshToken": "{{refr_token_toto}}"
+}
 
 > {%
 client.test("Request executed successfully", function() {
 client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
-###
 
+###
+POST http://localhost:8888/auth/tokens/refresh
+Content-Type: application/json
+
+{
+   "refreshToken": "{{auth_token_toto}}"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 401, "Response status is not 401 - CONFLICT");
+});
+%}
+
+###
 
 PATCH http://localhost:8888/auth/admin/users/2/roles
 Content-Type: application/json
-//admin token here
 Authorization: Bearer {{auth_token_admin}}
 
 {
@@ -387,10 +397,13 @@ client.assert(response.status === 403, "Response status is not 403 - Forbidden")
 
 ###
 
-GET http://localhost:8888/auth/tokens/refresh
+POST http://localhost:8888/auth/tokens/refresh
 Content-Type: application/json
-Authorization: Bearer {{refr_token_bu}}
+Authorization: Bearer
 
+{
+   "refreshToken": "{{refr_token_bu}}"
+}
 
 > {%
 client.test("Request executed successfully", function() {
@@ -425,10 +438,12 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 
 ###REFRESH usr unban
 
-GET http://localhost:8888/auth/tokens/refresh
+POST http://localhost:8888/auth/tokens/refresh
 Content-Type: application/json
-Authorization: Bearer {{refr_token_bu}}
 
+{
+ "refreshToken":"{{refr_token_bu}}"
+}
 
 > {%
 client.test("Request executed successfully", function() {
@@ -460,6 +475,18 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
 
+###Get server state admin
+GET http://localhost:8888/auth/admin/users/?maildomain=mail.com&role=USer
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+client.test("Request executed successfully", function() {
+client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+
 ###
 DELETE http://localhost:8888/auth/admin/clean
 Content-Type: application/json
@@ -470,16 +497,11 @@ client.test("Request executed successfully", function() {
 client.assert(response.status === 204, "Response status is not 204 - NO CONTENT");
 });
 %}
-
 ###
 
 DELETE http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
-
-{
-  "password": "admin1"
-}
 
 > {%
 client.test("Request executed successfully", function() {
@@ -500,3 +522,13 @@ client.test("Request executed successfully", function() {
 client.assert(response.status === 404, "Response status is not 404 - NOT FOUND ");
 });
 %}
+
+###RESET admin password
+
+PATCH http://localhost:8888/auth/users/password
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+{
+  "newPassword": "{{original_passwordAdmin}}"
+}

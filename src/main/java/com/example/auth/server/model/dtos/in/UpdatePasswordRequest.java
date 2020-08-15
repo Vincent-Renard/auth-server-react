@@ -15,6 +15,5 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 public class UpdatePasswordRequest {
-    String oldPassword;
     String newPassword;
 }

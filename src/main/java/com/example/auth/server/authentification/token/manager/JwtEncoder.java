@@ -1,8 +1,8 @@
 package com.example.auth.server.authentification.token.manager;
 
 import com.example.auth.server.authentification.KeyStore;
-import com.example.auth.server.authentification.facade.persistence.entities.TokenId;
-import com.example.auth.server.authentification.facade.persistence.repositories.TokenRepository;
+import com.example.auth.server.authentification.facade.persistence.InternalMemory;
+import com.example.auth.server.authentification.facade.persistence.entities.TokensId;
 import com.example.auth.server.authentification.token.TokenType;
 import com.example.auth.server.model.dtos.out.Bearers;
 import io.jsonwebtoken.Claims;
@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class JwtEncoder implements TokenConstant {
 
     @Autowired
-    TokenRepository tokenRepo;
+    InternalMemory memory;
+
     private AtomicLong idAccessTokenGenerator;
     @Autowired
     private KeyStore keys;
@@ -39,17 +40,17 @@ public class JwtEncoder implements TokenConstant {
     @PostConstruct
     public void init() {
 
-        Optional<TokenId> last = tokenRepo.findById(1L);
-        TokenId ids;
+        Optional<TokensId> last = memory.findLastTokensId();
+        TokensId ids;
         if (last.isPresent()) {
             ids = last.get();
 
         } else {
-            ids = new TokenId();
+            ids = new TokensId();
             ids.setIdAccessToken(1L);
             ids.setIdRefreshToken(1L);
             ids.setId(1L);
-            tokenRepo.save(ids);
+            memory.saveTokensId(ids);
         }
         idAccessTokenGenerator = new AtomicLong(ids.getIdAccessToken());
         idRefreshTokenGenerator = new AtomicLong(ids.getIdRefreshToken());
@@ -81,9 +82,9 @@ public class JwtEncoder implements TokenConstant {
         var r = new ArrayList<>(roles);
         cls.put(CLAIMS_KEY_TOKEN_ROLES, r);
 
-        var t = tokenRepo.getOne(1L);
+        var t = memory.getLastTokensId();
         t.setIdAccessToken(idAccessTokenGenerator.get());
-        tokenRepo.save(t);
+        memory.saveTokensId(t);
 
         return Jwts.builder()
                 .setClaims(cls)
@@ -103,10 +104,10 @@ public class JwtEncoder implements TokenConstant {
         cls.put(CLAIMS_KEY_TOKEN_TYPE, TokenType.REFRESH);
 
 
-        var t = tokenRepo.getOne(1L);
+        var t = memory.getLastTokensId();
 
         t.setIdRefreshToken(idRefreshTokenGenerator.get());
-        tokenRepo.save(t);
+        memory.saveTokensId(t);
         return Jwts.builder()
                 .setClaims(cls)
                 .signWith(keys.getPrivateKey())

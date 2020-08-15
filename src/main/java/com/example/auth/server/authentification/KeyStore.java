@@ -1,7 +1,7 @@
 package com.example.auth.server.authentification;
 
+import com.example.auth.server.authentification.facade.persistence.InternalMemory;
 import com.example.auth.server.authentification.facade.persistence.entities.RSAKey;
-import com.example.auth.server.authentification.facade.persistence.repositories.KeyRepository;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -28,19 +28,19 @@ public class KeyStore {
     private KeyPair keyChain;
 
     @Autowired
-    private KeyRepository keyRepository;
+    private InternalMemory memory;
 
     @PostConstruct
     private void genKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (keyChain == null) {
-            Optional<RSAKey> k = keyRepository.findById(1L);
+            Optional<RSAKey> k = memory.findKeys();
             if (!k.isPresent()) {
                 keyChain = Keys.keyPairFor(SignatureAlgorithm.RS256);
                 var sk = Base64.getEncoder().encodeToString(keyChain.getPrivate().getEncoded());
 
                 var pk = Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded());
 
-                keyRepository.save(new RSAKey(sk, pk));
+                memory.saveKeys(new RSAKey(sk, pk));
 
 
             } else {

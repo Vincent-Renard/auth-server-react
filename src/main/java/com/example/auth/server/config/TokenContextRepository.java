@@ -41,11 +41,11 @@ public class TokenContextRepository implements ServerSecurityContextRepository {
             var upat = bearerDecoder.decode(authorization);
             return Mono.just(new SecurityContextImpl(upat));
         } catch (NoToken noToken) {
-            logger.info("noToken");
+            //logger.info("noToken");
         } catch (InvalidToken invalidToken) {
-            logger.info("invalidToken");
+            //logger.info("invalidToken");
         } catch (TokenExpired tokenExpired) {
-            logger.info("TokenExpired");
+            //logger.info("TokenExpired");
         }
         return Mono.empty();
 

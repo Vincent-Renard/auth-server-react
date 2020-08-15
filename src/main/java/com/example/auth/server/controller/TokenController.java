@@ -2,17 +2,19 @@ package com.example.auth.server.controller;
 
 import com.example.auth.server.authentification.facade.AuthService;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
+import com.example.auth.server.model.dtos.in.RefreshRequest;
 import com.example.auth.server.model.dtos.in.UserCredentials;
 import com.example.auth.server.model.dtos.out.Bearers;
-import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.security.Principal;
 
 /**
  * @autor Vincent
@@ -27,7 +29,6 @@ public class TokenController {
     private AuthService base;
 
 
-
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
         UserToken ut = base.signIn(login.getMail(), login.getPassword());
@@ -37,9 +38,10 @@ public class TokenController {
     }
 
 
-    @GetMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> refresh(Principal user) throws NotSuchUserException, UserBan {
-        return ResponseEntity.ok(base.refresh(Long.parseLong(user.getName())));
+    @PostMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Bearers> refresh(@RequestBody RefreshRequest request) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired {
+
+        return ResponseEntity.ok(base.refresh(request.getRefreshToken()));
     }
 
     @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
@@ -48,10 +50,6 @@ public class TokenController {
     }
 
 
-    @GetMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> showMe(Principal principal) throws NotSuchUserException {
-        return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(principal.getName()))));
-    }
 
 
 }

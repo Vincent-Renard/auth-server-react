@@ -34,6 +34,19 @@ public class JwtDecoder implements TokenConstant {
     private KeyStore keyStore;
 
 
+    public long decodeRefreshToken(String token) throws NoToken, InvalidToken, TokenExpired {
+        UsernamePasswordAuthenticationToken upat = this.decode(token);
+
+
+        Claims body = Jwts.parserBuilder().setSigningKey(keyStore.getPublicKey()).build()
+                .parseClaimsJws(token).getBody();
+
+        if (!body.get(CLAIMS_KEY_TOKEN_TYPE).equals(TokenType.REFRESH.name())) {
+            throw new InvalidToken();
+        }
+        return (long) upat.getPrincipal();
+    }
+
     private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidToken {
         try {
 
