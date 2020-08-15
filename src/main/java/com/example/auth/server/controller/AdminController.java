@@ -7,11 +7,9 @@ import com.example.auth.server.model.dtos.in.BanUserRequest;
 import com.example.auth.server.model.dtos.in.UpdateRolesRequest;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.User;
-import com.example.auth.server.model.exceptions.ForbidenDomainMailUse;
 import com.example.auth.server.model.exceptions.NotSuchUserException;
 import com.example.auth.server.model.exceptions.UserAlreadyBanException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,9 +47,9 @@ public class AdminController {
 
 
     @DeleteMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> delDomain(@RequestBody BanDomainRequest domain) throws ForbidenDomainMailUse {
+    public ResponseEntity<Void> delDomain(@RequestBody BanDomainRequest domain) {
         base.delForbidenDomain(domain.getDomain());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
 
     }
 
