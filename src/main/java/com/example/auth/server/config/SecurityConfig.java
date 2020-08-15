@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains/list").hasAuthority("ADMIN")
 
-                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/domains/**").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/clean").hasAuthority("ADMIN")

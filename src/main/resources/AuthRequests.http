@@ -151,7 +151,7 @@ Content-Type: application/json
  %}
 
 ###
-GET http://localhost:8888/auth/tokens/login
+GET http://localhost:8888/auth/users/me
 Content-Type: application/json
 Authorization: Bearer {{auth_token_toto2}}
 
@@ -253,13 +253,10 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 %}
 
 ###
-DELETE http://localhost:8888/auth/admin/domains
+DELETE http://localhost:8888/auth/admin/domains/rumail.ru
 Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
-{
-  "domain": "rumail.ru"
-}
 > {%
 client.test("Request executed successfully", function() {
 client.assert(response.status === 204, "Response status is not 204 - NO CONTENT ");

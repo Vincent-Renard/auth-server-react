@@ -46,9 +46,9 @@ public class AdminController {
     }
 
 
-    @DeleteMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> delDomain(@RequestBody BanDomainRequest domain) {
-        base.delForbidenDomain(domain.getDomain());
+    @DeleteMapping(value = "/domains/{dom}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> delDomain(@PathVariable(name = "dom") String domain) {
+        base.delForbidenDomain(domain);
         return ResponseEntity.noContent().build();
 
     }
