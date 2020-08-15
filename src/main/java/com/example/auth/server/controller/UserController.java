@@ -3,7 +3,6 @@ package com.example.auth.server.controller;
 import com.example.auth.server.authentification.facade.AuthService;
 import com.example.auth.server.model.dtos.in.UpdateMailRequest;
 import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
-import com.example.auth.server.model.dtos.out.Bearers;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class UserController {
 
 
     @DeleteMapping(value = "/me", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> erase(Principal user) throws NotSuchUserException, UserBan {
+    public ResponseEntity<Void> erase(Principal user) throws NotSuchUserException, UserBan {
         base.signOut(Long.parseLong(user.getName()));
         return ResponseEntity.noContent().build();
     }
