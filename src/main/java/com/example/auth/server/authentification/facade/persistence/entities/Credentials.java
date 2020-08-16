@@ -1,5 +1,7 @@
 package com.example.auth.server.authentification.facade.persistence.entities;
 
+import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,9 +60,11 @@ public class Credentials {
     @Setter
     private Banishment banishment;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @Setter
+    @JsonManagedReference
     List<UserLog> logs = new ArrayList<>();
+
 
     protected Credentials() {
     }

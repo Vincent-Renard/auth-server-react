@@ -1,7 +1,7 @@
 package com.example.auth.server.model.dtos.out;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
-import com.example.auth.server.authentification.facade.persistence.entities.UserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

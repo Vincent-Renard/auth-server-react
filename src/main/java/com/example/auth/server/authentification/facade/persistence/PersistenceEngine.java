@@ -2,8 +2,8 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
-import com.example.auth.server.authentification.facade.persistence.entities.UserLog;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import lombok.AccessLevel;
@@ -89,7 +89,10 @@ public class PersistenceEngine {
         Optional<Credentials> userOpt = userCredentials.findById(idUser);
         if (userOpt.isPresent()) {
             Credentials credentials = userOpt.get();
-            credentials.getLogs().add(new UserLog(log));
+            UserLog ul = new UserLog();
+            ul.setStatus(log);
+            ul.setUser(credentials);
+            credentials.getLogs().add(ul);
             this.saveCredentials(credentials);
         }
     }

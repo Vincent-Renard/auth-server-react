@@ -100,9 +100,11 @@ public class AdminController {
     }
 
     @PatchMapping(value = "/users/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> updateRoles(@PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
+    public ResponseEntity<User> updateRoles(Principal admin, @PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException {
         return ResponseEntity
-                .ok(User.from(base.updateRoles(idUser, updateRolesRequest.getRoles())));
+                .ok(User.from(base.updateRoles(idUser,
+                        updateRolesRequest.getRoles(),
+                        Long.parseLong(admin.getName()))));
 
     }
 

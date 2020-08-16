@@ -4,9 +4,9 @@ import com.example.auth.server.authentification.facade.persistence.PersistenceEn
 import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
-import com.example.auth.server.authentification.facade.persistence.entities.UserLog;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtDecoder;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
@@ -244,23 +244,25 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Credentials updateRoles(long idUser, Collection<String> newRoles) throws NotSuchUserException {
-        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+    public Credentials updateRoles(long idUser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException {
+        Optional<Credentials> optCredentialsUser = base.findCredentialsById(idUser);
+        Optional<Credentials> optCredentialsAdmin = base.findCredentialsById(idAdmin);
         newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
 
-        if (!optCredentials.isPresent()) {
+        if (!optCredentialsUser.isPresent()) {
             throw new NotSuchUserException();
         } else {
             if (POSSILBES_ROLES.containsAll(newRoles)) {
-                var credentials = optCredentials.get();
+                var credentials = optCredentialsUser.get();
                 credentials.setRoles(newRoles);
                 credentials = base.saveCredentials(credentials);
                 base.logOnUser(credentials.getIdUser(), LogUserStatus.ROLES_UPDATE);
+
                 return credentials;
 
             }
         }
-        return optCredentials.get();
+        return optCredentialsUser.get();
     }
 
     @Override

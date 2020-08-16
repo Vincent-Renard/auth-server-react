@@ -47,7 +47,7 @@ public interface AuthService {
 
     void signOut(long iduser) throws NotSuchUserException, UserBan;
 
-    Credentials updateRoles(long iduser, Collection<String> newRoles) throws NotSuchUserException;
+    Credentials updateRoles(long iduser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException;
 
     Credentials showUser(long iduser) throws NotSuchUserException;
 

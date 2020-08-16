@@ -1,10 +1,12 @@
-package com.example.auth.server.authentification.facade.persistence.entities;
+package com.example.auth.server.authentification.facade.persistence.entities.logs;
 
+import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -19,9 +21,9 @@ import java.time.LocalDateTime;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@ToString
 @Entity
 @NoArgsConstructor
+@Inheritance
 public class UserLog {
 
 
@@ -30,12 +32,30 @@ public class UserLog {
     Long id;
 
     @Enumerated
+    @Setter
     LogUserStatus status;
 
     @CreationTimestamp
     LocalDateTime date;
 
+    @ManyToOne
+    @Setter
+
+    @JsonBackReference
+    Credentials user;
+
+
     public UserLog(LogUserStatus log) {
         status = log;
+    }
+
+    @Override
+    public String toString() {
+        return "UserLog{" +
+                "id=" + id +
+                ", status=" + status +
+                ", date=" + date +
+                ", iduser=" + user.getIdUser() +
+                '}';
     }
 }

@@ -350,6 +350,15 @@ client.assert(response.status === 200, "Response status is not 200 - OK");
 });
 %}
 
+
+###
+GET http://localhost:8888/auth/admin/users/2
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+
+
+
 ###BAN TEST
 POST http://localhost:8888/auth/tokens/claim
 Content-Type: application/json
