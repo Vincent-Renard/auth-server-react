@@ -6,6 +6,7 @@ import com.example.auth.server.authentification.facade.persistence.entities.Cred
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
+import com.example.auth.server.authentification.token.manager.JwtDecoder;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
 import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
@@ -42,6 +43,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Autowired
     JwtEncoder tokenEncoder;
 
+    @Autowired
+    JwtDecoder tokenDecoder;
+
     LocalDateTime startDate;
 
     @PostConstruct
@@ -50,7 +54,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         fill();
 
     }
-
 
 
     private String genPassword(int lenght, int chunks) {
@@ -145,6 +148,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
+    public Collection<Credentials> getAllUsersWithDomainsNotAllowed() {
+
+        return base.findCredentialsWithFordindenDomainMail();
+    }
+
+
+    @Override
     public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
         if (!passwordChecker.test(passsword))
             throw new BadPasswordFormat();
@@ -187,8 +197,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers refresh(long idUser) throws NotSuchUserException, UserBan {
-
+    public Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired {
+        long idUser = tokenDecoder.decodeRefreshToken(token);
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         if (optCredentials.isPresent()) {
             if (optCredentials.get().getBanishment() != null)
@@ -249,6 +259,23 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         } else {
             throw new NotSuchUserException();
         }
+    }
+
+    @Override
+    public Collection<Credentials> getAllUsersWithDomain(String domain) {
+        domain = domain.toLowerCase();
+        return base.findCredentialsByDomainMail(domain);
+    }
+
+    @Override
+    public Collection<Credentials> getAllUsersWithRole(String role) {
+        role = role.toUpperCase();
+
+        if (POSSILBES_ROLES.contains(role)) {
+            return base.getUsersWithRole(role);
+        }
+
+        return new HashSet<>();
     }
 
     @Override

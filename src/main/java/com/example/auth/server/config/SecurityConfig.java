@@ -55,12 +55,12 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/domains/list").hasAuthority("ADMIN")
 
-                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/domains").hasAuthority("ADMIN")
+                .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/domains/**").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.POST, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/users/*/ban").hasAuthority("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, rootUrl + adminUrl + "/clean").hasAuthority("ADMIN")
 //TOKEN PART
-                .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/refresh").authenticated()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/refresh").permitAll()
                 .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/login").permitAll()
                 .pathMatchers(HttpMethod.POST, rootUrl + "/tokens/claim").permitAll()
                 .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/login").authenticated()

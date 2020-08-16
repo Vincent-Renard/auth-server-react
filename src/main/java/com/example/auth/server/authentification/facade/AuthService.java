@@ -33,11 +33,15 @@ public interface AuthService {
 
     Collection<ForbidenDomain> getAllDomainNotAllowed();
 
+    Collection<Credentials> getAllUsersWithDomainsNotAllowed();
+
+    Collection<Credentials> getAllUsersWithDomain(String domain);
+
     UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
 
     Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan;
 
-    Bearers refresh(long iduser) throws NotSuchUserException, UserBan;
+    Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired;
 
     void clear();
 
@@ -54,4 +58,6 @@ public interface AuthService {
     Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 
     void unBanUser(long idUser, long idAdmin) throws NotSuchUserException;
+
+    Collection<Credentials> getAllUsersWithRole(String role);
 }

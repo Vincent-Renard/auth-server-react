@@ -109,4 +109,22 @@ public class PersistenceEngine {
     }
 
 
+    public Collection<Credentials> findCredentialsByDomainMail(String domain) {
+        return userCredentials.findAll()
+                .stream()
+                .filter(c -> c.getMail().split("@")[1].equals(domain))
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<Credentials> findCredentialsWithFordindenDomainMail() {
+        Set<String> fds = forbidenDomains.findAll().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet());
+        return userCredentials.findAll()
+                .stream()
+                .filter(uc -> fds.contains(uc.getMail().split("@")[1]))
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<Credentials> getUsersWithRole(String role) {
+        return userCredentials.findAll().stream().filter(uc -> uc.getRoles().contains(role)).collect(Collectors.toSet());
+    }
 }
