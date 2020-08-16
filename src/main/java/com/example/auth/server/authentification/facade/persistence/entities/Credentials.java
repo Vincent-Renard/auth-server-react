@@ -11,7 +11,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -55,6 +57,10 @@ public class Credentials {
     @OneToOne(cascade = CascadeType.ALL, optional = true)
     @Setter
     private Banishment banishment;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @Setter
+    List<UserLog> logs = new ArrayList<>();
 
     protected Credentials() {
     }

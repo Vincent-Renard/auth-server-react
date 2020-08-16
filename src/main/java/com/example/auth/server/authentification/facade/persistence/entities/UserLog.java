@@ -1,8 +1,9 @@
 package com.example.auth.server.authentification.facade.persistence.entities;
 
-import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Entity
+@NoArgsConstructor
 public class UserLog {
 
 
@@ -27,14 +29,13 @@ public class UserLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    Credentials credentials;
-
     @Enumerated
-    LogStatus status;
+    LogUserStatus status;
 
     @CreationTimestamp
     LocalDateTime date;
 
-
+    public UserLog(LogUserStatus log) {
+        status = log;
+    }
 }

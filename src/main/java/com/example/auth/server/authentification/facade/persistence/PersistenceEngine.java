@@ -2,6 +2,8 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
+import com.example.auth.server.authentification.facade.persistence.entities.UserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import lombok.AccessLevel;
@@ -62,6 +64,7 @@ public class PersistenceEngine {
     }
 
     public void saveAllDomains(Collection<String> domains) {
+
         Set<String> deja = forbidenDomains.findAll()
                 .stream()
                 .map(ForbidenDomain::getDomain)
@@ -80,6 +83,15 @@ public class PersistenceEngine {
     public void deleteDomainById(String domain) {
         domain = domain.toLowerCase();
         forbidenDomains.deleteById(domain);
+    }
+
+    public void logOnUser(long idUser, LogUserStatus log) {
+        Optional<Credentials> userOpt = userCredentials.findById(idUser);
+        if (userOpt.isPresent()) {
+            Credentials credentials = userOpt.get();
+            credentials.getLogs().add(new UserLog(log));
+            this.saveCredentials(credentials);
+        }
     }
 
     public Optional<Credentials> findCredentialsById(long idUser) {

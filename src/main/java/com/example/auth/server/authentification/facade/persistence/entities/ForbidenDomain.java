@@ -29,6 +29,7 @@ public class ForbidenDomain {
     @CreationTimestamp
     LocalDateTime dateTimeInserted;
 
+
     public ForbidenDomain(String dom) {
         this.domain = dom;
     }

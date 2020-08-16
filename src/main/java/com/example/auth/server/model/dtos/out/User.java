@@ -1,6 +1,7 @@
 package com.example.auth.server.model.dtos.out;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
+import com.example.auth.server.authentification.facade.persistence.entities.UserLog;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,20 +20,21 @@ import java.util.Objects;
 @Setter
 public class User {
 
-    private
     long id;
-    private String mail;
-    private LocalDateTime inscriptionDate;
-    private Collection<String> roles;
-    private LocalDateTime updateDate;
-    private UserBanishment userBanishment;
+    String mail;
+    LocalDateTime inscriptionDate;
+    Collection<String> roles;
+    LocalDateTime updateDate;
+    UserBanishment userBanishment;
+    Collection<UserLog> logs;
 
     public static User from(Credentials u) {
         return new User(u.getIdUser(),
                 u.getMail(),
                 u.getInscriptionDate(),
                 u.getRoles(),
-                u.getUpdateDate(), u.getBanishment() == null ? null : UserBanishment.from(u.getBanishment()));
+                u.getUpdateDate(), u.getBanishment() == null ? null : UserBanishment.from(u.getBanishment()),
+                u.getLogs());
     }
 
     @Override
