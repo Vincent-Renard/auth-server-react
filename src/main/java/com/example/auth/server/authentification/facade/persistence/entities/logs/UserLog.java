@@ -2,7 +2,7 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +40,7 @@ public class UserLog {
 
     @ManyToOne
     @Setter
-
-    @JsonBackReference
+    @JsonIdentityReference(alwaysAsId = true)
     Credentials user;
 
 
