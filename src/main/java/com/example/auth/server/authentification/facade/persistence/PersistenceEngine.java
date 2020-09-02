@@ -31,6 +31,8 @@ public class PersistenceEngine {
     @Autowired
     ForbidenDomainRepository forbidenDomains;
 
+    @Autowired
+    LogsEngine logsEngine;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -141,5 +143,9 @@ public class PersistenceEngine {
 
     public Collection<Credentials> getUsersWithRole(String role) {
         return userCredentials.findAll().stream().filter(uc -> uc.getRoles().contains(role)).collect(Collectors.toSet());
+    }
+
+    public void logRoleUpdate(Credentials userCredentials, Credentials adminCredentials, Collection<String> newRoles) {
+        logsEngine.logRoleUpdate(userCredentials, adminCredentials, newRoles);
     }
 }

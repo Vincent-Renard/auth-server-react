@@ -1,12 +1,11 @@
 package com.example.auth.server.authentification.facade.persistence.entities.logs;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -21,20 +20,14 @@ import java.util.TreeSet;
 @Entity
 public class RoleUpdateLog extends UserLog {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+
 
     @Setter
     @ElementCollection
     Collection<String> roles = new TreeSet<>();
 
-    @CreationTimestamp
-    LocalDateTime updateDate;
-
+    @Setter
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    Credentials user;
-
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
 }

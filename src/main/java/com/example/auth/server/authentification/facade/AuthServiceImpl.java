@@ -255,17 +255,22 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         if (!optCredentialsAdmin.isPresent()) {
             throw new NotSuchAdminException();
         }
+        var userCredentials = optCredentialsUser.get();
         if (POSSILBES_ROLES.containsAll(newRoles)) {
-            var credentials = optCredentialsUser.get();
-            credentials.setRoles(newRoles);
-            credentials = base.saveCredentials(credentials);
-            base.logOnUser(credentials.getIdUser(), LogUserStatus.ROLES_UPDATE);
 
-            return credentials;
+            var adminCredentials = optCredentialsAdmin.get();
+            if (!newRoles.equals(userCredentials.getRoles())) {
+                userCredentials.setRoles(newRoles);
+                userCredentials = base.saveCredentials(userCredentials);
+                //base.logOnUser(userCredentials.getIdUser(), LogUserStatus.ROLES_UPDATE);
+                base.logRoleUpdate(userCredentials, adminCredentials, newRoles);
+            }
+
+            return userCredentials;
 
 
         }
-        return optCredentialsUser.get();
+        return userCredentials;
     }
 
     @Override
