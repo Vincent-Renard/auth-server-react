@@ -244,23 +244,26 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Credentials updateRoles(long idUser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException {
+    public Credentials updateRoles(long idUser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException, NotSuchAdminException {
         Optional<Credentials> optCredentialsUser = base.findCredentialsById(idUser);
         Optional<Credentials> optCredentialsAdmin = base.findCredentialsById(idAdmin);
         newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
 
         if (!optCredentialsUser.isPresent()) {
             throw new NotSuchUserException();
-        } else {
-            if (POSSILBES_ROLES.containsAll(newRoles)) {
-                var credentials = optCredentialsUser.get();
-                credentials.setRoles(newRoles);
-                credentials = base.saveCredentials(credentials);
-                base.logOnUser(credentials.getIdUser(), LogUserStatus.ROLES_UPDATE);
+        }
+        if (!optCredentialsAdmin.isPresent()) {
+            throw new NotSuchAdminException();
+        }
+        if (POSSILBES_ROLES.containsAll(newRoles)) {
+            var credentials = optCredentialsUser.get();
+            credentials.setRoles(newRoles);
+            credentials = base.saveCredentials(credentials);
+            base.logOnUser(credentials.getIdUser(), LogUserStatus.ROLES_UPDATE);
 
-                return credentials;
+            return credentials;
 
-            }
+
         }
         return optCredentialsUser.get();
     }
