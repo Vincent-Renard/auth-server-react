@@ -6,7 +6,6 @@ import com.example.auth.server.authentification.facade.persistence.entities.Bani
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
-import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtDecoder;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
@@ -313,7 +312,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new UserBan();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
 
-            base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_PASSWORD);
+            //base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_PASSWORD);
             credentials.setPassword(base.encodePassword(newpasssword));
 
             base.saveCredentials(credentials);
@@ -345,10 +344,11 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (credentials.getMail().equals(mailAdmin))
                 newmail = mailAdmin;
 
-
+            String oldMail = credentials.getMail();
             credentials.setMail(newmail);
             base.saveCredentials(credentials);
-            base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_MAIL);
+            // base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_MAIL);
+            logsEngine.logMailUpdate(oldMail, credentials);
         } else {
             throw new NotSuchUserException();
         }
@@ -357,16 +357,18 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
-
-        if (optCredentials.isPresent()) {
+        Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
+        if (optCredentials.isPresent() && optAdmin.isPresent()) {
+            var admin = optAdmin.get();
             var credentials = optCredentials.get();
+
             if (credentials.getBanishment() != null) throw new UserAlreadyBanException();
 
             Banishment be = new Banishment(reason);
             credentials.setBanishment(be);
             if (!credentials.getMail().equals(mailAdmin)) {
                 base.saveCredentials(credentials);
-                base.logOnUser(credentials.getIdUser(), LogStatus.BAN);
+                logsEngine.banUser(credentials, admin, reason);
 
             }
 
@@ -378,14 +380,15 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public void unBanUser(long idUser, long idAdmin) throws NotSuchUserException {
-        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+        Optional<Credentials> optUser = base.findCredentialsById(idUser);
+        Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
+        if (optUser.isPresent() && optAdmin.isPresent()) {
 
-        if (optCredentials.isPresent()) {
-
-            var credentials = optCredentials.get();
-            credentials.setBanishment(null);
-            base.saveCredentials(credentials);
-            base.logOnUser(credentials.getIdUser(), LogStatus.UNBAN);
+            var user = optUser.get();
+            var admin = optAdmin.get();
+            user.setBanishment(null);
+            base.saveCredentials(user);
+            logsEngine.logUnban(user, admin);
 
         } else {
             throw new NotSuchUserException();

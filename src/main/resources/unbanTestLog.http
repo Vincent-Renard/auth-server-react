@@ -1,0 +1,98 @@
+POST http://localhost:8888/auth/tokens/login
+Content-Type: application/json
+
+{
+  "mail": "admin@admin.com",
+  "password": "pTWER-gYG5-ohom-qsZg"
+}
+> {%
+client.global.set("auth_token_admin", response.body.accessToken);
+client.global.set("refr_token_admin", response.body.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+###
+POST http://localhost:8888/auth/tokens/claim
+Content-Type: application/json
+
+{
+  "mail": "toto@mail.com",
+  "password": "toto"
+}
+> {% client.global.set("auth_token_toto", response.body.accessToken);
+     client.global.set("refr_token_toto", response.body.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201 - CREATED");
+});
+%}
+
+###
+GET http://localhost:8888/auth/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token_toto}}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+GET http://localhost:8888/auth/admin/users/2
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+DELETE http://localhost:8888/auth/admin/users/2/ban
+Content-Type: application/json
+Authorization:Bearer {{auth_token_admin}}
+
+###
+
+GET http://localhost:8888/auth/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token_toto}}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+GET http://localhost:8888/auth/admin/users/2
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###
+GET http://localhost:8888/auth/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###

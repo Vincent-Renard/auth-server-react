@@ -1,6 +1,7 @@
 package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.*;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,8 @@ public class LogsEngine {
 
         users.save(user);
 
-        AdminRoleUpdateLog logAdmin = new AdminRoleUpdateLog();
+        AdminRoleUpdateLog logAdmin = new AdminRoleUpdateLog(user);
         logAdmin.setRoles(newRoles);
-        logAdmin.setUserOn(user);
         admin.getLogs().add(logAdmin);
 
         users.save(admin);
@@ -62,5 +62,26 @@ public class LogsEngine {
     public void logUpdatePassword(Credentials user) {
         user.getLogs().add(new UpdatePasswordLog());
         users.save(user);
+    }
+
+    public void banUser(Credentials user, Credentials admin, BanReason reason) {
+        BanUserLog bul = new BanUserLog(admin, reason);
+        user.getLogs().add(bul);
+        users.save(user);
+
+
+        AdminBanUserLog abul = new AdminBanUserLog(user, reason);
+        admin.getLogs().add(abul);
+        users.save(admin);
+
+    }
+
+    public void logMailUpdate(String oldMail, Credentials user) {
+        //TODO
+
+    }
+
+    public void logUnban(Credentials user, Credentials admin) {
+        //TODO
     }
 }

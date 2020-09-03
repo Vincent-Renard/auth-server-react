@@ -1,33 +1,34 @@
 package com.example.auth.server.authentification.facade.persistence.entities.logs;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import java.util.Collection;
-import java.util.TreeSet;
+import javax.persistence.Enumerated;
 
 /**
  * @autor Vincent
- * @date 16/08/2020
+ * @date 03/09/2020
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@ToString(callSuper = true)
 @Entity
-public class AdminRoleUpdateLog extends AdminLog {
-
-
+public class AdminBanUserLog extends AdminLog {
+    @Enumerated
     @Setter
-    @ElementCollection
-    Collection<String> roles = new TreeSet<>();
+    BanReason reason;
 
 
-    public AdminRoleUpdateLog(Credentials userOn) {
-        super(userOn, LogStatus.ADMIN_USER_ROLES_UPDATE);
+    public AdminBanUserLog(Credentials user, BanReason reason) {
+        super(user, LogStatus.ADMIN_BAN_USER);
+        setReason(reason);
     }
 }
+

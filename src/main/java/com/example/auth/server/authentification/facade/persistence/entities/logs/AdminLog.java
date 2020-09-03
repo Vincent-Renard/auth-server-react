@@ -2,32 +2,33 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import java.util.Collection;
-import java.util.TreeSet;
+import javax.persistence.*;
 
 /**
  * @autor Vincent
- * @date 16/08/2020
+ * @date 03/09/2020
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@ToString(callSuper = true)
 @Entity
-public class AdminRoleUpdateLog extends AdminLog {
-
-
+@Inheritance
+@ToString
+public class AdminLog extends UserLog {
     @Setter
-    @ElementCollection
-    Collection<String> roles = new TreeSet<>();
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @ToString.Exclude
+    Credentials userOn;
 
+    public AdminLog(Credentials userOn, LogStatus status) {
+        super(status);
 
-    public AdminRoleUpdateLog(Credentials userOn) {
-        super(userOn, LogStatus.ADMIN_USER_ROLES_UPDATE);
+        this.setUserOn(userOn);
     }
+
 }
