@@ -1,4 +1,4 @@
-package com.example.auth.server.authentification.facade.persistence.entities.logs;
+package com.example.auth.server.authentification.facade.persistence.entities.logs.user;
 
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
@@ -14,9 +14,9 @@ import javax.persistence.Entity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class SuccessfulLogingLog extends UserLog {
+public class RefreshingTokensLog extends UserLog {
 
-    public SuccessfulLogingLog() {
-        super(LogStatus.LOGING_SUCCESSFULL);
+    public RefreshingTokensLog() {
+        super(LogStatus.REFRESHING);
     }
 }

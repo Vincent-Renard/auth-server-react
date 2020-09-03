@@ -1,10 +1,10 @@
-package com.example.auth.server.authentification.facade.persistence.entities.logs;
+package com.example.auth.server.authentification.facade.persistence.entities.logs.user;
 
-import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
@@ -17,11 +17,14 @@ import javax.persistence.Entity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class AdminUnbanUserLog extends AdminLog {
+public class MailUpdateLog extends UserLog {
+
+    @Setter
+    String oldMail;
 
 
-    public AdminUnbanUserLog(Credentials user) {
-        super(user, LogStatus.ADMIN_UNBAN_USER);
+    public MailUpdateLog(String oldMail) {
+        super(LogStatus.UPDATE_MAIL);
+        setOldMail(oldMail);
     }
 }
-

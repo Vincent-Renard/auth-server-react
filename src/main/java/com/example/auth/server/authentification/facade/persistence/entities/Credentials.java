@@ -1,6 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.entities;
 
-import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.user.UserLog;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

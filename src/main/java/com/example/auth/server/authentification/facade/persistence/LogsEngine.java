@@ -2,7 +2,10 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.*;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminBanUserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminRoleUpdateLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminUnbanUserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.user.*;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,7 +23,7 @@ public class LogsEngine {
     CredentialsRepository users;
 
     public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
-        UserRoleUpdateLog logUser = new UserRoleUpdateLog();
+        RoleUpdateLog logUser = new RoleUpdateLog();
 
         logUser.setRoles(newRoles);
         logUser.setAdmin(admin);
@@ -60,7 +63,7 @@ public class LogsEngine {
     }
 
     public void logUpdatePassword(Credentials user) {
-        user.getLogs().add(new UpdatePasswordLog());
+        user.getLogs().add(new PasswordUpdateLog());
         users.save(user);
     }
 
@@ -84,7 +87,7 @@ public class LogsEngine {
     }
 
     public void logUnban(Credentials user, Credentials admin) {
-        UnbanUserLog bul = new UnbanUserLog(admin);
+        UnbanLog bul = new UnbanLog(admin);
         user.getLogs().add(bul);
         users.save(user);
 

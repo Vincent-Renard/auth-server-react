@@ -1,16 +1,13 @@
-package com.example.auth.server.authentification.facade.persistence.entities.logs;
+package com.example.auth.server.authentification.facade.persistence.entities.logs.admin;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
-import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 
 /**
  * @autor Vincent
@@ -20,15 +17,11 @@ import javax.persistence.Enumerated;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class AdminBanUserLog extends AdminLog {
-    @Enumerated
-    @Setter
-    BanReason reason;
+public class AdminUnbanUserLog extends AdminLog {
 
 
-    public AdminBanUserLog(Credentials user, BanReason reason) {
-        super(user, LogStatus.ADMIN_BAN_USER);
-        setReason(reason);
+    public AdminUnbanUserLog(Credentials user) {
+        super(user, LogStatus.ADMIN_UNBAN_USER);
     }
 }
 

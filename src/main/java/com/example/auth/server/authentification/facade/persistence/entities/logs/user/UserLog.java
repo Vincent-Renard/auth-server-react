@@ -1,4 +1,4 @@
-package com.example.auth.server.authentification.facade.persistence.entities.logs;
+package com.example.auth.server.authentification.facade.persistence.entities.logs.user;
 
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance
 @ToString
-public class UserLog {
+public abstract class UserLog {
 
 
     @Id

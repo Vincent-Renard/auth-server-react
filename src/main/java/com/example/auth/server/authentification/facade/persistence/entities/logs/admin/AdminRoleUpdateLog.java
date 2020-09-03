@@ -1,4 +1,4 @@
-package com.example.auth.server.authentification.facade.persistence.entities.logs;
+package com.example.auth.server.authentification.facade.persistence.entities.logs.admin;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
