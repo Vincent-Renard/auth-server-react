@@ -1,8 +1,12 @@
 package com.example.auth.server.authentification.facade.persistence.entities.logs;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
@@ -13,13 +17,11 @@ import java.util.TreeSet;
  * @autor Vincent
  * @date 16/08/2020
  */
-@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Entity
-public class RoleUpdateLog extends UserLog {
-
+public class AdminRoleUpdateLog extends UserLog {
 
 
     @Setter
@@ -29,5 +31,10 @@ public class RoleUpdateLog extends UserLog {
     @Setter
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
-    Credentials admin;
+    @ToString.Exclude
+    Credentials userOn;
+
+    public AdminRoleUpdateLog() {
+        super(LogStatus.ADMIN_USER_ROLES_UPDATE);
+    }
 }

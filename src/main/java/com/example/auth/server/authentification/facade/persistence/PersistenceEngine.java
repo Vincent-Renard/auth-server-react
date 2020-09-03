@@ -2,7 +2,7 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
-import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
@@ -87,15 +87,14 @@ public class PersistenceEngine {
         forbidenDomains.deleteById(domain);
     }
 
-    public void logOnUser(long idUser, LogUserStatus log) {
+    public void logOnUser(long idUser, LogStatus log) {
         Optional<Credentials> userOpt = userCredentials.findById(idUser);
         if (userOpt.isPresent()) {
             Credentials credentials = userOpt.get();
-            UserLog ul = new UserLog();
-            ul.setStatus(log);
-            ul.setUser(credentials);
-            credentials.getLogs().add(ul);
-            this.saveCredentials(credentials);
+            UserLog ul = new UserLog(log);
+            //ul.setUser(credentials);
+            //credentials.getLogs().add(ul);
+            //this.saveCredentials(credentials);
         }
     }
 
@@ -145,7 +144,5 @@ public class PersistenceEngine {
         return userCredentials.findAll().stream().filter(uc -> uc.getRoles().contains(role)).collect(Collectors.toSet());
     }
 
-    public void logRoleUpdate(Credentials userCredentials, Credentials adminCredentials, Collection<String> newRoles) {
-        logsEngine.logRoleUpdate(userCredentials, adminCredentials, newRoles);
-    }
+
 }

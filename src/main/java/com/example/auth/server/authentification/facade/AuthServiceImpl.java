@@ -1,11 +1,12 @@
 package com.example.auth.server.authentification.facade;
 
+import com.example.auth.server.authentification.facade.persistence.LogsEngine;
 import com.example.auth.server.authentification.facade.persistence.PersistenceEngine;
 import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
-import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtDecoder;
@@ -41,6 +42,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Autowired
     PersistenceEngine base;
+
+    @Autowired
+    LogsEngine logsEngine;
 
     @Autowired
     JwtEncoder tokenEncoder;
@@ -177,7 +181,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
         var credentials = new Credentials(mailUser, base.encodePassword(passsword), rolesOfUser);
-        credentials.getLogs().add(new UserLog(LogUserStatus.REGISTRATION));
+        credentials.getLogs().add(new UserLog(LogStatus.REGISTRATION));
         var user = base.saveCredentials(credentials);
 
         Bearers tokens = tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
@@ -192,10 +196,10 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (credentials.getBanishment() != null)
                 throw new UserBan();
             if (!base.passwordMatches(password, credentials.getPassword())) {
-                base.logOnUser(credentials.getIdUser(), LogUserStatus.BAD_PASSWORD);
+                logsEngine.logBadPassword(credentials.getIdUser());
                 throw new BadPasswordException();
             }
-            base.logOnUser(credentials.getIdUser(), LogUserStatus.LOGING);
+            logsEngine.logUserLogin(credentials.getIdUser());
 
             return tokenEncoder.genBoth(credentials.getIdUser(), credentials.getRoles());
         } else throw new NotSuchUserException();
@@ -212,7 +216,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new UserBan();
             }
 
-            base.logOnUser(credentials.getIdUser(), LogUserStatus.REFRESHING);
+            base.logOnUser(credentials.getIdUser(), LogStatus.REFRESHING);
 
             return tokenEncoder.genBoth(idUser, credentials.getRoles());
 
@@ -262,8 +266,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (!newRoles.equals(userCredentials.getRoles())) {
                 userCredentials.setRoles(newRoles);
                 userCredentials = base.saveCredentials(userCredentials);
-                //base.logOnUser(userCredentials.getIdUser(), LogUserStatus.ROLES_UPDATE);
-                base.logRoleUpdate(userCredentials, adminCredentials, newRoles);
+                logsEngine.logRoleUpdate(userCredentials, adminCredentials, newRoles);
             }
 
             return userCredentials;
@@ -310,7 +313,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new UserBan();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
 
-            base.logOnUser(credentials.getIdUser(), LogUserStatus.UPDATE_PASSWORD);
+            base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_PASSWORD);
             credentials.setPassword(base.encodePassword(newpasssword));
 
             base.saveCredentials(credentials);
@@ -344,7 +347,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             credentials.setMail(newmail);
             base.saveCredentials(credentials);
-            base.logOnUser(credentials.getIdUser(), LogUserStatus.UPDATE_MAIL);
+            base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_MAIL);
         } else {
             throw new NotSuchUserException();
         }
@@ -362,7 +365,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             credentials.setBanishment(be);
             if (!credentials.getMail().equals(mailAdmin)) {
                 base.saveCredentials(credentials);
-                base.logOnUser(credentials.getIdUser(), LogUserStatus.BAN);
+                base.logOnUser(credentials.getIdUser(), LogStatus.BAN);
 
             }
 
@@ -381,7 +384,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             var credentials = optCredentials.get();
             credentials.setBanishment(null);
             base.saveCredentials(credentials);
-            base.logOnUser(credentials.getIdUser(), LogUserStatus.UNBAN);
+            base.logOnUser(credentials.getIdUser(), LogStatus.UNBAN);
 
         } else {
             throw new NotSuchUserException();

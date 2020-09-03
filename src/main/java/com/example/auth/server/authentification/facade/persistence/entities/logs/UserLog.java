@@ -1,8 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.entities.logs;
 
-import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
-import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +16,10 @@ import java.time.LocalDateTime;
  * @date 30/07/2020
  */
 
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-@NoArgsConstructor
 @Inheritance
 public class UserLog {
 
@@ -33,19 +30,14 @@ public class UserLog {
 
     @Enumerated
     @Setter
-    LogUserStatus status;
+    LogStatus status;
 
     @CreationTimestamp
     LocalDateTime date;
 
-    @ManyToOne
-    @Setter
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials user;
 
-
-    public UserLog(LogUserStatus log) {
-        status = log;
+    public UserLog(LogStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -54,7 +46,6 @@ public class UserLog {
                 "id=" + id +
                 ", status=" + status +
                 ", date=" + date +
-                ", iduser=" + user.getIdUser() +
                 '}';
     }
 }

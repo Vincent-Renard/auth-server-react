@@ -4,10 +4,7 @@ import com.example.auth.server.authentification.facade.persistence.entities.logs
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,6 +26,7 @@ import java.util.TreeSet;
 @Getter
 @ToString
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Credentials {
 
 
@@ -62,14 +60,11 @@ public class Credentials {
     @Setter
     private Banishment banishment;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL)
     @Setter
     @JsonManagedReference
     List<UserLog> logs = new ArrayList<>();
 
-
-    protected Credentials() {
-    }
 
     public Credentials(String mail, String password, Collection<String> roles) {
 

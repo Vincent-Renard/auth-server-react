@@ -4,7 +4,7 @@ package com.example.auth.server.authentification.facade.persistence.entities.enu
  * @autor Vincent
  * @date 30/07/2020
  */
-public enum LogUserStatus {
+public enum LogStatus {
     REGISTRATION,
     REFRESHING,
     LOGING,
@@ -13,5 +13,8 @@ public enum LogUserStatus {
     UPDATE_PASSWORD,
     UPDATE_MAIL,
     BAN,
-    UNBAN
+    UNBAN,
+    ADMIN_USER_ROLES_UPDATE,
+    ADMIN_BAN_USER,
+    ADMIN_UNBAN_USER
 }

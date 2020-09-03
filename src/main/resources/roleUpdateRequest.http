@@ -100,3 +100,14 @@ Authorization: Bearer {{auth_token_admin}}
 %}
 
 ###
+GET http://localhost:8888/auth/users/me
+Content-Type: application/json
+Authorization: Bearer {{auth_token_admin}}
+
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
+
+###

@@ -1,8 +1,8 @@
 package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
-import com.example.auth.server.authentification.facade.persistence.entities.enums.LogUserStatus;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.RoleUpdateLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.AdminRoleUpdateLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.UserRoleUpdateLog;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,15 +20,33 @@ public class LogsEngine {
     CredentialsRepository users;
 
     public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
-        RoleUpdateLog entity = new RoleUpdateLog();
-        entity.setRoles(newRoles);
-        entity.setStatus(LogUserStatus.ROLES_UPDATE);
-        entity.setUser(user);
-        entity.setAdmin(admin);
+        UserRoleUpdateLog logUser = new UserRoleUpdateLog();
 
-        user.getLogs().add(entity);
-        users.save(user);
+        logUser.setRoles(newRoles);
+        //logUser.setUser(user);
+        logUser.setAdmin(admin);
+        user.getLogs().add(logUser);
 
+        //user=
+        var t = users.save(user);
+        System.err.println(t.toString());
+
+        AdminRoleUpdateLog logAdmin = new AdminRoleUpdateLog();
+        logAdmin.setRoles(newRoles);
+        //logAdmin.setUser(admin);
+        logAdmin.setUserOn(user);
+        admin.getLogs().add(logAdmin);
+
+        var u = users.save(admin);
+        System.err.println(u.toString());
+    }
+
+
+    public void logBadPassword(Long idUser) {
+        //TODO
+    }
+
+    public void logUserLogin(Long idUser) {
 
     }
 }
