@@ -196,7 +196,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             if (credentials.getBanishment() != null)
                 throw new UserBan();
             if (!base.passwordMatches(password, credentials.getPassword())) {
-                logsEngine.logBadPassword(credentials.getIdUser());
+                logsEngine.logBadPassword(credentials);
                 throw new BadPasswordException();
             }
             logsEngine.logUserLogin(credentials);

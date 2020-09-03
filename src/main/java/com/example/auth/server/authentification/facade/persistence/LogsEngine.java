@@ -1,10 +1,7 @@
 package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.AdminRoleUpdateLog;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.RegistrationLog;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLogingLog;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.UserRoleUpdateLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.*;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,8 +36,10 @@ public class LogsEngine {
     }
 
 
-    public void logBadPassword(Long idUser) {
-        //TODO
+    public void logBadPassword(Credentials user) {
+        BadPasswordAttempt bpal = new BadPasswordAttempt();
+        user.getLogs().add(bpal);
+        users.save(user);
     }
 
     public void logUserLogin(Credentials user) {
