@@ -64,7 +64,7 @@ public class LogsEngine {
         users.save(user);
     }
 
-    public void banUser(Credentials user, Credentials admin, BanReason reason) {
+    public void logBan(Credentials user, Credentials admin, BanReason reason) {
         BanUserLog bul = new BanUserLog(admin, reason);
         user.getLogs().add(bul);
         users.save(user);
@@ -82,6 +82,13 @@ public class LogsEngine {
     }
 
     public void logUnban(Credentials user, Credentials admin) {
-        //TODO
+        UnbanUserLog bul = new UnbanUserLog(admin);
+        user.getLogs().add(bul);
+        users.save(user);
+
+
+        AdminUnbanUserLog abul = new AdminUnbanUserLog(user);
+        admin.getLogs().add(abul);
+        users.save(admin);
     }
 }

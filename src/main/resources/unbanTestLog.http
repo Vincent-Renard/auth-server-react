@@ -55,6 +55,15 @@ Authorization: Bearer {{auth_token_admin}}
 %}
 
 ###
+POST http://localhost:8888/auth/admin/users/2/ban
+Content-Type: application/json
+Authorization:Bearer {{auth_token_admin}}
+
+{
+  "reason": "SPAM"
+}
+
+###
 DELETE http://localhost:8888/auth/admin/users/2/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}

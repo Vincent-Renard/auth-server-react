@@ -368,7 +368,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             credentials.setBanishment(be);
             if (!credentials.getMail().equals(mailAdmin)) {
                 base.saveCredentials(credentials);
-                logsEngine.banUser(credentials, admin, reason);
+                logsEngine.logBan(credentials, admin, reason);
 
             }
 

@@ -31,7 +31,7 @@ public class UnbanUserLog extends UserLog {
     Credentials admin;
 
     public UnbanUserLog(Credentials admin) {
-        super(LogStatus.BAN);
+        super(LogStatus.UNBAN);
         this.setAdmin(admin);
     }
 }

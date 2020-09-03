@@ -21,7 +21,7 @@ public class AdminUnbanUserLog extends AdminLog {
 
 
     public AdminUnbanUserLog(Credentials user) {
-        super(user, LogStatus.ADMIN_BAN_USER);
+        super(user, LogStatus.ADMIN_UNBAN_USER);
     }
 }
 
