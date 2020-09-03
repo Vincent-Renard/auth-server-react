@@ -7,7 +7,6 @@ import com.example.auth.server.authentification.facade.persistence.entities.Cred
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLog;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtDecoder;
 import com.example.auth.server.authentification.token.manager.JwtEncoder;
@@ -181,9 +180,10 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
 
         var credentials = new Credentials(mailUser, base.encodePassword(passsword), rolesOfUser);
-        credentials.getLogs().add(new UserLog(LogStatus.REGISTRATION));
-        var user = base.saveCredentials(credentials);
 
+
+        var user = base.saveCredentials(credentials);
+        logsEngine.logRegistration(user);
         Bearers tokens = tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
         return new UserToken(user.getIdUser(), tokens);
     }
@@ -216,7 +216,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new UserBan();
             }
 
-            base.logOnUser(credentials.getIdUser(), LogStatus.REFRESHING);
+            //TODO base.logOnUser(credentials.getIdUser(), LogStatus.REFRESHING);
 
             return tokenEncoder.genBoth(idUser, credentials.getRoles());
 

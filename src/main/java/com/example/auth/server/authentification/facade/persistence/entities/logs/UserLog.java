@@ -4,7 +4,7 @@ import com.example.auth.server.authentification.facade.persistence.entities.enum
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Inheritance
+@ToString
 public class UserLog {
 
 
@@ -29,7 +30,6 @@ public class UserLog {
     Long id;
 
     @Enumerated
-    @Setter
     LogStatus status;
 
     @CreationTimestamp
@@ -40,12 +40,5 @@ public class UserLog {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "UserLog{" +
-                "id=" + id +
-                ", status=" + status +
-                ", date=" + date +
-                '}';
-    }
+
 }

@@ -2,6 +2,7 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.AdminRoleUpdateLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.RegistrationLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.UserRoleUpdateLog;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,11 @@ public class LogsEngine {
     }
 
     public void logUserLogin(Long idUser) {
+        //TODO
+    }
 
+    public void logRegistration(Credentials user) {
+        user.getLogs().add(new RegistrationLog());
+        users.save(user);
     }
 }
