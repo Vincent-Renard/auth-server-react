@@ -43,7 +43,7 @@ public class LogsEngine {
     }
 
     public void logUserLogin(Credentials user) {
-        UserLogingLog ull = new UserLogingLog();
+        SuccessfulLogingLog ull = new SuccessfulLogingLog();
         user.getLogs().add(ull);
         users.save(user);
 
@@ -51,6 +51,11 @@ public class LogsEngine {
 
     public void logRegistration(Credentials user) {
         user.getLogs().add(new RegistrationLog());
+        users.save(user);
+    }
+
+    public void LogRefreshing(Credentials user) {
+        user.getLogs().add(new RefreshingTokensLog());
         users.save(user);
     }
 }

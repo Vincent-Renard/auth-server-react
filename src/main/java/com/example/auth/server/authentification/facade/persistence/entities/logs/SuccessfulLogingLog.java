@@ -14,9 +14,9 @@ import javax.persistence.Entity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class UserLogingLog extends UserLog {
+public class SuccessfulLogingLog extends UserLog {
 
-    public UserLogingLog() {
+    public SuccessfulLogingLog() {
         super(LogStatus.LOGING_SUCCESSFULL);
     }
 }

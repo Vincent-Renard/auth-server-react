@@ -217,7 +217,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             }
 
             //TODO base.logOnUser(credentials.getIdUser(), LogStatus.REFRESHING);
-
+            logsEngine.LogRefreshing(credentials);
             return tokenEncoder.genBoth(idUser, credentials.getRoles());
 
         } else {
