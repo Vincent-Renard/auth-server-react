@@ -199,7 +199,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 logsEngine.logBadPassword(credentials);
                 throw new BadPasswordException();
             }
-            logsEngine.logUserLogin(credentials);
+            logsEngine.logLogin(credentials);
 
             return tokenEncoder.genBoth(credentials.getIdUser(), credentials.getRoles());
         } else throw new NotSuchUserException();
@@ -317,6 +317,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             credentials.setPassword(base.encodePassword(newpasssword));
 
             base.saveCredentials(credentials);
+            logsEngine.logUpdatePassword(credentials);
         } else {
             throw new NotSuchUserException();
         }
