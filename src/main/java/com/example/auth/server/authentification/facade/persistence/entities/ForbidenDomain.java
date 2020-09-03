@@ -28,6 +28,7 @@ public class ForbidenDomain {
 
     @CreationTimestamp
     LocalDateTime dateTimeInserted;
+    //TODO admin credential (who has ban this dom)
 
 
     public ForbidenDomain(String dom) {
