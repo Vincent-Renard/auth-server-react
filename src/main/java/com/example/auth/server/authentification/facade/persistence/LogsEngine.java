@@ -3,6 +3,7 @@ package com.example.auth.server.authentification.facade.persistence;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.AdminRoleUpdateLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.RegistrationLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.UserLogingLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.UserRoleUpdateLog;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +25,17 @@ public class LogsEngine {
         UserRoleUpdateLog logUser = new UserRoleUpdateLog();
 
         logUser.setRoles(newRoles);
-        //logUser.setUser(user);
         logUser.setAdmin(admin);
         user.getLogs().add(logUser);
 
-        //user=
-        var t = users.save(user);
-        System.err.println(t.toString());
+        users.save(user);
 
         AdminRoleUpdateLog logAdmin = new AdminRoleUpdateLog();
         logAdmin.setRoles(newRoles);
-        //logAdmin.setUser(admin);
         logAdmin.setUserOn(user);
         admin.getLogs().add(logAdmin);
 
-        var u = users.save(admin);
-        System.err.println(u.toString());
+        users.save(admin);
     }
 
 
@@ -47,8 +43,11 @@ public class LogsEngine {
         //TODO
     }
 
-    public void logUserLogin(Long idUser) {
-        //TODO
+    public void logUserLogin(Credentials user) {
+        UserLogingLog ull = new UserLogingLog();
+        user.getLogs().add(ull);
+        users.save(user);
+
     }
 
     public void logRegistration(Credentials user) {

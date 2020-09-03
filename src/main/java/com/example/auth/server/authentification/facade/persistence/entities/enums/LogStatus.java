@@ -7,7 +7,7 @@ package com.example.auth.server.authentification.facade.persistence.entities.enu
 public enum LogStatus {
     REGISTRATION,
     REFRESHING,
-    LOGING,
+    LOGING_SUCCESSFULL,
     BAD_PASSWORD,
     ROLES_UPDATE,
     UPDATE_PASSWORD,

@@ -199,7 +199,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 logsEngine.logBadPassword(credentials.getIdUser());
                 throw new BadPasswordException();
             }
-            logsEngine.logUserLogin(credentials.getIdUser());
+            logsEngine.logUserLogin(credentials);
 
             return tokenEncoder.genBoth(credentials.getIdUser(), credentials.getRoles());
         } else throw new NotSuchUserException();
