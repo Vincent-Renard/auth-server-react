@@ -29,31 +29,6 @@ client.test("Request executed successfully", function() {
   client.assert(response.status === 201, "Response status is not 201 - CREATED");
 });
 %}
-
-###
-GET http://localhost:8888/auth/users/me
-Content-Type: application/json
-Authorization: Bearer {{auth_token_toto}}
-
-> {%
-  client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not OK");
-});
-%}
-
-###
-GET http://localhost:8888/auth/admin/users/2
-Content-Type: application/json
-Authorization: Bearer {{auth_token_admin}}
-
-
-
-> {%
-  client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not OK");
-});
-%}
-
 ###
 POST http://localhost:8888/auth/admin/users/2/ban
 Content-Type: application/json
@@ -86,22 +61,8 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 
-
 > {%
   client.test("Request executed successfully", function() {
   client.assert(response.status === 200, "Response status is not OK");
 });
 %}
-
-###
-GET http://localhost:8888/auth/users/me
-Content-Type: application/json
-Authorization: Bearer {{auth_token_admin}}
-
-> {%
-  client.test("Request executed successfully", function() {
-  client.assert(response.status === 200, "Response status is not OK");
-});
-%}
-
-###

@@ -77,7 +77,9 @@ public class LogsEngine {
     }
 
     public void logMailUpdate(String oldMail, Credentials user) {
-        //TODO
+        MailUpdateLog mul = new MailUpdateLog(oldMail);
+        user.getLogs().add(mul);
+        users.save(user);
 
     }
 
