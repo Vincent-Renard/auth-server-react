@@ -1,5 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence.entities.logs.user;
 
+import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,8 +24,8 @@ public class MailUpdateLog extends UserLog {
     String oldMail;
 
 
-    public MailUpdateLog(String oldMail) {
-        super(LogStatus.UPDATE_MAIL);
+    public MailUpdateLog(Credentials user, String oldMail) {
+        super(user, LogStatus.UPDATE_MAIL);
         setOldMail(oldMail);
     }
 }

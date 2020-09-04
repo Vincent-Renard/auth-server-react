@@ -20,14 +20,15 @@ import javax.persistence.*;
 @Inheritance
 @ToString
 public abstract class AdminLog extends UserLog {
+
     @Setter
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     @ToString.Exclude
     Credentials userOn;
 
-    public AdminLog(Credentials userOn, LogStatus status) {
-        super(status);
+    public AdminLog(Credentials userAdmin, Credentials userOn, LogStatus status) {
+        super(userAdmin, status);
         this.setUserOn(userOn);
     }
 

@@ -5,6 +5,7 @@ import com.example.auth.server.authentification.facade.persistence.entities.enum
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
@@ -16,6 +17,7 @@ import java.util.TreeSet;
  * @autor Vincent
  * @date 16/08/2020
  */
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
@@ -31,8 +33,8 @@ public class RoleUpdateLog extends UserLog {
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
 
-    public RoleUpdateLog() {
-        super(LogStatus.ROLES_UPDATE);
+    public RoleUpdateLog(Credentials user) {
+        super(user, LogStatus.ROLES_UPDATE);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.auth.server.authentification.facade.persistence.entities;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @autor Vincent
  * @date 26/06/2020
  */
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @ToString
@@ -25,14 +26,11 @@ public class Banishment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated
     BanReason reason;
 
     @CreationTimestamp
     LocalDateTime date;
-
-    public Banishment() {
-    }
 
     public Banishment(BanReason reason) {
         this.reason = reason;

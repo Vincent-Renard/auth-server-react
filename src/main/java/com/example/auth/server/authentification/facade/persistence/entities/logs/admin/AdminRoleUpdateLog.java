@@ -27,7 +27,7 @@ public class AdminRoleUpdateLog extends AdminLog {
     Collection<String> roles = new TreeSet<>();
 
 
-    public AdminRoleUpdateLog(Credentials userOn) {
-        super(userOn, LogStatus.ADMIN_USER_ROLES_UPDATE);
+    public AdminRoleUpdateLog(Credentials admin, Credentials userOn) {
+        super(admin, userOn, LogStatus.ADMIN_USER_ROLES_UPDATE);
     }
 }

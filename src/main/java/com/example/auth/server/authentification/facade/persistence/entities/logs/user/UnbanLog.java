@@ -30,8 +30,8 @@ public class UnbanLog extends UserLog {
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
 
-    public UnbanLog(Credentials admin) {
-        super(LogStatus.UNBAN);
+    public UnbanLog(Credentials user, Credentials admin) {
+        super(user, LogStatus.UNBAN);
         this.setAdmin(admin);
     }
 }

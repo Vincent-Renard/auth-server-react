@@ -71,5 +71,6 @@ public class Credentials {
         this.mail = mail.toLowerCase();
         this.password = password;
         this.roles = roles;
+
     }
 }

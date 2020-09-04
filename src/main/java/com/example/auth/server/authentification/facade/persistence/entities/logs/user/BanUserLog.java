@@ -31,8 +31,8 @@ public class BanUserLog extends UserLog {
     Credentials admin;
 
 
-    public BanUserLog(Credentials admin, BanReason reason) {
-        super(LogStatus.BAN);
+    public BanUserLog(Credentials user, Credentials admin, BanReason reason) {
+        super(user, LogStatus.BAN);
         setAdmin(admin);
         setReason(reason);
 

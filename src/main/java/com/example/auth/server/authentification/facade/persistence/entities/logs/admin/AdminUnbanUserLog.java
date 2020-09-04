@@ -20,8 +20,8 @@ import javax.persistence.Entity;
 public class AdminUnbanUserLog extends AdminLog {
 
 
-    public AdminUnbanUserLog(Credentials user) {
-        super(user, LogStatus.ADMIN_UNBAN_USER);
+    public AdminUnbanUserLog(Credentials admin, Credentials user) {
+        super(admin, user, LogStatus.ADMIN_UNBAN_USER);
     }
 }
 
