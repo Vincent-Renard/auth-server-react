@@ -2,8 +2,10 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -28,22 +30,19 @@ public abstract class UserLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     LogStatus status;
 
     @CreationTimestamp
     LocalDateTime date;
 
 
-    @Setter
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials user;
+
 
     public UserLog(Credentials user, LogStatus status) {
 
         this.status = status;
-        this.user = user;
+        //this.user = user;
     }
 
 

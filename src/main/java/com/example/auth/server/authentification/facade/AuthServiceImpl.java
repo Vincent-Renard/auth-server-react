@@ -108,40 +108,54 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public AuthServerStateAdmin getServerStateAdmin() {
-        AuthServerStateAdmin p = new AuthServerStateAdmin();
+    public AuthServerStateAdmin getServerStateAdmin(long idAdmin) throws NotSuchUserException {
 
-        p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
-        p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
-        p.setStartDateServer(startDate);
+        Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
+        if (optAdmin.isPresent()) {
+            AuthServerStateAdmin p = new AuthServerStateAdmin();
 
-        p.setForbidenDomains(base.findAllDomains().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet()));
-        p.setKey(tokenEncoder.getPublicKey().getEncoded());
-        Collection<Credentials> credentials = base.findAllCredentials();
-        p.setNbUsersRegistered(credentials.size());
-        p.setNbUsersAdminsRegistered(credentials.stream().filter(c -> c.getRoles().contains("ADMIN")).count());
+            p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
+            p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
+            p.setStartDateServer(startDate);
 
-        return p;
+            p.setForbidenDomains(base.findAllDomains().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet()));
+            p.setKey(tokenEncoder.getPublicKey().getEncoded());
+            Collection<Credentials> credentials = base.findAllCredentials();
+            p.setNbUsersRegistered(credentials.size());
+            p.setNbUsersAdminsRegistered(credentials.stream().filter(c -> c.getRoles().contains("ADMIN")).count());
+            var admin = optAdmin.get();
+            logsEngine.logAsksServerStateAdmin(admin);
+            return p;
+        } else throw new NotSuchUserException();
+
     }
 
 
     @Override
-    public void addForbidenDomain(String domain) {
-        domain = domain.toLowerCase();
-        base.saveDomain(new ForbidenDomain(domain));
-    }
-
-    @Override
-    public void addForbidenDomains(Collection<String> domains) {
-
-        base.saveAllDomains(domains);
-
+    public void addForbidenDomain(long idAdmin, String domain) {
+        var optAdmin = base.findCredentialsById(idAdmin);
+        if (optAdmin.isPresent()) {
+            var admin = optAdmin.get();
+            domain = domain.toLowerCase();
+            base.saveDomain(new ForbidenDomain(admin, domain));
+            logsEngine.logBanDomain(admin, domain);
+        }
 
     }
 
     @Override
-    public void delForbidenDomain(String domain) {
+    public void addForbidenDomains(long idAdmin, Collection<String> domains) {
+        Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
+        optAdmin.ifPresent(credentials -> base.saveAllDomains(credentials, domains));
+
+
+    }
+
+    @Override
+    public void delForbidenDomain(long idAdmin, String domain) {
         base.deleteDomainById(domain);
+
+        logsEngine.logUnbanDomain(idAdmin, domain);
 
     }
 
@@ -154,7 +168,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public Collection<Credentials> getAllUsersWithDomainsNotAllowed() {
 
-        return base.findCredentialsWithFordindenDomainMail();
+        return base.findCredentialsWithForbiddenDomainMail();
     }
 
 
@@ -286,6 +300,17 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
+    public Credentials showUser(long idAdmin, long idUser) throws NotSuchUserException {
+        Optional<Credentials> optCredentials = base.findCredentialsById(idAdmin);
+        if (optCredentials.isPresent()) {
+            return showUser(idUser);
+        } else {
+            throw new NotSuchUserException();
+        }
+
+    }
+
+    @Override
     public Collection<Credentials> getAllUsersWithDomain(String domain) {
         domain = domain.toLowerCase();
         return base.findCredentialsByDomainMail(domain);
@@ -364,7 +389,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             if (credentials.getBanishment() != null) throw new UserAlreadyBanException();
 
-            Banishment be = new Banishment(reason);
+            Banishment be = new Banishment(admin, reason);
             credentials.setBanishment(be);
             if (!credentials.getMail().equals(mailAdmin)) {
                 base.saveCredentials(credentials);

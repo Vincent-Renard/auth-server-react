@@ -23,13 +23,13 @@ public interface AuthService {
 
     AuthServerStatePublic getServerStatePublic();
 
-    AuthServerStateAdmin getServerStateAdmin();
+    AuthServerStateAdmin getServerStateAdmin(long idAdmin) throws NotSuchUserException;
 
-    void addForbidenDomain(String domain);
+    void addForbidenDomain(long idAdmin, String domain);
 
-    void addForbidenDomains(Collection<String> domains);
+    void addForbidenDomains(long idAdmin, Collection<String> domains);
 
-    void delForbidenDomain(String domain);
+    void delForbidenDomain(long idAdmin, String domain);
 
     Collection<ForbidenDomain> getAllDomainNotAllowed();
 
@@ -50,6 +50,8 @@ public interface AuthService {
     Credentials updateRoles(long iduser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException, NotSuchAdminException;
 
     Credentials showUser(long iduser) throws NotSuchUserException;
+
+    Credentials showUser(long idAdmin, long iduser) throws NotSuchUserException;
 
     void updatePassword(long iduser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan;
 

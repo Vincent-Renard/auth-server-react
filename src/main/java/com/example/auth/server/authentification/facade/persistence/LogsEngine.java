@@ -96,4 +96,16 @@ public class LogsEngine {
         admin.getLogs().add(abul);
         users.save(admin);
     }
+
+    public void logUnbanDomain(long idAdmin, String domain) {
+        //TODO
+    }
+
+    public void logBanDomain(Credentials admin, String domain) {
+        //TODO
+    }
+
+    public void logAsksServerStateAdmin(Credentials admin) {
+        //TODO
+    }
 }

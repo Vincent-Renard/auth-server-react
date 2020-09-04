@@ -1,21 +1,18 @@
 package com.example.auth.server.authentification.facade.persistence.entities;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
  * @autor Vincent
  * @date 25/06/2020
  */
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
@@ -28,13 +25,15 @@ public class ForbidenDomain {
 
     @CreationTimestamp
     LocalDateTime dateTimeInserted;
-    //TODO admin credential (who has ban this dom)
+    @Setter
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    Credentials admin;
 
-
-    public ForbidenDomain(String dom) {
+    public ForbidenDomain(Credentials admin, String dom) {
+        //this.admin=admin;
         this.domain = dom;
     }
 
-    public ForbidenDomain() {
-    }
+
 }

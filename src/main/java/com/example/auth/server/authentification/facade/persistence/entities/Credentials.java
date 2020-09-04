@@ -56,7 +56,7 @@ public class Credentials {
     LocalDateTime updateDate;
 
 
-    @OneToOne(cascade = CascadeType.ALL, optional = true)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, optional = true)
     @Setter
     private Banishment banishment;
 

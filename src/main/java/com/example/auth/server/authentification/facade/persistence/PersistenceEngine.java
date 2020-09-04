@@ -33,6 +33,8 @@ public class PersistenceEngine {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    LogsEngine logsEngine;
 
     public String encodePassword(String clearPassword) {
         return passwordEncoder.encode(clearPassword);
@@ -61,7 +63,7 @@ public class PersistenceEngine {
         return forbidenDomains.save(forbidenDomain);
     }
 
-    public void saveAllDomains(Collection<String> domains) {
+    public void saveAllDomains(Credentials admin, Collection<String> domains) {
 
         Set<String> deja = forbidenDomains.findAll()
                 .stream()
@@ -72,9 +74,9 @@ public class PersistenceEngine {
                 .stream()
                 .map(String::toLowerCase)
                 .filter(d -> !deja.contains(d))
-                .map(ForbidenDomain::new)
+                .map(d -> new ForbidenDomain(admin, d))
                 .collect(Collectors.toSet());
-
+        ds.forEach(forbidenDomain -> logsEngine.logBanDomain(forbidenDomain.getAdmin(), forbidenDomain.getDomain()));
         forbidenDomains.saveAll(ds);
     }
 
@@ -118,7 +120,7 @@ public class PersistenceEngine {
                 .collect(Collectors.toSet());
     }
 
-    public Collection<Credentials> findCredentialsWithFordindenDomainMail() {
+    public Collection<Credentials> findCredentialsWithForbiddenDomainMail() {
         Set<String> fds = forbidenDomains.findAll().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet());
         return userCredentials.findAll()
                 .stream()

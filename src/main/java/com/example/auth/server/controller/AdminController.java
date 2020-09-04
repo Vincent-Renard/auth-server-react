@@ -32,40 +32,40 @@ public class AdminController {
 
 
     @PostMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> addDomain(@RequestBody BanDomainRequest domain) {
-        base.addForbidenDomain(domain.getDomain());
+    public ResponseEntity<Void> addDomain(Principal admin, @RequestBody BanDomainRequest domain) {
+        base.addForbidenDomain(Long.parseLong(admin.getName()), domain.getDomain());
         return ResponseEntity.ok().build();
 
     }
 
     @PostMapping(value = "/domains/list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> addDomains(@RequestBody BanDomainsRequest request) {
+    public ResponseEntity<Void> addDomains(Principal admin, @RequestBody BanDomainsRequest request) {
 
-        base.addForbidenDomains(request.getDomains());
+        base.addForbidenDomains(Long.parseLong(admin.getName()), request.getDomains());
         return ResponseEntity.ok().build();
 
     }
 
 
     @DeleteMapping(value = "/domains/{dom}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> delDomain(@PathVariable(name = "dom") String domain) {
-        base.delForbidenDomain(domain);
+    public ResponseEntity<Void> delDomain(Principal admin, @PathVariable(name = "dom") String domain) {
+        base.delForbidenDomain(Long.parseLong(admin.getName()), domain);
         return ResponseEntity.noContent().build();
 
     }
 
     @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<AuthServerStateAdmin> stateAdmin() {
-        return ResponseEntity.ok(base.getServerStateAdmin());
+    public ResponseEntity<AuthServerStateAdmin> stateAdmin(Principal admin) throws NotSuchUserException {
+        return ResponseEntity.ok(base.getServerStateAdmin(Long.parseLong(admin.getName())));
     }
 
     @GetMapping(value = "/users/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> showUser(@PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
-        return ResponseEntity.ok(User.from(base.showUser(idUser)));
+    public ResponseEntity<User> showUser(Principal admin, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
+        return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(admin.getName()), idUser)));
     }
 
     @GetMapping(value = "/users/", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Collection<User>> searchUsers(@RequestParam(name = "maildomain", required = false) String domain
+    public ResponseEntity<Collection<User>> searchUsers(Principal admin, @RequestParam(name = "maildomain", required = false) String domain
             , @RequestParam(required = false, name = "role") String role) {
 
 
