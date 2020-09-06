@@ -56,11 +56,11 @@ public class Credentials {
     LocalDateTime updateDate;
 
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, optional = true)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, optional = true, mappedBy = "user")
     @Setter
     private Banishment banishment;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)//TODO mappedBy
     @Setter
     @JsonManagedReference
     List<UserLog> logs = new ArrayList<>();
@@ -73,4 +73,6 @@ public class Credentials {
         this.roles = roles;
 
     }
+
+
 }

@@ -26,7 +26,7 @@ public class Banishment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     BanReason reason;
 
     @CreationTimestamp
@@ -38,10 +38,14 @@ public class Banishment {
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
 
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    @JsonIdentityReference(alwaysAsId = true)
+    Credentials user;
 
     public Banishment(Credentials admin, BanReason reason) {
         this.reason = reason;
-        //this.admin=admin;
+        this.admin = admin;
     }
 
     @Override
@@ -49,7 +53,9 @@ public class Banishment {
         return "Banishment{" +
                 "id=" + id +
                 ", reason=" + reason +
+                ", admin.id= " + ((admin != null) ? admin.getIdUser() : "null") +
                 ", date=" + date +
+
                 '}';
     }
 }

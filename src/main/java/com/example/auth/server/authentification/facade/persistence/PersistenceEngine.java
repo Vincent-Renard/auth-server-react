@@ -2,6 +2,7 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
+import com.example.auth.server.authentification.facade.persistence.repositories.BanishmentRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
 import lombok.AccessLevel;
@@ -25,6 +26,9 @@ public class PersistenceEngine {
 
     @Autowired
     CredentialsRepository userCredentials;
+
+    @Autowired
+    BanishmentRepository bans;
 
     @Autowired
     ForbidenDomainRepository forbidenDomains;
@@ -105,11 +109,21 @@ public class PersistenceEngine {
     }
 
     public void deleteAllCredentials() {
-        userCredentials.deleteAll();
+        userCredentials.findAll().forEach(c -> deleteCredentialsById(c.getIdUser()));
     }
 
     public void deleteCredentialsById(long iduser) {
-        userCredentials.deleteById(iduser);
+        var opt = userCredentials.findById(iduser);
+        if (opt.isPresent()) {
+            var cred = opt.get();
+            if (cred.getRoles().contains("ADMIN")) {
+                var listBansByAdmin = bans.findBanishmentByAdmin_IdUser(iduser);
+                listBansByAdmin.forEach(banishment -> banishment.setAdmin(null));
+                bans.saveAll(listBansByAdmin);
+            }
+            userCredentials.deleteById(iduser);
+        }
+
     }
 
 

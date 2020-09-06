@@ -392,11 +392,11 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             Banishment be = new Banishment(admin, reason);
             credentials.setBanishment(be);
             if (!credentials.getMail().equals(mailAdmin)) {
-                base.saveCredentials(credentials);
+                credentials = base.saveCredentials(credentials);
                 logsEngine.logBan(credentials, admin, reason);
 
             }
-
+            System.err.println("BAN_USER \n" + credentials.toString());
             return credentials;
         } else {
             throw new NotSuchUserException();
