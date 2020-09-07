@@ -2,10 +2,8 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -36,13 +34,16 @@ public abstract class UserLog {
     @CreationTimestamp
     LocalDateTime date;
 
-
-
+    @Setter
+    @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    @ToString.Exclude
+    Credentials user;
 
     public UserLog(Credentials user, LogStatus status) {
 
         this.status = status;
-        //this.user = user;
+        this.user = user;
     }
 
 

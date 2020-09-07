@@ -396,7 +396,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 logsEngine.logBan(credentials, admin, reason);
 
             }
-            System.err.println("BAN_USER \n" + credentials.toString());
             return credentials;
         } else {
             throw new NotSuchUserException();

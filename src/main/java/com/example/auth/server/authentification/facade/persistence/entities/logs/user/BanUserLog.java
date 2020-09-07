@@ -3,14 +3,14 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 /**
  * @autor Vincent
@@ -25,17 +25,16 @@ public class BanUserLog extends UserLog {
     @Setter
     BanReason reason;
 
-    /*
-    @Setter
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+
+    //@Setter
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
-     */
 
 
     public BanUserLog(Credentials user, Credentials admin, BanReason reason) {
         super(user, LogStatus.BAN);
-        //setAdmin(admin);
+        this.admin = admin;
         setReason(reason);
 
     }

@@ -70,7 +70,7 @@ public class LogsEngine {
     public void logBan(Credentials user, Credentials admin, BanReason reason) {
         BanUserLog bul = new BanUserLog(user, admin, reason);
         user.getLogs().add(bul);
-        users.save(user);
+        user = users.save(user);
 
 
         AdminBanUserLog abul = new AdminBanUserLog(admin, user, reason);

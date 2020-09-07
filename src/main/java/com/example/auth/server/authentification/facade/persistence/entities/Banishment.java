@@ -52,6 +52,7 @@ public class Banishment {
     public String toString() {
         return "Banishment{" +
                 "id=" + id +
+                ", user.id= " + user.getIdUser() +
                 ", reason=" + reason +
                 ", admin.id= " + ((admin != null) ? admin.getIdUser() : "null") +
                 ", date=" + date +

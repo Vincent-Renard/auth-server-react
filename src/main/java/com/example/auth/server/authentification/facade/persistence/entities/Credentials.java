@@ -56,11 +56,11 @@ public class Credentials {
     LocalDateTime updateDate;
 
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, optional = true, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
     @Setter
     private Banishment banishment;
 
-    @OneToMany(cascade = CascadeType.ALL)//TODO mappedBy
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @Setter
     @JsonManagedReference
     List<UserLog> logs = new ArrayList<>();
@@ -74,5 +74,24 @@ public class Credentials {
 
     }
 
+    public void addLog(UserLog log) {
+        log.setUser(this);
+        this.getLogs().add(log);
+    }
+
+    /*@PreRemove TODO
+    private void preRemove() {
+        if (this.getRoles().contains("ADMIN")){
+
+
+        for (UserLog s : logs) {
+            //s.setTeacher(null);
+            if (s instanceof AdminLog){
+
+            }
+
+        }
+        }
+    }*/
 
 }
