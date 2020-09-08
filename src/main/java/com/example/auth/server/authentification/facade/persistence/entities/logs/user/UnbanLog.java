@@ -2,12 +2,16 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 /**
  * @autor Vincent
@@ -19,15 +23,15 @@ import javax.persistence.Entity;
 @Entity
 public class UnbanLog extends UserLog {
 
-/*
+
     @Setter
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
-*/
+
     public UnbanLog(Credentials user, Credentials admin) {
         super(user, LogStatus.UNBAN);
-        //this.setAdmin(admin);
+        this.setAdmin(admin);
     }
 }
 

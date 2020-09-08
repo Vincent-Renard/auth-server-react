@@ -3,14 +3,11 @@ package com.example.auth.server.authentification.facade.persistence.entities.log
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.LogStatus;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.user.UserLog;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
+import javax.persistence.*;
 
 /**
  * @autor Vincent
@@ -24,14 +21,12 @@ import javax.persistence.Inheritance;
 @ToString
 public abstract class AdminLog extends UserLog {
 
-/*    @Setter
+    @Setter
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
-   // @OnDelete(action = OnDeleteAction.CASCADE)
-
     @ToString.Exclude
     Credentials userOn;
-    */
+
 
     public AdminLog(Credentials userAdmin, Credentials userOn, LogStatus status) {
         super(userAdmin, status);

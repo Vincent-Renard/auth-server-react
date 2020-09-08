@@ -206,14 +206,18 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
         Optional<Credentials> optCredentials = base.findCredentialsByMail(mail);
         if (optCredentials.isPresent()) {
             var credentials = optCredentials.get();
-            if (credentials.getBanishment() != null)
-                throw new UserBan();
+
+
             if (!base.passwordMatches(password, credentials.getPassword())) {
                 logsEngine.logBadPassword(credentials);
                 throw new BadPasswordException();
             }
-            logsEngine.logLogin(credentials);
+            System.out.println("LOGIN " + credentials.toString());
+            if (credentials.getBanishment() != null) {
+                throw new UserBan();
+            }
 
+            logsEngine.logLogin(credentials);
             return tokenEncoder.genBoth(credentials.getIdUser(), credentials.getRoles());
         } else throw new NotSuchUserException();
 
@@ -229,7 +233,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new UserBan();
             }
 
-            //TODO base.logOnUser(credentials.getIdUser(), LogStatus.REFRESHING);
             logsEngine.LogRefreshing(credentials);
             return tokenEncoder.genBoth(idUser, credentials.getRoles());
 
@@ -337,7 +340,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new UserBan();
             if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
 
-            //base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_PASSWORD);
             credentials.setPassword(base.encodePassword(newpasssword));
 
             base.saveCredentials(credentials);
@@ -372,7 +374,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             String oldMail = credentials.getMail();
             credentials.setMail(newmail);
             base.saveCredentials(credentials);
-            // base.logOnUser(credentials.getIdUser(), LogStatus.UPDATE_MAIL);
             logsEngine.logMailUpdate(oldMail, credentials);
         } else {
             throw new NotSuchUserException();
@@ -392,11 +393,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 if (user.getBanishment() != null) throw new UserAlreadyBanException();
                 var admin = optAdmin.get();
                 Banishment be = new Banishment(admin, reason);
+                be.setUser(user);
                 user.setBanishment(be);
 
                 user = base.saveCredentials(user);
                 admin = base.saveCredentials(admin);
-                logsEngine.logBan(user, admin, reason);//TODO --
+                logsEngine.logBan(user, admin, reason);
+                System.out.println("BAN " + user.toString());// TODO --
 
 
             }
@@ -414,10 +417,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             var user = optUser.get();
             var admin = optAdmin.get();
-            user.unsetBanishment();
-            user = base.saveCredentials(user);
-            logsEngine.logUnban(user, admin);
-
+            System.out.println("UNBAN 1" + user.toString());// TODO --
+            base.deleteBanishment(user.getBanishment());
+            user.setBanishment(null);
+            base.saveCredentials(user);
+            user = base.findCredentialsById(user.getIdUser()).get();
+            //logsEngine.logUnban(user, admin);
+            System.out.println("UNBAN 2" + user.toString());// TODO --
         } else {
             throw new NotSuchUserException();
         }

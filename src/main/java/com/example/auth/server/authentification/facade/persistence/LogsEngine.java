@@ -9,6 +9,7 @@ import com.example.auth.server.authentification.facade.persistence.entities.logs
 import com.example.auth.server.authentification.facade.persistence.repositories.BanLogRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.RoleUpdateLogRepository;
+import com.example.auth.server.authentification.facade.persistence.repositories.UnBanLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,9 @@ public class LogsEngine {
 
     @Autowired
     BanLogRepository banLogs;
+
+    @Autowired
+    UnBanLogRepository unbanLogs;
 
     public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
         RoleUpdateLog logUser = new RoleUpdateLog(user);
@@ -76,7 +80,7 @@ public class LogsEngine {
     }
 
     public void logBan(Credentials user, Credentials admin, BanReason reason) {
-        BanUserLog bul = new BanUserLog(user, admin, reason);
+        BanLog bul = new BanLog(user, admin, reason);
         user.getLogs().add(bul);
         user = users.save(user);// TODO DEBUG HERE pls
 
@@ -123,9 +127,12 @@ public class LogsEngine {
         roleUpdateLogRepository.saveAll(roleUpByAdmin);
 
         var banLogsByAdmin = banLogs.findAllByAdmin_IdUser(iduser);
-        banLogsByAdmin.forEach(banUserLog -> banUserLog.setAdmin(null));
+        banLogsByAdmin.forEach(banLog -> banLog.setAdmin(null));
         banLogs.saveAll(banLogsByAdmin);
 
+        var unbanLogsByAdmin = unbanLogs.findAllByAdmin_IdUser(iduser);
+        unbanLogsByAdmin.forEach(unbanLog -> unbanLog.setAdmin(null));
+        unbanLogs.saveAll(unbanLogsByAdmin);
 
     }
 }

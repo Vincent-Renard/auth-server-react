@@ -119,7 +119,7 @@ public class AdminController {
     }
 
     @DeleteMapping(value = "/users/{iduser}/ban")
-    public ResponseEntity<Void> unBan(Principal principal, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
+    public ResponseEntity<Void> unBanUser(Principal principal, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
         base.unBanUser(idUser, Long.parseLong(principal.getName()));
         return ResponseEntity.noContent().build();
     }

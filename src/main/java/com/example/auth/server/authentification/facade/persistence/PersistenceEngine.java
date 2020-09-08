@@ -1,5 +1,6 @@
 package com.example.auth.server.authentification.facade.persistence;
 
+import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
 import com.example.auth.server.authentification.facade.persistence.repositories.BanishmentRepository;
@@ -152,4 +153,14 @@ public class PersistenceEngine {
     }
 
 
+    public void deleteBanishment(Banishment banishment) {
+        var u = banishment.getUser();
+        //bans.deleteById(banishment.getId());
+        System.out.println(u.toString());
+        u.setBanishment(null);
+        System.out.println(u.toString());
+        u = userCredentials.save(u);
+        System.out.println(u.toString());
+
+    }
 }

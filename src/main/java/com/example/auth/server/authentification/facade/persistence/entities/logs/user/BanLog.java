@@ -23,7 +23,7 @@ import javax.persistence.ManyToOne;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class BanUserLog extends UserLog {
+public class BanLog extends UserLog {
     @Enumerated
     @Setter
     BanReason reason;
@@ -35,7 +35,7 @@ public class BanUserLog extends UserLog {
     Credentials admin;
 
 
-    public BanUserLog(Credentials user, Credentials admin, BanReason reason) {
+    public BanLog(Credentials user, Credentials admin, BanReason reason) {
         super(user, LogStatus.BAN);
         this.admin = admin;
         setReason(reason);

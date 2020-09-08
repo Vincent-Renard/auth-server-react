@@ -4,7 +4,10 @@ import com.example.auth.server.authentification.facade.persistence.entities.logs
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,7 +27,7 @@ import java.util.TreeSet;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idUser")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-@ToString
+//@ToString TODO --//
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Credentials {
@@ -55,7 +58,7 @@ public class Credentials {
     @UpdateTimestamp
     LocalDateTime updateDate;
 
-
+    @Setter
     @OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
     private Banishment banishment;
 
@@ -78,15 +81,22 @@ public class Credentials {
         this.getLogs().add(log);
     }
 
-    public void setBanishment(Banishment banishment) {
-        banishment.setUser(this);
-        this.banishment = banishment;
+
+    public String toString() {
+        return "Credentials{" +
+                "idUser=" + idUser +
+                ", mail='" + mail + '\'' +
+                //", inscriptionDate=" + inscriptionDate +
+                //", password='" + password + '\'' +
+                //", roles=" + roles +
+                //", updateDate=" + updateDate +
+                ", banishment=" + ((banishment == null) ? "null" : banishment.toString()) +
+                //", logs=" + logs +
+                '}';
     }
 
-    public void unsetBanishment() {
-        this.banishment = null;
-    }
-    /*@PreRemove TODO
+
+/*@PreRemove TODO
     private void preRemove() {
         if (this.getRoles().contains("ADMIN")){
 

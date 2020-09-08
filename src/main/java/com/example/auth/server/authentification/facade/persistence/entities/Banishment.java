@@ -59,4 +59,9 @@ public class Banishment {
 
                 '}';
     }
+
+    @PreRemove
+    private void del() {
+        this.setUser(null);
+    }
 }

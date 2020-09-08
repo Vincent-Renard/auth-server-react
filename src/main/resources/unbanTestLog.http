@@ -42,12 +42,43 @@ Authorization:Bearer {{auth_token_admin}}
   client.assert(response.status === 200, "Response status is not OK");
 });
 %}
+
+###
+POST http://localhost:8888/auth/tokens/login
+Content-Type: application/json
+
+{
+  "mail": "toto@mail.com",
+  "password": "toto"
+}
+> {%
+
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 401, "Response status is not 401");
+});
+%}
+
 ###
 DELETE http://localhost:8888/auth/admin/users/2/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
+###
+POST http://localhost:8888/auth/tokens/login
+Content-Type: application/json
 
+{
+  "mail": "toto@mail.com",
+  "password": "toto"
+}
+> {%
+     client.global.set("auth_token_toto", response.body.accessToken);
+     client.global.set("refr_token_toto", response.body.refreshToken);
+
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200 OK");
+});
+%}
 ###
 
 GET http://localhost:8888/auth/users/me
