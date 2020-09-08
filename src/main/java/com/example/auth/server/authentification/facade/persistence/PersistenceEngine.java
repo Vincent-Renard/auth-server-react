@@ -5,7 +5,6 @@ import com.example.auth.server.authentification.facade.persistence.entities.Forb
 import com.example.auth.server.authentification.facade.persistence.repositories.BanishmentRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
-import com.example.auth.server.authentification.facade.persistence.repositories.RoleUpdateLogRepository;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,6 @@ public class PersistenceEngine {
     @Autowired
     ForbidenDomainRepository forbidenDomains;
 
-    @Autowired
-    RoleUpdateLogRepository roleUpdateLogRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -70,7 +67,7 @@ public class PersistenceEngine {
         return forbidenDomains.save(forbidenDomain);
     }
 
-    public void saveAllDomains(Credentials admin, Collection<String> domains) {
+    public void saveDomains(Credentials admin, Collection<String> domains) {
 
         Set<String> deja = forbidenDomains.findAll()
                 .stream()
@@ -123,10 +120,8 @@ public class PersistenceEngine {
                 var listBansByAdmin = bans.findBanishmentByAdmin_IdUser(iduser);
                 listBansByAdmin.forEach(banishment -> banishment.setAdmin(null));
                 bans.saveAll(listBansByAdmin);
+                logsEngine.delogAdmin(iduser);
 
-                var roleUpByAdmin = roleUpdateLogRepository.findAllByAdmin_IdUser(iduser);
-                roleUpByAdmin.forEach(e -> e.setAdmin(null));
-                roleUpdateLogRepository.saveAll(roleUpByAdmin);
 
             }
             userCredentials.deleteById(iduser);

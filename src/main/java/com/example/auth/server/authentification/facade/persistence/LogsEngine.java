@@ -6,7 +6,9 @@ import com.example.auth.server.authentification.facade.persistence.entities.logs
 import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminRoleUpdateLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminUnbanUserLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.user.*;
+import com.example.auth.server.authentification.facade.persistence.repositories.BanLogRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
+import com.example.auth.server.authentification.facade.persistence.repositories.RoleUpdateLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,12 @@ public class LogsEngine {
 
     @Autowired
     CredentialsRepository users;
+
+    @Autowired
+    RoleUpdateLogRepository roleUpdateLogRepository;
+
+    @Autowired
+    BanLogRepository banLogs;
 
     public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
         RoleUpdateLog logUser = new RoleUpdateLog(user);
@@ -70,11 +78,11 @@ public class LogsEngine {
     public void logBan(Credentials user, Credentials admin, BanReason reason) {
         BanUserLog bul = new BanUserLog(user, admin, reason);
         user.getLogs().add(bul);
-        user = users.save(user);
+        user = users.save(user);// TODO DEBUG HERE pls
 
 
         AdminBanUserLog abul = new AdminBanUserLog(admin, user, reason);
-        admin.getLogs().add(abul);
+        admin.addLog(abul);
         users.save(admin);
 
     }
@@ -107,5 +115,17 @@ public class LogsEngine {
 
     public void logAsksServerStateAdmin(Credentials admin) {
         //TODO
+    }
+
+    public void delogAdmin(long iduser) {
+        var roleUpByAdmin = roleUpdateLogRepository.findAllByAdmin_IdUser(iduser);
+        roleUpByAdmin.forEach(e -> e.setAdmin(null));
+        roleUpdateLogRepository.saveAll(roleUpByAdmin);
+
+        var banLogsByAdmin = banLogs.findAllByAdmin_IdUser(iduser);
+        banLogsByAdmin.forEach(banUserLog -> banUserLog.setAdmin(null));
+        banLogs.saveAll(banLogsByAdmin);
+
+
     }
 }

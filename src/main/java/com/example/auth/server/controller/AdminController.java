@@ -110,7 +110,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/users/{iduser}/ban", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> sign(Principal principal, @PathVariable(name = "iduser") long idUser, @RequestBody BanUserRequest bur) throws NotSuchUserException, UserAlreadyBanException {
+    public ResponseEntity<User> banUser(Principal principal, @PathVariable(name = "iduser") long idUser, @RequestBody BanUserRequest bur) throws NotSuchUserException, UserAlreadyBanException {
         return ResponseEntity.ok(
                 User.from(base.banUser(idUser,
                         bur.getReason(),

@@ -146,7 +146,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     @Override
     public void addForbidenDomains(long idAdmin, Collection<String> domains) {
         Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
-        optAdmin.ifPresent(credentials -> base.saveAllDomains(credentials, domains));
+        optAdmin.ifPresent(credentials -> base.saveDomains(credentials, domains));
 
 
     }
@@ -381,22 +381,26 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
     @Override
     public Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
-        Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+        Optional<Credentials> optUser = base.findCredentialsById(idUser);
         Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
-        if (optCredentials.isPresent() && optAdmin.isPresent()) {
-            var admin = optAdmin.get();
-            var credentials = optCredentials.get();
+        if (optUser.isPresent() && optAdmin.isPresent()) {
+            var user = optUser.get();
 
-            if (credentials.getBanishment() != null) throw new UserAlreadyBanException();
+            if (!user.getMail().equals(mailAdmin)) {
 
-            Banishment be = new Banishment(admin, reason);
-            credentials.setBanishment(be);
-            if (!credentials.getMail().equals(mailAdmin)) {
-                credentials = base.saveCredentials(credentials);
-                logsEngine.logBan(credentials, admin, reason);
+
+                if (user.getBanishment() != null) throw new UserAlreadyBanException();
+                var admin = optAdmin.get();
+                Banishment be = new Banishment(admin, reason);
+                user.setBanishment(be);
+
+                user = base.saveCredentials(user);
+                admin = base.saveCredentials(admin);
+                logsEngine.logBan(user, admin, reason);//TODO --
+
 
             }
-            return credentials;
+            return user;
         } else {
             throw new NotSuchUserException();
         }
@@ -410,8 +414,8 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             var user = optUser.get();
             var admin = optAdmin.get();
-            user.setBanishment(null);
-            base.saveCredentials(user);
+            user.unsetBanishment();
+            user = base.saveCredentials(user);
             logsEngine.logUnban(user, admin);
 
         } else {

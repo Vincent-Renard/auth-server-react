@@ -10,7 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 /**
  * @autor Vincent
@@ -26,8 +29,8 @@ public class BanUserLog extends UserLog {
     BanReason reason;
 
 
-    //@Setter
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
 
@@ -36,7 +39,6 @@ public class BanUserLog extends UserLog {
         super(user, LogStatus.BAN);
         this.admin = admin;
         setReason(reason);
-
     }
 }
 

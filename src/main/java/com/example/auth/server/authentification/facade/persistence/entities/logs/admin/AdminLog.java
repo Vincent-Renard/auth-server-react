@@ -23,11 +23,11 @@ import javax.persistence.Inheritance;
 @Inheritance
 @ToString
 public abstract class AdminLog extends UserLog {
-/*
-    @Setter
-    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
+
+/*    @Setter
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+   // @OnDelete(action = OnDeleteAction.CASCADE)
 
     @ToString.Exclude
     Credentials userOn;

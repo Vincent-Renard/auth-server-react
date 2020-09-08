@@ -57,7 +57,6 @@ public class Credentials {
 
 
     @OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
-    @Setter
     private Banishment banishment;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
@@ -79,6 +78,14 @@ public class Credentials {
         this.getLogs().add(log);
     }
 
+    public void setBanishment(Banishment banishment) {
+        banishment.setUser(this);
+        this.banishment = banishment;
+    }
+
+    public void unsetBanishment() {
+        this.banishment = null;
+    }
     /*@PreRemove TODO
     private void preRemove() {
         if (this.getRoles().contains("ADMIN")){

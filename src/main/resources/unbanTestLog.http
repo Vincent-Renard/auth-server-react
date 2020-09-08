@@ -37,11 +37,16 @@ Authorization:Bearer {{auth_token_admin}}
 {
   "reason": "SPAM"
 }
-
+> {%
+  client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not OK");
+});
+%}
 ###
 DELETE http://localhost:8888/auth/admin/users/2/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
+
 
 ###
 
