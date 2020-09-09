@@ -419,7 +419,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             user.setBanishment(null);
             base.saveCredentials(user);
             user = base.findCredentialsById(user.getIdUser()).get();
-            //logsEngine.logUnban(user, admin);// TODO --
+            logsEngine.logUnban(user, admin);
         } else {
             throw new NotSuchUserException();
         }

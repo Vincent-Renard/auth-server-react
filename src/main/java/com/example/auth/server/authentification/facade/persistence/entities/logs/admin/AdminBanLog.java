@@ -20,13 +20,13 @@ import javax.persistence.Enumerated;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class AdminBanUserLog extends AdminLog {
+public class AdminBanLog extends AdminLog {
     @Enumerated
     @Setter
     BanReason reason;
 
 
-    public AdminBanUserLog(Credentials admin, Credentials user, BanReason reason) {
+    public AdminBanLog(Credentials admin, Credentials user, BanReason reason) {
         super(admin, user, LogStatus.ADMIN_BAN_USER);
         setReason(reason);
     }

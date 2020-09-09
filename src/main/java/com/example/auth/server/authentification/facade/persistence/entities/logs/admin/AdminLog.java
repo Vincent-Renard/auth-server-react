@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToOne;
 
 /**
  * @autor Vincent
@@ -22,7 +25,7 @@ import javax.persistence.*;
 public abstract class AdminLog extends UserLog {
 
     @Setter
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     @ToString.Exclude
     Credentials userOn;
@@ -30,7 +33,7 @@ public abstract class AdminLog extends UserLog {
 
     public AdminLog(Credentials userAdmin, Credentials userOn, LogStatus status) {
         super(userAdmin, status);
-        //this.setUserOn(userOn);
+        this.setUserOn(userOn);
     }
 
 }

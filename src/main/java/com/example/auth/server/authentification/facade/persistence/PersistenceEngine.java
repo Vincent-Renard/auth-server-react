@@ -125,6 +125,7 @@ public class PersistenceEngine {
 
 
             }
+            logsEngine.delogUser(iduser);
             userCredentials.deleteById(iduser);
         }
 

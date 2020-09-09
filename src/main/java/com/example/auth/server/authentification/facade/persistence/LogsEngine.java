@@ -2,14 +2,11 @@ package com.example.auth.server.authentification.facade.persistence;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminBanUserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminBanLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminRoleUpdateLog;
-import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminUnbanUserLog;
+import com.example.auth.server.authentification.facade.persistence.entities.logs.admin.AdminUnbanLog;
 import com.example.auth.server.authentification.facade.persistence.entities.logs.user.*;
-import com.example.auth.server.authentification.facade.persistence.repositories.BanLogRepository;
-import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
-import com.example.auth.server.authentification.facade.persistence.repositories.RoleUpdateLogRepository;
-import com.example.auth.server.authentification.facade.persistence.repositories.UnBanLogRepository;
+import com.example.auth.server.authentification.facade.persistence.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +30,9 @@ public class LogsEngine {
 
     @Autowired
     UnBanLogRepository unbanLogs;
+
+    @Autowired
+    AdminBanLogRepository adminBanLogRepository;
 
     public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
         RoleUpdateLog logUser = new RoleUpdateLog(user);
@@ -82,10 +82,10 @@ public class LogsEngine {
     public void logBan(Credentials user, Credentials admin, BanReason reason) {
         BanLog bul = new BanLog(user, admin, reason);
         user.getLogs().add(bul);
-        user = users.save(user);// TODO DEBUG HERE pls
+        user = users.save(user);
 
 
-        AdminBanUserLog abul = new AdminBanUserLog(admin, user, reason);
+        AdminBanLog abul = new AdminBanLog(admin, user, reason);
         admin.addLog(abul);
         users.save(admin);
 
@@ -104,7 +104,7 @@ public class LogsEngine {
         users.save(user);
 
 
-        AdminUnbanUserLog abul = new AdminUnbanUserLog(admin, user);
+        AdminUnbanLog abul = new AdminUnbanLog(admin, user);
         admin.getLogs().add(abul);
         users.save(admin);
     }
@@ -134,5 +134,14 @@ public class LogsEngine {
         unbanLogsByAdmin.forEach(unbanLog -> unbanLog.setAdmin(null));
         unbanLogs.saveAll(unbanLogsByAdmin);
 
+
+    }
+
+    public void delogUser(long iduser) {
+
+        //admin role update
+        //ADMINban log
+
+        //adminUnban
     }
 }

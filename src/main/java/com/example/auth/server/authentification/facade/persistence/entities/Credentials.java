@@ -86,29 +86,15 @@ public class Credentials {
         return "Credentials{" +
                 "idUser=" + idUser +
                 ", mail='" + mail + '\'' +
-                //", inscriptionDate=" + inscriptionDate +
-                //", password='" + password + '\'' +
-                //", roles=" + roles +
-                //", updateDate=" + updateDate +
+                ", inscriptionDate=" + inscriptionDate +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", updateDate=" + updateDate +
                 ", banishment=" + ((banishment == null) ? "null" : banishment.toString()) +
-                //", logs=" + logs +
+                ", logs=" + logs +
                 '}';
     }
 
 
-/*@PreRemove TODO
-    private void preRemove() {
-        if (this.getRoles().contains("ADMIN")){
-
-
-        for (UserLog s : logs) {
-            //s.setTeacher(null);
-            if (s instanceof AdminLog){
-
-            }
-
-        }
-        }
-    }*/
 
 }

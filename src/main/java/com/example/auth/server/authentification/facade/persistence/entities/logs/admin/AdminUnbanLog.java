@@ -17,10 +17,10 @@ import javax.persistence.Entity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class AdminUnbanUserLog extends AdminLog {
+public class AdminUnbanLog extends AdminLog {
 
 
-    public AdminUnbanUserLog(Credentials admin, Credentials user) {
+    public AdminUnbanLog(Credentials admin, Credentials user) {
         super(admin, user, LogStatus.ADMIN_UNBAN_USER);
     }
 }
