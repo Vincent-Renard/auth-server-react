@@ -34,12 +34,12 @@ public class Banishment {
 
 
     @Setter
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     Credentials admin;
 
     @Setter
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
     Credentials user;
 
@@ -52,7 +52,7 @@ public class Banishment {
     public String toString() {
         return "Banishment{" +
                 "id=" + id +
-                ", user.id= " + user.getIdUser() +
+                ", user.id= " + ((user != null) ? user.getIdUser() : "null") +
                 ", reason=" + reason +
                 ", admin.id= " + ((admin != null) ? admin.getIdUser() : "null") +
                 ", date=" + date +
@@ -60,8 +60,5 @@ public class Banishment {
                 '}';
     }
 
-    @PreRemove
-    private void del() {
-        this.setUser(null);
-    }
+
 }

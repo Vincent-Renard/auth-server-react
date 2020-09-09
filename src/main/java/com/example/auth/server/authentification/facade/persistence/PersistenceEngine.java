@@ -155,12 +155,11 @@ public class PersistenceEngine {
 
     public void deleteBanishment(Banishment banishment) {
         var u = banishment.getUser();
-        //bans.deleteById(banishment.getId());
-        System.out.println(u.toString());
+        banishment.setUser(null);
+        banishment.setAdmin(null);
+        bans.save(banishment);
         u.setBanishment(null);
-        System.out.println(u.toString());
-        u = userCredentials.save(u);
-        System.out.println(u.toString());
+        userCredentials.save(u);
 
     }
 }

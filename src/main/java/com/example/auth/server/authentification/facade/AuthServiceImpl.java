@@ -212,7 +212,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 logsEngine.logBadPassword(credentials);
                 throw new BadPasswordException();
             }
-            System.out.println("LOGIN " + credentials.toString());
             if (credentials.getBanishment() != null) {
                 throw new UserBan();
             }
@@ -399,7 +398,6 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 user = base.saveCredentials(user);
                 admin = base.saveCredentials(admin);
                 logsEngine.logBan(user, admin, reason);
-                System.out.println("BAN " + user.toString());// TODO --
 
 
             }
@@ -417,13 +415,11 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
             var user = optUser.get();
             var admin = optAdmin.get();
-            System.out.println("UNBAN 1" + user.toString());// TODO --
             base.deleteBanishment(user.getBanishment());
             user.setBanishment(null);
             base.saveCredentials(user);
             user = base.findCredentialsById(user.getIdUser()).get();
-            //logsEngine.logUnban(user, admin);
-            System.out.println("UNBAN 2" + user.toString());// TODO --
+            //logsEngine.logUnban(user, admin);// TODO --
         } else {
             throw new NotSuchUserException();
         }
