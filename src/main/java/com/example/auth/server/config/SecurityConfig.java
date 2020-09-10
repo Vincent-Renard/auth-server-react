@@ -66,7 +66,8 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.GET, rootUrl + "/tokens/login").authenticated()
 
 //USER PART
-
+                .pathMatchers(HttpMethod.GET, rootUrl + "/users/password/reset/**").permitAll()
+                .pathMatchers(HttpMethod.POST, rootUrl + "/users/password/reset/**").permitAll()
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/password").authenticated()
                 .pathMatchers(HttpMethod.PATCH, rootUrl + "/users/mail").authenticated()
                 .pathMatchers(HttpMethod.GET, rootUrl + "/users/me").authenticated()

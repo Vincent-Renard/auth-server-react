@@ -3,6 +3,7 @@ package com.example.auth.server.controller;
 import com.example.auth.server.authentification.facade.AuthService;
 import com.example.auth.server.model.dtos.in.UpdateMailRequest;
 import com.example.auth.server.model.dtos.in.UpdatePasswordRequest;
+import com.example.auth.server.model.dtos.out.ResetToken;
 import com.example.auth.server.model.dtos.out.User;
 import com.example.auth.server.model.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,19 @@ public class UserController {
     @Autowired
     private AuthService base;
 
+    @GetMapping(value = "/password/reset", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResetToken> resetPassword(@RequestParam("mail") String mail) throws NotSuchUserException, UserBan {
+        return ResponseEntity.ok(ResetToken.from(base.askResetPasswordToken(mail).getResetToken()));
+
+    }
+
+    @PostMapping(value = "/password/reset", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Void> resetUpdatePassword(@RequestParam("key") String key, @RequestBody UpdatePasswordRequest upr) throws NotSuchUserException, UserBan, BadPasswordFormat, TokenNotFound {
+
+        base.useResetPasswordToken(key, upr.getNewPassword());
+        return ResponseEntity.ok().build();
+
+    }
 
     @PatchMapping(value = "/password", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> updatePassword(Principal user, @RequestBody UpdatePasswordRequest updatePasswordRequest) throws NotSuchUserException, BadPasswordFormat, UserBan {

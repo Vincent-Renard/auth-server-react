@@ -5,6 +5,7 @@ import com.example.auth.server.authentification.facade.persistence.PersistenceEn
 import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
+import com.example.auth.server.authentification.facade.persistence.entities.ResetPasswordToken;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.authentification.token.manager.JwtDecoder;
@@ -330,6 +331,41 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
+    public ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBan {
+        var optUser = base.findCredentialsByMail(mail);
+        if (optUser.isPresent()) {
+            var u = optUser.get();
+            if (u.getBanishment() != null)
+                throw new UserBan();
+
+            logsEngine.askResetPasswordToken(u);
+            return base.generateResetToken(u);
+        } else throw new NotSuchUserException();
+
+    }
+
+    @Override
+    public void useResetPasswordToken(String key, String newPassword) throws UserBan, BadPasswordFormat, TokenNotFound {
+        var optToken = base.findToken(key);
+        if (optToken.isPresent()) {
+            var token = optToken.get();
+            var u = token.getUser();
+            if (u.getBanishment() != null)
+                throw new UserBan();
+            if (!passwordChecker.test(newPassword)) throw new BadPasswordFormat();
+
+            u.setPassword(base.encodePassword(newPassword));
+
+
+            base.useToken(token);
+            base.saveCredentials(u);
+            logsEngine.logUpdatePasswordByResetToken(u);
+            base.cleanOldAndUnusedResetTokens(TTL_SECONDS_RESET_PASSWORD_TOKEN);
+        } else throw new TokenNotFound();
+    }
+
+
+    @Override
     public void updatePassword(long idUser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
@@ -417,11 +453,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             var admin = optAdmin.get();
             base.deleteBanishment(user.getBanishment());
             user.setBanishment(null);
-            base.saveCredentials(user);
-            user = base.findCredentialsById(user.getIdUser()).get();
+            user = base.saveCredentials(user);
+
             logsEngine.logUnban(user, admin);
         } else {
             throw new NotSuchUserException();
         }
     }
+
+
 }

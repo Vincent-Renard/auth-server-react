@@ -144,4 +144,17 @@ public class LogsEngine {
 
         //adminUnban
     }
+
+    public void logUpdatePasswordByResetToken(Credentials u) {
+        UpdatePasswordByResetToken upbrt = new UpdatePasswordByResetToken(u);
+        u.addLog(upbrt);
+        users.save(u);
+
+    }
+
+    public void askResetPasswordToken(Credentials u) {
+        ClaimResetToken claimResetToken = new ClaimResetToken(u);
+        u.addLog(claimResetToken);
+        users.save(u);
+    }
 }

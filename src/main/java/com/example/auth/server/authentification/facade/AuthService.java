@@ -2,6 +2,7 @@ package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
+import com.example.auth.server.authentification.facade.persistence.entities.ResetPasswordToken;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
@@ -62,4 +63,8 @@ public interface AuthService {
     void unBanUser(long idUser, long idAdmin) throws NotSuchUserException;
 
     Collection<Credentials> getAllUsersWithRole(String role);
+
+    ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBan;
+
+    void useResetPasswordToken(String key, String newPassword) throws UserBan, BadPasswordFormat, TokenNotFound;
 }

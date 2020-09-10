@@ -27,7 +27,6 @@ import java.util.TreeSet;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idUser")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
-//@ToString TODO --//
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Credentials {
