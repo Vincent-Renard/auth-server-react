@@ -357,7 +357,64 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token_admin}}
 
 
+###
+POST http://localhost:8888/auth/tokens/claim
+Content-Type: application/json
 
+{
+  "mail": "toto3@mail.com",
+  "password": "toto"
+}
+> {% client.global.set("auth_token_toto3", response.body.accessToken);
+     client.global.set("refr_token_toto3", response.body.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 201, "Response status is not 201 - CREATED");
+});
+%}
+
+###
+GET http://localhost:8888/auth/users/password/reset?mail=toto3@mail.com
+Content-Type: application/json
+
+
+> {% client.global.set("reset_token", response.body.token);
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
+POST http://localhost:8888/auth/users/password/reset?key={{reset_token}}
+Content-Type: application/json
+
+{
+  "newPassword": "toto3"
+}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
+POST http://localhost:8888/auth/tokens/login
+Content-Type: application/json
+
+{
+  "mail": "toto3@mail.com",
+  "password": "toto3"
+}
+> {% client.global.set("auth_token_toto3", response.body.accessToken);
+     client.global.set("refr_token_toto3", response.body.refreshToken);
+
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200 - OK");
+});
+%}
+
+###
 
 ###BAN TEST
 POST http://localhost:8888/auth/tokens/claim
@@ -376,7 +433,7 @@ Content-Type: application/json
 
 
 ### BAN USER
-POST http://localhost:8888/auth/admin/users/4/ban
+POST http://localhost:8888/auth/admin/users/5/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
@@ -421,7 +478,7 @@ client.assert(response.status === 401, "Response status is not 401 - Unauthorize
 %}
 
 ### UNBAN USER
-DELETE http://localhost:8888/auth/admin/users/4/ban
+DELETE http://localhost:8888/auth/admin/users/5/ban
 Content-Type: application/json
 Authorization:Bearer {{auth_token_admin}}
 
