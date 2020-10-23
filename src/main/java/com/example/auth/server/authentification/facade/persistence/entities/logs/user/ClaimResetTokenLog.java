@@ -17,9 +17,9 @@ import javax.persistence.Entity;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class ClaimResetToken extends UserLog {
+public class ClaimResetTokenLog extends UserLog {
 
-    public ClaimResetToken(Credentials user) {
+    public ClaimResetTokenLog(Credentials user) {
         super(user, LogStatus.CLAIM_PASSWORD_RESET_TOKEN);
     }
 }

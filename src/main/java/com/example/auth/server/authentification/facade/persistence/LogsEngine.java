@@ -39,13 +39,13 @@ public class LogsEngine {
 
         logUser.setRoles(newRoles);
         logUser.setAdmin(admin);
-        user.getLogs().add(logUser);
+        user.addLog(logUser);
 
         users.save(user);
 
         AdminRoleUpdateLog logAdmin = new AdminRoleUpdateLog(admin, user);
         logAdmin.setRoles(newRoles);
-        admin.getLogs().add(logAdmin);
+        admin.addLog(logAdmin);
 
         users.save(admin);
     }
@@ -53,35 +53,35 @@ public class LogsEngine {
 
     public void logBadPassword(Credentials user) {
         BadPasswordAttempt bpal = new BadPasswordAttempt(user);
-        user.getLogs().add(bpal);
+        user.addLog(bpal);
         users.save(user);
     }
 
     public void logLogin(Credentials user) {
         SuccessfulLogingLog ull = new SuccessfulLogingLog(user);
-        user.getLogs().add(ull);
+        user.addLog(ull);
         users.save(user);
 
     }
 
     public void logRegistration(Credentials user) {
-        user.getLogs().add(new RegistrationLog(user));
+        user.addLog(new RegistrationLog(user));
         users.save(user);
     }
 
     public void LogRefreshing(Credentials user) {
-        user.getLogs().add(new RefreshingTokensLog(user));
+        user.addLog(new RefreshingTokensLog(user));
         users.save(user);
     }
 
     public void logUpdatePassword(Credentials user) {
-        user.getLogs().add(new PasswordUpdateLog(user));
+        user.addLog(new PasswordUpdateLog(user));
         users.save(user);
     }
 
     public void logBan(Credentials user, Credentials admin, BanReason reason) {
         BanLog bul = new BanLog(user, admin, reason);
-        user.getLogs().add(bul);
+        user.addLog(bul);
         user = users.save(user);
 
 
@@ -93,19 +93,19 @@ public class LogsEngine {
 
     public void logMailUpdate(String oldMail, Credentials user) {
         MailUpdateLog mul = new MailUpdateLog(user, oldMail);
-        user.getLogs().add(mul);
+        user.addLog(mul);
         users.save(user);
 
     }
 
     public void logUnban(Credentials user, Credentials admin) {
         UnbanLog bul = new UnbanLog(user, admin);
-        user.getLogs().add(bul);
+        user.addLog(bul);
         users.save(user);
 
 
         AdminUnbanLog abul = new AdminUnbanLog(admin, user);
-        admin.getLogs().add(abul);
+        admin.addLog(abul);
         users.save(admin);
     }
 
@@ -153,8 +153,9 @@ public class LogsEngine {
     }
 
     public void askResetPasswordToken(Credentials u) {
-        ClaimResetToken claimResetToken = new ClaimResetToken(u);
-        u.addLog(claimResetToken);
-        users.save(u);
+        ClaimResetTokenLog claimResetTokenLog = new ClaimResetTokenLog(u);
+        u.addLog(claimResetTokenLog);
+        System.err.println("u: "+u.getIdUser()+" "+claimResetTokenLog.toString());
+        //users.save(u);
     }
 }

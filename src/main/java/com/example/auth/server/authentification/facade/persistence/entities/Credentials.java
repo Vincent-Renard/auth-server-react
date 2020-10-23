@@ -76,7 +76,9 @@ public class Credentials {
     }
 
     public void addLog(UserLog log) {
-        log.setUser(this);
+        //FIXME --
+        //log.setUser(this);
+
         this.getLogs().add(log);
     }
 
