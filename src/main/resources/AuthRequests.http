@@ -100,7 +100,7 @@ Content-Type: application/json
 }
 > {%
 client.test("Request executed successfully", function() {
-  client.assert(response.status === 409, "Response status is not 409");
+  client.assert(response.status === 417, "Response status is not 417");
 });
 %}
 
