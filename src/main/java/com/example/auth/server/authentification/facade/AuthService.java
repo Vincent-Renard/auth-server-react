@@ -38,15 +38,15 @@ public interface AuthService {
 
     Collection<Credentials> getAllUsersWithDomain(String domain);
 
-    UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
+    UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormatException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException;
 
-    Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan;
+    Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBanException;
 
-    Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired;
+    Bearers refresh(String token) throws NotSuchUserException, UserBanException, NoTokenException, InvalidTokenException, TokenExpiredException;
 
     void clear();
 
-    void signOut(long iduser) throws NotSuchUserException, UserBan;
+    void signOut(long iduser) throws NotSuchUserException, UserBanException;
 
     Credentials updateRoles(long iduser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException, NotSuchAdminException;
 
@@ -54,9 +54,9 @@ public interface AuthService {
 
     Credentials showUser(long idAdmin, long iduser) throws NotSuchUserException;
 
-    void updatePassword(long iduser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan;
+    void updatePassword(long iduser, String newpasssword) throws NotSuchUserException, BadPasswordFormatException, UserBanException;
 
-    void updateMail(long iduser, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, ForbidenDomainMailUse, UserBan;
+    void updateMail(long iduser, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException;
 
     Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 
@@ -64,7 +64,7 @@ public interface AuthService {
 
     Collection<Credentials> getAllUsersWithRole(String role);
 
-    ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBan;
+    ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBanException;
 
-    void useResetPasswordToken(String key, String newPassword) throws UserBan, BadPasswordFormat, TokenNotFound;
+    void useResetPasswordToken(String key, String newPassword) throws UserBanException, BadPasswordFormatException, TokenNotFoundException;
 }

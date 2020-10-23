@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @autor Vincent
  * @date 18/04/2020
  */
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Mail invalid")
-public class InvalidMail extends Throwable {
+@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED, reason = "Mail invalid")
+public class InvalidMailException extends Exception {
 }

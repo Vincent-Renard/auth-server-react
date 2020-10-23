@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 14/04/2020
+ * @date 10/09/2020
  */
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Bad password format")
-public class BadPasswordFormat extends Throwable {
+
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Unknown token")
+public class TokenNotFoundException extends Exception {
 }

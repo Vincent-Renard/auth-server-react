@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 16/07/2020
+ * @date 25/06/2020
  */
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Unauthorized")
-public class UnauthorizedUser extends Throwable {
+
+@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Domain Not Allowed")
+public class ForbiddenDomainMailUseException extends Exception {
 }

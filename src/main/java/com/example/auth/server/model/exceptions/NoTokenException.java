@@ -5,10 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 10/09/2020
+ * @date 22/03/2020
  */
-
-
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Unkonwn token")
-public class TokenNotFound extends Exception {
+@ResponseStatus(value = HttpStatus.NON_AUTHORITATIVE_INFORMATION, reason = "No token in Autorization")
+public class NoTokenException extends Exception {
 }

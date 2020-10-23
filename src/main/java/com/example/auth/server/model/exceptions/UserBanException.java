@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 22/03/2020
+ * @date 26/06/2020
  */
-@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED, reason = "Expired token")
-public class TokenExpired extends Throwable {
+@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "User ban")
+public class UserBanException extends Exception {
 }

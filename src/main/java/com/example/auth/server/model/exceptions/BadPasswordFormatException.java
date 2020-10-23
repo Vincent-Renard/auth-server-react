@@ -5,9 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 25/06/2020
+ * @date 14/04/2020
  */
-
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Domain Not Allowed")
-public class ForbidenDomainMailUse extends Throwable {
+@ResponseStatus(value = HttpStatus.PRECONDITION_FAILED, reason = "Bad password format")
+public class BadPasswordFormatException extends Exception {
 }

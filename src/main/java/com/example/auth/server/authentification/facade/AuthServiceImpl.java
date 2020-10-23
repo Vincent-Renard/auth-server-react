@@ -64,7 +64,9 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     private String genPassword(int lenght, int chunks) {
         String sep = "-";
         String alphaU = "ABCDEGHIJKLMNOPQRSTUVWXYZ";
+
         String alpha = alphaU + alphaU.toLowerCase() + "0123456789";
+
         alpha = alpha.replace("0", "")
                 .replace("O", "");
         StringBuilder s = new StringBuilder();
@@ -174,19 +176,19 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
 
 
     @Override
-    public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
+    public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormatException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException {
         if (!passwordChecker.test(passsword))
-            throw new BadPasswordFormat();
+            throw new BadPasswordFormatException();
         if (!mailChecker.test(mailUser))
-            throw new InvalidMail();
+            throw new InvalidMailException();
         String domain = mailUser.split("@")[1];
         if (base.existDomainByName(domain))
-            throw new ForbidenDomainMailUse();
+            throw new ForbiddenDomainMailUseException();
         Optional<Credentials> c = base.findCredentialsByMail(mailUser);
 
         if (c.isPresent()) {
             if (c.get().getBanishment() != null)
-                throw new UserBan();
+                throw new UserBanException();
             throw new MailAlreadyTakenException();
         }
 
@@ -203,7 +205,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers logIn(String mail, String password) throws BadPasswordException, NotSuchUserException, UserBan {
+    public Bearers logIn(String mail, String password) throws BadPasswordException, NotSuchUserException, UserBanException {
         Optional<Credentials> optCredentials = base.findCredentialsByMail(mail);
         if (optCredentials.isPresent()) {
             var credentials = optCredentials.get();
@@ -214,7 +216,7 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
                 throw new BadPasswordException();
             }
             if (credentials.getBanishment() != null) {
-                throw new UserBan();
+                throw new UserBanException();
             }
 
             logsEngine.logLogin(credentials);
@@ -224,13 +226,13 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired {
+    public Bearers refresh(String token) throws NotSuchUserException, UserBanException, NoTokenException, InvalidTokenException, TokenExpiredException {
         long idUser = tokenDecoder.decodeRefreshToken(token);
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         if (optCredentials.isPresent()) {
             Credentials credentials = optCredentials.get();
             if (credentials.getBanishment() != null) {
-                throw new UserBan();
+                throw new UserBanException();
             }
 
             logsEngine.LogRefreshing(credentials);
@@ -249,12 +251,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void signOut(long idUser) throws NotSuchUserException, UserBan {
+    public void signOut(long idUser) throws NotSuchUserException, UserBanException {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
         if (optCredentials.isPresent()) {
             var credentials = optCredentials.get();
             if (credentials.getBanishment() != null)
-                throw new UserBan();
+                throw new UserBanException();
 
             base.deleteCredentialsById(idUser);
 
@@ -331,12 +333,12 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBan {
+    public ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBanException {
         var optUser = base.findCredentialsByMail(mail);
         if (optUser.isPresent()) {
             var u = optUser.get();
             if (u.getBanishment() != null)
-                throw new UserBan();
+                throw new UserBanException();
 
             logsEngine.askResetPasswordToken(u);
             return base.generateResetToken(u);
@@ -345,14 +347,14 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void useResetPasswordToken(String key, String newPassword) throws UserBan, BadPasswordFormat, TokenNotFound {
+    public void useResetPasswordToken(String key, String newPassword) throws UserBanException, BadPasswordFormatException, TokenNotFoundException {
         var optToken = base.findToken(key);
         if (optToken.isPresent()) {
             var token = optToken.get();
             var u = token.getUser();
             if (u.getBanishment() != null)
-                throw new UserBan();
-            if (!passwordChecker.test(newPassword)) throw new BadPasswordFormat();
+                throw new UserBanException();
+            if (!passwordChecker.test(newPassword)) throw new BadPasswordFormatException();
 
             u.setPassword(base.encodePassword(newPassword));
 
@@ -361,19 +363,19 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
             base.saveCredentials(u);
             logsEngine.logUpdatePasswordByResetToken(u);
             base.cleanOldAndUnusedResetTokens(TTL_SECONDS_RESET_PASSWORD_TOKEN);
-        } else throw new TokenNotFound();
+        } else throw new TokenNotFoundException();
     }
 
 
     @Override
-    public void updatePassword(long idUser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan {
+    public void updatePassword(long idUser, String newpasssword) throws NotSuchUserException, BadPasswordFormatException, UserBanException {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
         if (optCredentials.isPresent()) {
             var credentials = optCredentials.get();
             if (credentials.getBanishment() != null)
-                throw new UserBan();
-            if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormat();
+                throw new UserBanException();
+            if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormatException();
 
             credentials.setPassword(base.encodePassword(newpasssword));
 
@@ -385,20 +387,20 @@ public class AuthServiceImpl implements AuthService, AuthUtils {
     }
 
     @Override
-    public void updateMail(long idUser, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, ForbidenDomainMailUse, UserBan {
+    public void updateMail(long idUser, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException {
         Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
 
         if (optCredentials.isPresent()) {
 
             var credentials = optCredentials.get();
             if (credentials.getBanishment() != null)
-                throw new UserBan();
+                throw new UserBanException();
 
             if (!mailChecker.test(newmail))
-                throw new InvalidMail();
+                throw new InvalidMailException();
             String domain = newmail.split("@")[1];
             if (base.existDomainByName(domain))
-                throw new ForbidenDomainMailUse();
+                throw new ForbiddenDomainMailUseException();
 
             if (base.credentialsExistsWithMail(newmail))
                 throw new MailAlreadyTakenException();
