@@ -2,9 +2,9 @@ package com.example.auth.server.authentification.token.manager;
 
 import com.example.auth.server.authentification.KeyStore;
 import com.example.auth.server.authentification.token.TokenType;
-import com.example.auth.server.model.exceptions.InvalidToken;
-import com.example.auth.server.model.exceptions.NoToken;
-import com.example.auth.server.model.exceptions.TokenExpired;
+import com.example.auth.server.model.exceptions.InvalidTokenException;
+import com.example.auth.server.model.exceptions.NoTokenException;
+import com.example.auth.server.model.exceptions.TokenExpiredException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -34,7 +34,7 @@ public class JwtDecoder implements TokenConstant {
     private KeyStore keyStore;
 
 
-    public long decodeRefreshToken(String token) throws NoToken, InvalidToken, TokenExpired {
+    public long decodeRefreshToken(String token) throws NoTokenException, InvalidTokenException, TokenExpiredException {
         UsernamePasswordAuthenticationToken upat = this.decode(token);
 
 
@@ -42,12 +42,12 @@ public class JwtDecoder implements TokenConstant {
                 .parseClaimsJws(token).getBody();
 
         if (!body.get(CLAIMS_KEY_TOKEN_TYPE).equals(TokenType.REFRESH.name())) {
-            throw new InvalidToken();
+            throw new InvalidTokenException();
         }
         return (long) upat.getPrincipal();
     }
 
-    private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidToken {
+    private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidTokenException {
         try {
 
             long iduser = Long.parseLong(refreshClaims.getSubject());
@@ -55,14 +55,14 @@ public class JwtDecoder implements TokenConstant {
             return new UsernamePasswordAuthenticationToken(iduser, null, null);
         } catch (JwtException e) {
             e.printStackTrace();
-            throw new InvalidToken();
+            throw new InvalidTokenException();
         }
     }
 
-    private UsernamePasswordAuthenticationToken decodeAccess(Claims accessClaims) throws InvalidToken {
+    private UsernamePasswordAuthenticationToken decodeAccess(Claims accessClaims) throws InvalidTokenException {
         try {
             var userroles = accessClaims.get(CLAIMS_KEY_TOKEN_ROLES, List.class);
-            List<String> roles = new ArrayList<>();
+            var roles = new ArrayList<String>();
             userroles.forEach(r -> roles.add((String) r));
 
             Collection<SimpleGrantedAuthority> authorities = roles.stream()
@@ -74,14 +74,14 @@ public class JwtDecoder implements TokenConstant {
 
         } catch (JwtException e) {
             e.printStackTrace();
-            throw new InvalidToken();
+            throw new InvalidTokenException();
         }
     }
 
     public UsernamePasswordAuthenticationToken decode(String token) throws
-            NoToken, InvalidToken, TokenExpired {
+            NoTokenException, InvalidTokenException, TokenExpiredException {
         if (token == null)
-            throw new NoToken();
+            throw new NoTokenException();
         if (token.startsWith(TOKENS_PREFIX))
             token = token.replace(TOKENS_PREFIX, "");
         try {
@@ -93,9 +93,9 @@ public class JwtDecoder implements TokenConstant {
                 return decodeAccess(body);
             else return decodeRefresh(body);
         } catch (ExpiredJwtException e) {
-            throw new TokenExpired();
+            throw new TokenExpiredException();
         } catch (JwtException e) {
-            throw new InvalidToken();
+            throw new InvalidTokenException();
         }
     }
 }
