@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 22/03/2020
+ * @date 18/04/2020
  */
-@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED, reason = "Expired token")
-public class TokenExpired extends Throwable {
+@ResponseStatus(value = HttpStatus.EXPECTATION_FAILED, reason = "Mail invalid")
+public class InvalidMailException extends Exception {
 }

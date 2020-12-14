@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-@Inheritance
+@Inheritance(strategy = InheritanceType.JOINED)
 @ToString
 public abstract class UserLog {
 

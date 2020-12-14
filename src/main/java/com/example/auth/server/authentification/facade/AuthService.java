@@ -2,6 +2,7 @@ package com.example.auth.server.authentification.facade;
 
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
+import com.example.auth.server.authentification.facade.persistence.entities.ResetPasswordToken;
 import com.example.auth.server.authentification.facade.persistence.entities.enums.BanReason;
 import com.example.auth.server.authentification.facade.pojos.UserToken;
 import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
@@ -37,15 +38,15 @@ public interface AuthService {
 
     Collection<Credentials> getAllUsersWithDomain(String domain);
 
-    UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan;
+    UserToken signIn(String mail, String passsword) throws MailAlreadyTakenException, BadPasswordFormatException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException;
 
-    Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBan;
+    Bearers logIn(String mail, String passsword) throws BadPasswordException, NotSuchUserException, UserBanException;
 
-    Bearers refresh(String token) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired;
+    Bearers refresh(String token) throws NotSuchUserException, UserBanException, NoTokenException, InvalidTokenException, TokenExpiredException;
 
     void clear();
 
-    void signOut(long iduser) throws NotSuchUserException, UserBan;
+    void signOut(long iduser) throws NotSuchUserException, UserBanException;
 
     Credentials updateRoles(long iduser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException, NotSuchAdminException;
 
@@ -53,13 +54,17 @@ public interface AuthService {
 
     Credentials showUser(long idAdmin, long iduser) throws NotSuchUserException;
 
-    void updatePassword(long iduser, String newpasssword) throws NotSuchUserException, BadPasswordFormat, UserBan;
+    void updatePassword(long iduser, String newpasssword) throws NotSuchUserException, BadPasswordFormatException, UserBanException;
 
-    void updateMail(long iduser, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMail, ForbidenDomainMailUse, UserBan;
+    void updateMail(long iduser, String mail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException;
 
     Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException;
 
     void unBanUser(long idUser, long idAdmin) throws NotSuchUserException;
 
     Collection<Credentials> getAllUsersWithRole(String role);
+
+    ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBanException;
+
+    void useResetPasswordToken(String key, String newPassword) throws UserBanException, BadPasswordFormatException, TokenNotFoundException;
 }

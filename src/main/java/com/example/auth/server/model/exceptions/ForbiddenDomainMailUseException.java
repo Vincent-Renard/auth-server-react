@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 22/03/2020
+ * @date 25/06/2020
  */
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Invalid token")
-public class InvalidToken extends Throwable {
+
+@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Domain Not Allowed")
+public class ForbiddenDomainMailUseException extends Exception {
 }

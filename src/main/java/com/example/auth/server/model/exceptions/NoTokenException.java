@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 14/04/2020
+ * @date 22/03/2020
  */
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Bad password format")
-public class BadPasswordFormat extends Throwable {
+@ResponseStatus(value = HttpStatus.NON_AUTHORITATIVE_INFORMATION, reason = "No token in Autorization")
+public class NoTokenException extends Exception {
 }

@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * @autor Vincent
- * @date 16/07/2020
+ * @date 14/04/2020
  */
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Unauthorized")
-public class UnauthorizedUser extends Throwable {
+@ResponseStatus(value = HttpStatus.PRECONDITION_FAILED, reason = "Bad password format")
+public class BadPasswordFormatException extends Exception {
 }

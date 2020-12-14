@@ -3,9 +3,11 @@ package com.example.auth.server.authentification.facade.persistence;
 import com.example.auth.server.authentification.facade.persistence.entities.Banishment;
 import com.example.auth.server.authentification.facade.persistence.entities.Credentials;
 import com.example.auth.server.authentification.facade.persistence.entities.ForbidenDomain;
+import com.example.auth.server.authentification.facade.persistence.entities.ResetPasswordToken;
 import com.example.auth.server.authentification.facade.persistence.repositories.BanishmentRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.CredentialsRepository;
 import com.example.auth.server.authentification.facade.persistence.repositories.ForbidenDomainRepository;
+import com.example.auth.server.authentification.facade.persistence.repositories.ResetPasswordTokenRepository;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +43,10 @@ public class PersistenceEngine {
 
     @Autowired
     LogsEngine logsEngine;
+
+
+    @Autowired
+    ResetPasswordTokenRepository resetPasswordTokens;
 
     public String encodePassword(String clearPassword) {
         return passwordEncoder.encode(clearPassword);
@@ -126,7 +133,14 @@ public class PersistenceEngine {
 
             }
             logsEngine.delogUser(iduser);
+            var ltokens = resetPasswordTokens.findAllByUserIdUser(iduser);
+            ltokens.forEach(t -> t.setUser(null));
+            resetPasswordTokens.saveAll(ltokens);
+            var ids = ltokens.stream().map(ResetPasswordToken::getResetToken);
+            ids.forEach(id -> resetPasswordTokens.deleteById(id));
+
             userCredentials.deleteById(iduser);
+
         }
 
     }
@@ -162,5 +176,39 @@ public class PersistenceEngine {
         u.setBanishment(null);
         userCredentials.save(u);
 
+    }
+
+    public ResetPasswordToken generateResetToken(Credentials u) {
+
+        String key;
+        do {
+            key = UUID.randomUUID().toString().replace("-", "");
+        } while (resetPasswordTokens.existsByResetToken(key));
+        ResetPasswordToken rpt = new ResetPasswordToken(key, u);
+        rpt = resetPasswordTokens.save(rpt);
+
+        return rpt;
+    }
+
+
+    public Optional<ResetPasswordToken> findToken(String key) {
+        return resetPasswordTokens.findById(key);
+    }
+
+    public void cleanOldAndUnusedResetTokens(int ttl) {
+        /*
+       var td= resetPasswordTokens.findAll().stream()
+                .filter(rpt-> rpt.getDateTime()
+                        .plusSeconds(ttl)
+                        .isBefore(LocalDateTime.now())
+                        && rpt.getDateTimeUse()==null)
+               .collect(Collectors.toList()).forEach(rpt -> rpt.setUser);
+       */
+    }
+
+    // #{      @}
+    public void useToken(ResetPasswordToken token) {
+        token.use();
+        resetPasswordTokens.save(token);
     }
 }

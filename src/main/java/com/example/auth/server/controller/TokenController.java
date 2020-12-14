@@ -30,7 +30,7 @@ public class TokenController {
 
 
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormat, InvalidMail, ForbidenDomainMailUse, UserBan {
+    public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormatException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException {
         UserToken ut = base.signIn(login.getMail(), login.getPassword());
 
         return ResponseEntity.created(URI.create("/auth/users/" + ut.getIdUser()))
@@ -39,13 +39,13 @@ public class TokenController {
 
 
     @PostMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> refresh(@RequestBody RefreshRequest request) throws NotSuchUserException, UserBan, NoToken, InvalidToken, TokenExpired {
+    public ResponseEntity<Bearers> refresh(@RequestBody RefreshRequest request) throws NotSuchUserException, UserBanException, NoTokenException, InvalidTokenException, TokenExpiredException {
 
         return ResponseEntity.ok(base.refresh(request.getRefreshToken()));
     }
 
     @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Bearers> log(@RequestBody UserCredentials login) throws BadPasswordException, NotSuchUserException, UserBan {
+    public ResponseEntity<Bearers> log(@RequestBody UserCredentials login) throws BadPasswordException, NotSuchUserException, UserBanException {
         return ResponseEntity.ok(base.logIn(login.getMail(), login.getPassword()));
     }
 

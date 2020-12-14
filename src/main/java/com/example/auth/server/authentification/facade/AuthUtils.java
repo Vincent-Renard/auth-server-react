@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
  * @date 31/03/2020
  */
 public interface AuthUtils {
+    int TTL_SECONDS_RESET_PASSWORD_TOKEN = 600;
     int MIN_LENGHT_PASSWORD = 2;
     int MAX_LENGHT_PASSWORD = 64;
     String REGEX_PASSWORD = "";

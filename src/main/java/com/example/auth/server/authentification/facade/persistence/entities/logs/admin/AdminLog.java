@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
 import javax.persistence.ManyToOne;
 
 /**
@@ -20,7 +19,6 @@ import javax.persistence.ManyToOne;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Entity
-@Inheritance
 @ToString
 public abstract class AdminLog extends UserLog {
 

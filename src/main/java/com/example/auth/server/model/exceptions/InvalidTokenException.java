@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @autor Vincent
  * @date 22/03/2020
  */
-@ResponseStatus(value = HttpStatus.NON_AUTHORITATIVE_INFORMATION, reason = "No token in Autorization")
-public class NoToken extends Throwable {
+@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Invalid token")
+public class InvalidTokenException extends Exception {
 }
