@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -207,9 +206,9 @@ public class PersistenceEngine {
        */
     }
 
-    // #{      @}|
+    // #{      @}
     public void useToken(ResetPasswordToken token) {
-        token.setDateTimeUse(LocalDateTime.now());
+        token.use();
         resetPasswordTokens.save(token);
     }
 }
