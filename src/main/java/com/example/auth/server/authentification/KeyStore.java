@@ -1,9 +1,11 @@
 package com.example.auth.server.authentification;
 
-import com.example.auth.server.authentification.facade.persistence.InternalMemory;
-import com.example.auth.server.authentification.facade.persistence.entities.RSAKey;
+import com.example.auth.server.model.InternalMemory;
+import com.example.auth.server.model.entities.RSAKey;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +24,24 @@ import java.util.Optional;
  * @date 11/03/2020
  */
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyStore {
-    private static final Logger log = LoggerFactory.getLogger(KeyStore.class);
+    static final Logger log = LoggerFactory.getLogger(KeyStore.class);
 
-    private KeyPair keyChain;
 
+    KeyPair keyPair;
     @Autowired
-    private InternalMemory memory;
+    InternalMemory memory;
 
     @PostConstruct
     private void genKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        if (keyChain == null) {
+        if (keyPair == null) {
             Optional<RSAKey> k = memory.findKeys();
             if (!k.isPresent()) {
-                keyChain = Keys.keyPairFor(SignatureAlgorithm.RS256);
-                var sk = Base64.getEncoder().encodeToString(keyChain.getPrivate().getEncoded());
+                keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
+                var sk = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
 
-                var pk = Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded());
+                var pk = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
 
                 memory.saveKeys(new RSAKey(sk, pk));
 
@@ -58,20 +61,20 @@ public class KeyStore {
                 var publicKey = keyFactory.generatePublic(publicKeySpec);
 
 
-                keyChain = new KeyPair(publicKey, privateKey);
+                keyPair = new KeyPair(publicKey, privateKey);
 
 
             }
-            log.debug(keyChain.getPublic().toString());
-            log.debug(Base64.getEncoder().encodeToString(keyChain.getPublic().getEncoded()));
+            log.debug(keyPair.getPublic().toString());
+            log.debug(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
         }
     }
 
     public PublicKey getPublicKey() {
-        return keyChain.getPublic();
+        return keyPair.getPublic();
     }
 
     public PrivateKey getPrivateKey() {
-        return keyChain.getPrivate();
+        return keyPair.getPrivate();
     }
 }

@@ -1,12 +1,12 @@
 package com.example.auth.server.controller;
 
-import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.authentification.facade.pojos.UserToken;
-import com.example.auth.server.model.dtos.in.RefreshRequest;
-import com.example.auth.server.model.dtos.in.UserCredentials;
-import com.example.auth.server.model.dtos.out.Bearers;
-import com.example.auth.server.model.exceptions.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.auth.server.authentification.facade.dtos.in.RefreshRequest;
+import com.example.auth.server.authentification.facade.dtos.in.UserCredentials;
+import com.example.auth.server.authentification.facade.dtos.out.Bearers;
+import com.example.auth.server.authentification.facade.dtos.out.UserToken;
+import com.example.auth.server.authentification.facade.exceptions.*;
+import com.example.auth.server.authentification.facade.services.server.TokenService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +23,16 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/auth/tokens")
+@AllArgsConstructor
 public class TokenController {
 
-    @Autowired
-    private AuthService base;
+
+    private TokenService tokens;
 
 
     @PostMapping(value = "/claim", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> sign(@RequestBody UserCredentials login) throws MailAlreadyTakenException, BadPasswordFormatException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException {
-        UserToken ut = base.signIn(login.getMail(), login.getPassword());
+        UserToken ut = tokens.signIn(login.getMail(), login.getPassword());
 
         return ResponseEntity.created(URI.create("/auth/users/" + ut.getIdUser()))
                 .body(ut.getBearers());
@@ -41,12 +42,12 @@ public class TokenController {
     @PostMapping(value = "/refresh", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> refresh(@RequestBody RefreshRequest request) throws NotSuchUserException, UserBanException, NoTokenException, InvalidTokenException, TokenExpiredException {
 
-        return ResponseEntity.ok(base.refresh(request.getRefreshToken()));
+        return ResponseEntity.ok(tokens.refresh(request.getRefreshToken()));
     }
 
     @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Bearers> log(@RequestBody UserCredentials login) throws BadPasswordException, NotSuchUserException, UserBanException {
-        return ResponseEntity.ok(base.logIn(login.getMail(), login.getPassword()));
+        return ResponseEntity.ok(tokens.logIn(login.getMail(), login.getPassword()));
     }
 
 

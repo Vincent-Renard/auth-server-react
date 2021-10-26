@@ -1,15 +1,15 @@
 package com.example.auth.server.authentification.token.manager;
 
 import com.example.auth.server.authentification.KeyStore;
+import com.example.auth.server.authentification.facade.exceptions.InvalidTokenException;
+import com.example.auth.server.authentification.facade.exceptions.NoTokenException;
+import com.example.auth.server.authentification.facade.exceptions.TokenExpiredException;
 import com.example.auth.server.authentification.token.TokenType;
-import com.example.auth.server.model.exceptions.InvalidTokenException;
-import com.example.auth.server.model.exceptions.NoTokenException;
-import com.example.auth.server.model.exceptions.TokenExpiredException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,12 +26,13 @@ import java.util.stream.Collectors;
  */
 
 @Component
+@RequiredArgsConstructor
 public class JwtDecoder implements TokenConstant {
     @Value(value = "${auth.token.prefix}")
     private String TOKENS_PREFIX;
 
-    @Autowired
-    private KeyStore keyStore;
+
+    final KeyStore keyStore;
 
 
     public long decodeRefreshToken(String token) throws NoTokenException, InvalidTokenException, TokenExpiredException {

@@ -20,5 +20,7 @@ public interface AuthUtils {
 
     Set<String> BASE_ROLES = Set.of("USER");
     Set<String> POSSILBES_ROLES = Set.of("ADMIN", "USER");
+    String mailAdmin = "admin@admin.com";
+
 
 }

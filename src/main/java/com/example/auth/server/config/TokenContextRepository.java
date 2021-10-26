@@ -1,12 +1,14 @@
 package com.example.auth.server.config;
 
+import com.example.auth.server.authentification.facade.exceptions.InvalidTokenException;
+import com.example.auth.server.authentification.facade.exceptions.NoTokenException;
+import com.example.auth.server.authentification.facade.exceptions.TokenExpiredException;
 import com.example.auth.server.authentification.token.manager.JwtDecoder;
-import com.example.auth.server.model.exceptions.InvalidTokenException;
-import com.example.auth.server.model.exceptions.NoTokenException;
-import com.example.auth.server.model.exceptions.TokenExpiredException;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,11 +23,13 @@ import reactor.core.publisher.Mono;
  * @date 09/04/2020
  */
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class TokenContextRepository implements ServerSecurityContextRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenContextRepository.class);
-    @Autowired
-    JwtDecoder bearerDecoder;
+
+    final JwtDecoder bearerDecoder;
 
     @Override
     public Mono<Void> save(ServerWebExchange serverWebExchange, SecurityContext securityContext) {
