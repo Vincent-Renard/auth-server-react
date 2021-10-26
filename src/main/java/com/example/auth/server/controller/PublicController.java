@@ -1,10 +1,11 @@
 package com.example.auth.server.controller;
 
-import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.model.dtos.out.AuthServerStatePublic;
-import com.example.auth.server.model.dtos.out.ForbidenDomain;
-import com.example.auth.server.model.dtos.out.PubKey;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.auth.server.authentification.facade.dtos.out.AuthServerStatePublic;
+import com.example.auth.server.authentification.facade.dtos.out.ForbidenDomain;
+import com.example.auth.server.authentification.facade.dtos.out.PubKey;
+import com.example.auth.server.authentification.facade.services.server.DomainService;
+import com.example.auth.server.authentification.facade.services.server.ServerService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,25 +22,27 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class PublicController {
-    @Autowired
-    private AuthService base;
+
+    private ServerService serverService;
+    private DomainService domainService;
 
     @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<AuthServerStatePublic> state() {
-        return ResponseEntity.ok(base.getServerStatePublic());
+        return ResponseEntity.ok(serverService.getServerStatePublic());
     }
 
     @GetMapping(value = "/public", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<PubKey> pubkey() {
-        return ResponseEntity.ok(PubKey.from(base.publicKey().getEncoded()));
+        return ResponseEntity.ok(PubKey.from(serverService.publicKey().getEncoded()));
     }
 
 
     @GetMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Collection<ForbidenDomain>> getDomains() {
         return ResponseEntity
-                .ok(base.getAllDomainNotAllowed()
+                .ok(domainService.getAllDomainNotAllowed()
                         .stream().map(ForbidenDomain::from)
                         .collect(Collectors.toList()));
 

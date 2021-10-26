@@ -1,16 +1,19 @@
 package com.example.auth.server.controller;
 
-import com.example.auth.server.authentification.facade.AuthService;
-import com.example.auth.server.model.dtos.in.BanDomainRequest;
-import com.example.auth.server.model.dtos.in.BanDomainsRequest;
-import com.example.auth.server.model.dtos.in.BanUserRequest;
-import com.example.auth.server.model.dtos.in.UpdateRolesRequest;
-import com.example.auth.server.model.dtos.out.AuthServerStateAdmin;
-import com.example.auth.server.model.dtos.out.User;
-import com.example.auth.server.model.exceptions.NotSuchAdminException;
-import com.example.auth.server.model.exceptions.NotSuchUserException;
-import com.example.auth.server.model.exceptions.UserAlreadyBanException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.auth.server.authentification.facade.dtos.in.BanDomainRequest;
+import com.example.auth.server.authentification.facade.dtos.in.BanDomainsRequest;
+import com.example.auth.server.authentification.facade.dtos.in.BanUserRequest;
+import com.example.auth.server.authentification.facade.dtos.in.UpdateRolesRequest;
+import com.example.auth.server.authentification.facade.dtos.out.AuthServerStateAdmin;
+import com.example.auth.server.authentification.facade.dtos.out.User;
+import com.example.auth.server.authentification.facade.exceptions.NotSuchAdminException;
+import com.example.auth.server.authentification.facade.exceptions.NotSuchUserException;
+import com.example.auth.server.authentification.facade.exceptions.UserAlreadyBanException;
+import com.example.auth.server.authentification.facade.services.admin.AdminService;
+import com.example.auth.server.authentification.facade.services.server.DomainService;
+import com.example.auth.server.authentification.facade.services.server.ServerService;
+import com.example.auth.server.authentification.facade.services.users.roles.RoleService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +29,18 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/auth/admin")
+@AllArgsConstructor
 public class AdminController {
-    @Autowired
-    private AuthService base;
+
+    private AdminService adminService;
+    private DomainService domainService;
+    private ServerService serverService;
+    private RoleService roleService;
 
 
     @PostMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> addDomain(Principal admin, @RequestBody BanDomainRequest domain) {
-        base.addForbidenDomain(Long.parseLong(admin.getName()), domain.getDomain());
+        domainService.addForbidenDomain(Long.parseLong(admin.getName()), domain.getDomain());
         return ResponseEntity.ok().build();
 
     }
@@ -41,7 +48,7 @@ public class AdminController {
     @PostMapping(value = "/domains/list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> addDomains(Principal admin, @RequestBody BanDomainsRequest request) {
 
-        base.addForbidenDomains(Long.parseLong(admin.getName()), request.getDomains());
+        domainService.addForbidenDomains(Long.parseLong(admin.getName()), request.getDomains());
         return ResponseEntity.ok().build();
 
     }
@@ -49,19 +56,19 @@ public class AdminController {
 
     @DeleteMapping(value = "/domains/{dom}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> delDomain(Principal admin, @PathVariable(name = "dom") String domain) {
-        base.delForbidenDomain(Long.parseLong(admin.getName()), domain);
+        domainService.delForbidenDomain(Long.parseLong(admin.getName()), domain);
         return ResponseEntity.noContent().build();
 
     }
 
     @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<AuthServerStateAdmin> stateAdmin(Principal admin) throws NotSuchUserException {
-        return ResponseEntity.ok(base.getServerStateAdmin(Long.parseLong(admin.getName())));
+        return ResponseEntity.ok(adminService.getServerStateAdmin(Long.parseLong(admin.getName())));
     }
 
     @GetMapping(value = "/users/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> showUser(Principal admin, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
-        return ResponseEntity.ok(User.from(base.showUser(Long.parseLong(admin.getName()), idUser)));
+        return ResponseEntity.ok(User.from(adminService.showUser(Long.parseLong(admin.getName()), idUser)));
     }
 
     @GetMapping(value = "/users/", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
@@ -73,7 +80,7 @@ public class AdminController {
 
 
         if (domain != null) {
-            HashSet<User> r = base.getAllUsersWithDomain(domain)
+            HashSet<User> r = adminService.getAllUsersWithDomain(domain)
                     .stream()
                     .map(User::from)
                     .collect(Collectors.toCollection(HashSet::new));
@@ -85,7 +92,7 @@ public class AdminController {
 
         }
         if (role != null) {
-            HashSet<User> r = base.getAllUsersWithRole(role)
+            HashSet<User> r = roleService.getAllUsersWithRole(role)
                     .stream()
                     .map(User::from)
                     .collect(Collectors.toCollection(HashSet::new));
@@ -103,7 +110,7 @@ public class AdminController {
     @PatchMapping(value = "/users/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> updateRoles(Principal admin, @PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException, NotSuchAdminException {
         return ResponseEntity
-                .ok(User.from(base.updateRoles(idUser,
+                .ok(User.from(roleService.updateRoles(idUser,
                         updateRolesRequest.getRoles(),
                         Long.parseLong(admin.getName()))));
 
@@ -112,7 +119,7 @@ public class AdminController {
     @PostMapping(value = "/users/{iduser}/ban", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<User> banUser(Principal principal, @PathVariable(name = "iduser") long idUser, @RequestBody BanUserRequest bur) throws NotSuchUserException, UserAlreadyBanException {
         return ResponseEntity.ok(
-                User.from(base.banUser(idUser,
+                User.from(adminService.banUser(idUser,
                         bur.getReason(),
                         Long.parseLong(principal.getName()))));
 
@@ -120,13 +127,13 @@ public class AdminController {
 
     @DeleteMapping(value = "/users/{iduser}/ban")
     public ResponseEntity<Void> unBanUser(Principal principal, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
-        base.unBanUser(idUser, Long.parseLong(principal.getName()));
+        adminService.unBanUser(idUser, Long.parseLong(principal.getName()));
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/clean")
     public ResponseEntity<Void> clear() {
-        base.clear();
+        serverService.clear();
         return ResponseEntity.noContent().build();
     }
 

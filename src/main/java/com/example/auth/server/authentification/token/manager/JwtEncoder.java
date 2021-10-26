@@ -1,13 +1,15 @@
 package com.example.auth.server.authentification.token.manager;
 
 import com.example.auth.server.authentification.KeyStore;
-import com.example.auth.server.authentification.facade.persistence.InternalMemory;
-import com.example.auth.server.authentification.facade.persistence.entities.TokensId;
+import com.example.auth.server.authentification.facade.dtos.out.Bearers;
 import com.example.auth.server.authentification.token.TokenType;
-import com.example.auth.server.model.dtos.out.Bearers;
+import com.example.auth.server.model.InternalMemory;
+import com.example.auth.server.model.entities.TokensId;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,18 +26,18 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date 22/03/2020
  */
 @Component
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtEncoder implements TokenConstant {
 
-    @Autowired
-    InternalMemory memory;
 
-    private AtomicLong idAccessTokenGenerator;
-    @Autowired
-    private KeyStore keys;
-
+    final InternalMemory memory;
+    final KeyStore keys;
+    AtomicLong idAccessTokenGenerator;
     @Value(value = "${auth.token.issuer}")
-    private String ISSUER;
-    private AtomicLong idRefreshTokenGenerator;
+    String ISSUER;
+
+    AtomicLong idRefreshTokenGenerator;
 
     @PostConstruct
     public void init() {
