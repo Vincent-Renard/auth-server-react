@@ -19,9 +19,9 @@ import javax.persistence.Entity;
 @Entity
 public class ClaimResetTokenLog extends UserLog {
 
-    public ClaimResetTokenLog(Credentials user) {
-        super(user, LogStatus.CLAIM_PASSWORD_RESET_TOKEN);
-    }
+	public ClaimResetTokenLog(Credentials user) {
+		super(user, LogStatus.CLAIM_PASSWORD_RESET_TOKEN);
+	}
 }
 
 

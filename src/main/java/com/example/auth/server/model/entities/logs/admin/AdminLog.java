@@ -22,16 +22,16 @@ import javax.persistence.ManyToOne;
 @ToString
 public abstract class AdminLog extends UserLog {
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    @ToString.Exclude
-    Credentials userOn;
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	@ToString.Exclude
+	Credentials userOn;
 
 
-    public AdminLog(Credentials userAdmin, Credentials userOn, LogStatus status) {
-        super(userAdmin, status);
-        this.setUserOn(userOn);
-    }
+	protected AdminLog(Credentials userAdmin, Credentials userOn, LogStatus status) {
+		super(userAdmin, status);
+		this.setUserOn(userOn);
+	}
 
 }

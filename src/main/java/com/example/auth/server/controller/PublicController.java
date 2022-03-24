@@ -25,28 +25,27 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PublicController {
 
-    private ServerService serverService;
-    private DomainService domainService;
+	private ServerService serverService;
+	private DomainService domainService;
 
-    @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<AuthServerStatePublic> state() {
-        return ResponseEntity.ok(serverService.getServerStatePublic());
-    }
+	@GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<AuthServerStatePublic> state() {
+		return ResponseEntity.ok(serverService.getServerStatePublic());
+	}
 
-    @GetMapping(value = "/public", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<PubKey> pubkey() {
-        return ResponseEntity.ok(PubKey.from(serverService.publicKey().getEncoded()));
-    }
+	@GetMapping(value = "/public", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<PubKey> pubkey() {
+		return ResponseEntity.ok(PubKey.from(serverService.publicKey().getEncoded()));
+	}
 
 
-    @GetMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Collection<ForbidenDomain>> getDomains() {
-        return ResponseEntity
-                .ok(domainService.getAllDomainNotAllowed()
-                        .stream().map(ForbidenDomain::from)
-                        .collect(Collectors.toList()));
+	@GetMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Collection<ForbidenDomain>> getDomains() {
+		return ResponseEntity
+				.ok(domainService.getAllDomainNotAllowed()
+						.stream().map(ForbidenDomain::from)
+						.collect(Collectors.toList()));
 
-    }
-
+	}
 
 }

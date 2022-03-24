@@ -17,13 +17,13 @@ import javax.persistence.Id;
 @Entity
 @EqualsAndHashCode(of = {"id"})
 public class TokensId {
-    @Id
-    @Setter
-    Long id;
+	@Id
+	@Setter
+	Long id;
 
-    @Setter
-    Long idAccessToken;
-    @Setter
-    Long idRefreshToken;
+	@Setter
+	Long idAccessToken;
+	@Setter
+	Long idRefreshToken;
 
 }

@@ -24,21 +24,21 @@ import javax.persistence.ManyToOne;
 @Getter
 @Entity
 public class BanLog extends UserLog {
-    @Enumerated
-    @Setter
-    BanReason reason;
+	@Enumerated
+	@Setter
+	BanReason reason;
 
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials admin;
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	Credentials admin;
 
 
-    public BanLog(Credentials user, Credentials admin, BanReason reason) {
-        super(user, LogStatus.BAN);
-        this.admin = admin;
-        setReason(reason);
-    }
+	public BanLog(Credentials user, Credentials admin, BanReason reason) {
+		super(user, LogStatus.BAN);
+		this.admin = admin;
+		setReason(reason);
+	}
 }
 

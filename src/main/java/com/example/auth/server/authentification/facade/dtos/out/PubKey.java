@@ -14,11 +14,11 @@ import lombok.*;
 @Getter
 public class PubKey {
 
-    byte[] key;
+	byte[] key;
 
-    public static PubKey from(byte[] c) {
+	public static PubKey from(byte[] c) {
 
-        return new PubKey(c);
-    }
+		return new PubKey(c);
+	}
 
 }

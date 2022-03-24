@@ -21,14 +21,14 @@ import javax.persistence.Enumerated;
 @Getter
 @Entity
 public class AdminBanLog extends AdminLog {
-    @Enumerated
-    @Setter
-    BanReason reason;
+	@Enumerated
+	@Setter
+	BanReason reason;
 
 
-    public AdminBanLog(Credentials admin, Credentials user, BanReason reason) {
-        super(admin, user, LogStatus.ADMIN_BAN_USER);
-        setReason(reason);
-    }
+	public AdminBanLog(Credentials admin, Credentials user, BanReason reason) {
+		super(admin, user, LogStatus.ADMIN_BAN_USER);
+		setReason(reason);
+	}
 }
 

@@ -24,14 +24,14 @@ import javax.persistence.ManyToOne;
 public class UnbanLog extends UserLog {
 
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials admin;
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	Credentials admin;
 
-    public UnbanLog(Credentials user, Credentials admin) {
-        super(user, LogStatus.UNBAN);
-        this.setAdmin(admin);
-    }
+	public UnbanLog(Credentials user, Credentials admin) {
+		super(user, LogStatus.UNBAN);
+		this.setAdmin(admin);
+	}
 }
 

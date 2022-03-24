@@ -27,32 +27,32 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class TokenContextRepository implements ServerSecurityContextRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenContextRepository.class);
+	private static final Logger logger = LoggerFactory.getLogger(TokenContextRepository.class);
 
-    final JwtDecoder bearerDecoder;
+	final JwtDecoder bearerDecoder;
 
-    @Override
-    public Mono<Void> save(ServerWebExchange serverWebExchange, SecurityContext securityContext) {
-        return null;
-    }
+	@Override
+	public Mono<Void> save(ServerWebExchange serverWebExchange, SecurityContext securityContext) {
+		return null;
+	}
 
-    @Override
-    public Mono<SecurityContext> load(ServerWebExchange serverWebExchange) {
-        ServerHttpRequest request = serverWebExchange.getRequest();
-        String authorization = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+	@Override
+	public Mono<SecurityContext> load(ServerWebExchange serverWebExchange) {
+		ServerHttpRequest request = serverWebExchange.getRequest();
+		String authorization = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-        try {
-            var upat = bearerDecoder.decode(authorization);
-            return Mono.just(new SecurityContextImpl(upat));
-        } catch (NoTokenException noTokenException) {
-            //logger.info("noTokenException");
-        } catch (InvalidTokenException invalidTokenException) {
-            //logger.info("invalidTokenException");
-        } catch (TokenExpiredException tokenExpiredException) {
-            //logger.info("TokenExpiredException");
-        }
-        return Mono.empty();
+		try {
+			var upat = bearerDecoder.decode(authorization);
+			return Mono.just(new SecurityContextImpl(upat));
+		} catch (NoTokenException e) {
+			logger.info("noTokenException");
+		} catch (InvalidTokenException e) {
+			logger.info("invalidTokenException");
+		} catch (TokenExpiredException e) {
+			logger.info("TokenExpiredException");
+		}
+		return Mono.empty();
 
-    }
+	}
 
 }

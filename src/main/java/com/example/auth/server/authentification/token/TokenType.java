@@ -5,5 +5,5 @@ package com.example.auth.server.authentification.token;
  * @date 13/03/2020
  */
 public enum TokenType {
-    ACCESS, REFRESH
+	ACCESS, REFRESH
 }

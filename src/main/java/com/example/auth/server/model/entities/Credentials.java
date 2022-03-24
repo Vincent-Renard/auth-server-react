@@ -29,53 +29,50 @@ import java.util.*;
 public class Credentials {
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long idUser;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long idUser;
 
-    @Column(unique = true, nullable = false)
-    @Setter
-    @Email
-    String mail;
+	@Column(unique = true, nullable = false)
+	@Setter
+	@Email
+	String mail;
 
-    @CreationTimestamp
-    LocalDateTime inscriptionDate;
-
-
-    @Column(nullable = false)
-    @Setter
-    String password;
+	@CreationTimestamp
+	LocalDateTime inscriptionDate;
 
 
-    @Setter
-    @ElementCollection
-    Collection<String> roles = new TreeSet<>();
-
-    @UpdateTimestamp
-    LocalDateTime updateDate;
-
-    @Setter
-    @OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
-    private Banishment banishment;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    @Setter
-    @JsonManagedReference
-    List<UserLog> logs = new ArrayList<>();
+	@Column(nullable = false)
+	@Setter
+	String password;
 
 
-    public Credentials(String mail, String password, Collection<String> roles) {
+	@Setter
+	@ElementCollection
+	Collection<String> roles = new TreeSet<>();
 
-        this.mail = mail.toLowerCase();
-        this.password = password;
-        this.roles = roles;
+	@UpdateTimestamp
+	LocalDateTime updateDate;
+
+	@Setter
+	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
+	private Banishment banishment;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	@Setter
+	@JsonManagedReference
+	List<UserLog> logs = new ArrayList<>();
+
+
+	public Credentials(String mail, String password, Collection<String> roles) {
+
+		this.mail = mail.toLowerCase();
+		this.password = password;
+		this.roles = roles;
 
 	}
 
 	public void addLog(UserLog log) {
-		//FIXME --
-		//log.setUser(this);
-
 		this.getLogs().add(log);
 	}
 
@@ -101,10 +98,9 @@ public class Credentials {
 				", roles=" + roles +
 				", updateDate=" + updateDate +
 				", banishment=" + ((banishment == null) ? "null" : banishment.toString()) +
-                ", logs=" + logs +
-                '}';
-    }
-
+				", logs=" + logs +
+				'}';
+	}
 
 
 }

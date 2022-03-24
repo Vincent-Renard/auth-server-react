@@ -15,6 +15,7 @@
     <description>Serveur d'authentification Oauth2 like</description>
     <properties>
         <jjwt.version>0.11.2</jjwt.version>
+        <springdoc.version>1.5.11</springdoc.version>
         <java.version>17</java.version>
         <maven.compiler.target>1.17</maven.compiler.target>
         <maven.compiler.source>1.17</maven.compiler.source>
@@ -69,7 +70,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-webflux-ui</artifactId>
-            <version>1.5.11</version>
+            <version>${springdoc.version}</version>
 
         </dependency>
     </dependencies>

@@ -19,9 +19,9 @@ import javax.persistence.Entity;
 @Entity
 public class BadPasswordAttempt extends UserLog {
 
-    public BadPasswordAttempt(Credentials user) {
-        super(user, LogStatus.BAD_PASSWORD);
-    }
+	public BadPasswordAttempt(Credentials user) {
+		super(user, LogStatus.BAD_PASSWORD);
+	}
 }
 
 

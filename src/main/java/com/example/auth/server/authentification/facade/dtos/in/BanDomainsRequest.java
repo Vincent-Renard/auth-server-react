@@ -17,5 +17,5 @@ import java.util.Collection;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BanDomainsRequest {
-    Collection<String> domains;
+	Collection<String> domains;
 }

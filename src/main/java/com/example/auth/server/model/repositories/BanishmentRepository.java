@@ -13,5 +13,5 @@ import java.util.List;
 @Repository
 public interface BanishmentRepository extends JpaRepository<Banishment, Long> {
 
-    List<Banishment> findBanishmentByAdmin_IdUser(long idAdmin);
+	List<Banishment> findBanishmentByAdmin_IdUser(long idAdmin);
 }

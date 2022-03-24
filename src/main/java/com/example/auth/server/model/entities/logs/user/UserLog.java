@@ -24,27 +24,27 @@ import java.time.LocalDateTime;
 public abstract class UserLog {
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
 
-    @Enumerated(value = EnumType.STRING)
-    LogStatus status;
+	@Enumerated(value = EnumType.STRING)
+	LogStatus status;
 
-    @CreationTimestamp
-    LocalDateTime date;
+	@CreationTimestamp
+	LocalDateTime date;
 
-    @Setter
-    @ManyToOne
-    @JsonIdentityReference(alwaysAsId = true)
-    @ToString.Exclude
-    Credentials user;
+	@Setter
+	@ManyToOne
+	@JsonIdentityReference(alwaysAsId = true)
+	@ToString.Exclude
+	Credentials user;
 
-    public UserLog(Credentials user, LogStatus status) {
+	protected UserLog(Credentials user, LogStatus status) {
 
-        this.status = status;
-        this.user = user;
-    }
+		this.status = status;
+		this.user = user;
+	}
 
 
 }

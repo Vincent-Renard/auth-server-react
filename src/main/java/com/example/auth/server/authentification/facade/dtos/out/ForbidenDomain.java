@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Setter
 public class ForbidenDomain {
 
-    String domain;
-    LocalDateTime dateInsert;
+	String domain;
+	LocalDateTime dateInsert;
 
 
 	public static ForbidenDomain from(com.example.auth.server.model.entities.ForbidenDomain d) {

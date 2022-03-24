@@ -17,11 +17,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ResetToken {
 
-    String token;
+	String token;
 
-    public static ResetToken from(String token) {
-        ResetToken r = new ResetToken();
-        r.setToken(token);
-        return r;
-    }
+	public static ResetToken from(String token) {
+		ResetToken r = new ResetToken();
+		r.setToken(token);
+		return r;
+	}
 }

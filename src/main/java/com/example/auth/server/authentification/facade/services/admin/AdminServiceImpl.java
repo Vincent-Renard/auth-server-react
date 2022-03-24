@@ -21,14 +21,12 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class AdminServiceImpl implements AdminService, AuthUtils {
+public class AdminServiceImpl implements AuthUtils, AdminService {
 
 
 	LogsService logsService;
@@ -48,23 +46,19 @@ public class AdminServiceImpl implements AdminService, AuthUtils {
 	@Override
 	public AuthServerStateAdmin getServerStateAdmin(long idAdmin) throws NotSuchUserException {
 
-		Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
-		if (optAdmin.isPresent()) {
-			AuthServerStateAdmin p = new AuthServerStateAdmin();
+		var admin = base.findCredentialsById(idAdmin).orElseThrow(NotSuchUserException::new);
+		var p = new AuthServerStateAdmin();
 
-			p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
-			p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
-			//p.setStartDateServer(startDate);
+		p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
+		p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());
+		//p.setStartDateServer(startDate);
 
-			p.setForbidenDomains(base.findAllDomains().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet()));
-			p.setKey(tokenEncoder.getPublicKey().getEncoded());
+		p.setForbidenDomains(base.findAllDomains().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet()));
+		p.setKey(tokenEncoder.getPublicKey().getEncoded());
 
-			p.setNbUsersRegistered(credentialsRepo.count());
-			p.setNbUsersAdminsRegistered(credentialsRepo.findAll().stream().filter(c -> c.getRoles().contains("ADMIN")).count());
-			var admin = optAdmin.get();
-			logsService.logAsksServerStateAdmin(admin);
-			return p;
-		} else throw new NotSuchUserException();
+		p.setNbUsersRegistered(credentialsRepo.count());
+		p.setNbUsersAdminsRegistered(credentialsRepo.findAll().stream().filter(c -> c.getRoles().contains("ADMIN")).count());
+		return p;
 
 	}
 
@@ -81,13 +75,8 @@ public class AdminServiceImpl implements AdminService, AuthUtils {
 
 	@Override
 	public Credentials showUser(long idAdmin, long idUser) throws NotSuchUserException {
-		Optional<Credentials> optCredentials = credentialsRepo.findById(idAdmin);
-		if (optCredentials.isPresent()) {
-			return userService.showUser(idUser);
-		} else {
-			throw new NotSuchUserException();
-		}
-
+		if (!credentialsRepo.existsById(idAdmin)) throw new NotSuchUserException();
+		return userService.showUser(idUser);
 	}
 
 
@@ -103,57 +92,42 @@ public class AdminServiceImpl implements AdminService, AuthUtils {
 
 	@Override
 	public void unBanUser(long idUser, long idAdmin) throws NotSuchUserException {
-		Optional<Credentials> optUser = base.findCredentialsById(idUser);
-		Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
-		if (optUser.isPresent() && optAdmin.isPresent()) {
+		var user = base.findCredentialsById(idUser).orElseThrow(NotSuchUserException::new);
+		var admin = base.findCredentialsById(idAdmin).orElseThrow(NotSuchUserException::new);
+		this.deleteBanishment(user.getBanishment());
+		user.setBanishment(null);
+		user = base.saveCredentials(user);
 
-			var user = optUser.get();
-			var admin = optAdmin.get();
-			this.deleteBanishment(user.getBanishment());
-			user.setBanishment(null);
-			user = base.saveCredentials(user);
-
-			logsService.logUnban(user, admin);
-		} else {
-			throw new NotSuchUserException();
-		}
+		logsService.logUnban(user, admin);
 	}
 
 
 	@Override
 	public Credentials banUser(long idUser, BanReason reason, long idAdmin) throws NotSuchUserException, UserAlreadyBanException {
-		Optional<Credentials> optUser = base.findCredentialsById(idUser);
-		Optional<Credentials> optAdmin = base.findCredentialsById(idAdmin);
-		if (optUser.isPresent() && optAdmin.isPresent()) {
-			var user = optUser.get();
+		var user = base.findCredentialsById(idUser).orElseThrow(NotSuchUserException::new);
+		var admin = base.findCredentialsById(idAdmin).orElseThrow(NotSuchUserException::new);
 
-			if (!user.getMail().equals(mailAdmin)) {
+		if (!user.getMail().equals(MAIL_ADMIN)) {
+			if (user.getBanishment() != null) throw new UserAlreadyBanException();
 
+			var banishment = new Banishment(admin, reason);
+			banishment.setUser(user);
+			user.setBanishment(banishment);
 
-				if (user.getBanishment() != null) throw new UserAlreadyBanException();
-				var admin = optAdmin.get();
-				Banishment be = new Banishment(admin, reason);
-				be.setUser(user);
-				user.setBanishment(be);
+			user = base.saveCredentials(user);
+			admin = base.saveCredentials(admin);
+			logsService.logBan(user, admin, reason);
 
-				user = base.saveCredentials(user);
-				admin = base.saveCredentials(admin);
-				logsService.logBan(user, admin, reason);
-
-
-			}
-			return user;
-		} else {
-			throw new NotSuchUserException();
 		}
+		return user;
 	}
 
 	@Override
 	public Collection<Credentials> getAllUsersWithDomainsNotAllowed() {
-		Set<String> fds = forbidenDomains.findAll().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet());
+		var forbidenDomainsSet = forbidenDomains.findAll().stream().map(ForbidenDomain::getDomain).collect(Collectors.toSet());
 		return credentialsRepo.findAll()
 				.stream()
-				.filter(uc -> fds.contains(uc.getMail().split("@")[1]))
+				.filter(uc -> forbidenDomainsSet.contains(uc.getMail().split("@")[1]))
 				.collect(Collectors.toSet());
 	}
 

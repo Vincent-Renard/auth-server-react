@@ -22,12 +22,12 @@ import java.util.TreeSet;
 public class AdminRoleUpdateLog extends AdminLog {
 
 
-    @Setter
-    @ElementCollection
-    Collection<String> roles = new TreeSet<>();
+	@Setter
+	@ElementCollection
+	Collection<String> roles = new TreeSet<>();
 
 
-    public AdminRoleUpdateLog(Credentials admin, Credentials userOn) {
-        super(admin, userOn, LogStatus.ADMIN_USER_ROLES_UPDATE);
-    }
+	public AdminRoleUpdateLog(Credentials admin, Credentials userOn) {
+		super(admin, userOn, LogStatus.ADMIN_USER_ROLES_UPDATE);
+	}
 }

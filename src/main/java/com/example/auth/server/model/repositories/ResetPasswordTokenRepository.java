@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface ResetPasswordTokenRepository extends JpaRepository<ResetPasswordToken, String> {
 
-    boolean existsByResetToken(String token);
+	boolean existsByResetToken(String token);
 
-    List<ResetPasswordToken> findAllByUserIdUser(long iduser);
+	List<ResetPasswordToken> findAllByUserIdUser(long iduser);
 }

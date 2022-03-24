@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface AdminRoleUpdateLogRepository extends JpaRepository<AdminRoleUpdateLog, Long> {
-    List<AdminRoleUpdateLog> findAllByUserIdUser(long idUser);
+	List<AdminRoleUpdateLog> findAllByUserIdUser(long idUser);
 }

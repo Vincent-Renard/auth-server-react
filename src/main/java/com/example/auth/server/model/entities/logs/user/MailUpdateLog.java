@@ -20,12 +20,12 @@ import javax.persistence.Entity;
 @Entity
 public class MailUpdateLog extends UserLog {
 
-    @Setter
-    String oldMail;
+	@Setter
+	String oldMail;
 
 
-    public MailUpdateLog(Credentials user, String oldMail) {
-        super(user, LogStatus.UPDATE_MAIL);
-        setOldMail(oldMail);
-    }
+	public MailUpdateLog(Credentials user, String oldMail) {
+		super(user, LogStatus.UPDATE_MAIL);
+		setOldMail(oldMail);
+	}
 }

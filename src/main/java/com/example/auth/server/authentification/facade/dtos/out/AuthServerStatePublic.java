@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthServerStatePublic {
 
-    LocalDateTime startDateServer;
-    byte[] key;
-    long authTokenTTL;
-    long refreshTokenTTL;
+	LocalDateTime startDateServer;
+	byte[] key;
+	long authTokenTTL;
+	long refreshTokenTTL;
 
 }

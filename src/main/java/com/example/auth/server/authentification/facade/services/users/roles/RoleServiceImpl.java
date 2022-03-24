@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -32,11 +31,7 @@ public class RoleServiceImpl implements RoleService, AuthUtils {
 	public Collection<Credentials> getAllUsersWithRole(String role) {
 		role = role.toUpperCase();
 
-		if (POSSILBES_ROLES.contains(role)) {
-			return this.getUsersWithRole(role);
-		}
-
-		return new HashSet<>();
+		return POSSILBES_ROLES.contains(role) ? this.getUsersWithRole(role) : new HashSet<>();
 	}
 
 	private Collection<Credentials> getUsersWithRole(String role) {
@@ -47,31 +42,24 @@ public class RoleServiceImpl implements RoleService, AuthUtils {
 
 	@Override
 	public Credentials updateRoles(long idUser, Collection<String> newRoles, long idAdmin) throws NotSuchUserException, NotSuchAdminException {
-		Optional<Credentials> optCredentialsUser = base.findCredentialsById(idUser);
-		Optional<Credentials> optCredentialsAdmin = base.findCredentialsById(idAdmin);
+		var currentUserCredentials = base.findCredentialsById(idUser).orElseThrow(NotSuchUserException::new);
+		var adminCredentials = base.findCredentialsById(idAdmin).orElseThrow(NotSuchUserException::new);
 		newRoles = newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet());
 
-		if (!optCredentialsUser.isPresent()) {
-			throw new NotSuchUserException();
-		}
-		if (!optCredentialsAdmin.isPresent()) {
-			throw new NotSuchAdminException();
-		}
-		var userCredentials = optCredentialsUser.get();
+
 		if (POSSILBES_ROLES.containsAll(newRoles)) {
 
-			var adminCredentials = optCredentialsAdmin.get();
-			if (!newRoles.equals(userCredentials.getRoles())) {
-				userCredentials.setRoles(newRoles);
-				userCredentials = base.saveCredentials(userCredentials);
-				logsService.logRoleUpdate(userCredentials, adminCredentials, newRoles);
+			if (!newRoles.equals(currentUserCredentials.getRoles())) {
+				currentUserCredentials.setRoles(newRoles);
+				currentUserCredentials = base.saveCredentials(currentUserCredentials);
+				logsService.logRoleUpdate(currentUserCredentials, adminCredentials, newRoles);
 			}
 
-			return userCredentials;
+			return currentUserCredentials;
 
 
 		}
-		return userCredentials;
+		return currentUserCredentials;
 	}
 
 }

@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface AdminBanLogRepository extends JpaRepository<AdminBanLog, Long> {
-    List<AdminBanLog> findAllByUserIdUser(long idUser);
+	List<AdminBanLog> findAllByUserIdUser(long idUser);
 }

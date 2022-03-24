@@ -15,8 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
 
 
@@ -32,6 +30,7 @@ public class TokenServiceImpl implements TokenService, AuthUtils {
 	JwtEncoder tokenEncoder;
 
 	PasswordService passwordService;
+
 	@Override
 	public UserToken signIn(String mailUser, String passsword) throws MailAlreadyTakenException, BadPasswordFormatException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException {
 		if (!passwordChecker.test(passsword))
@@ -39,33 +38,33 @@ public class TokenServiceImpl implements TokenService, AuthUtils {
 		if (!mailChecker.test(mailUser))
 			throw new InvalidMailException();
 		String domain = mailUser.split("@")[1];
-		if (base.existDomainByName(domain))
+		if (base.existDomainByName(domain)) {
 			throw new ForbiddenDomainMailUseException();
-		Optional<Credentials> c = base.findCredentialsByMail(mailUser);
+		}
 
-		if (c.isPresent()) {
-			if (c.get().getBanishment() != null)
+		var foundUser = base.findCredentialsByMail(mailUser);
+
+		if (foundUser.isPresent()) {
+			if (foundUser.get().getBanishment() != null) {
 				throw new UserBanException();
-			throw new MailAlreadyTakenException();
+			} else throw new MailAlreadyTakenException();
 		}
 
 
-		Set<String> rolesOfUser = new TreeSet<>(BASE_ROLES);
+		var rolesOfUser = new TreeSet<>(BASE_ROLES);
 
 		var credentials = new Credentials(mailUser, passwordService.encodePassword(passsword), rolesOfUser);
 
 
 		var user = base.saveCredentials(credentials);
 		logsService.logRegistration(user);
-		Bearers tokens = tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
+		var tokens = tokenEncoder.genBoth(user.getIdUser(), user.getRoles());
 		return new UserToken(user.getIdUser(), tokens);
 	}
 
 	@Override
 	public Bearers logIn(String mail, String password) throws BadPasswordException, NotSuchUserException, UserBanException {
-		Optional<Credentials> optCredentials = base.findCredentialsByMail(mail);
-		if (optCredentials.isPresent()) {
-			var credentials = optCredentials.get();
+		var credentials = base.findCredentialsByMail(mail).orElseThrow(NotSuchUserException::new);
 
 
 			if (!passwordService.passwordMatches(password, credentials.getPassword())) {
@@ -78,26 +77,18 @@ public class TokenServiceImpl implements TokenService, AuthUtils {
 
 			logsService.logLogin(credentials);
 			return tokenEncoder.genBoth(credentials.getIdUser(), credentials.getRoles());
-		} else throw new NotSuchUserException();
 
 	}
 
 	@Override
 	public Bearers refresh(String token) throws NotSuchUserException, UserBanException, NoTokenException, InvalidTokenException, TokenExpiredException {
 		long idUser = tokenDecoder.decodeRefreshToken(token);
-		Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
-		if (optCredentials.isPresent()) {
-			Credentials credentials = optCredentials.get();
+		var credentials = base.findCredentialsById(idUser).orElseThrow(NotSuchUserException::new);
 			if (credentials.getBanishment() != null) {
 				throw new UserBanException();
 			}
-
-			logsService.LogRefreshing(credentials);
+			logsService.logRefreshing(credentials);
 			return tokenEncoder.genBoth(idUser, credentials.getRoles());
-
-		} else {
-			throw new NotSuchUserException();
-		}
 
 	}
 }

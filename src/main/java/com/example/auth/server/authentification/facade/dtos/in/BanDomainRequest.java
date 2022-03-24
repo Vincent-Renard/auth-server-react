@@ -15,5 +15,5 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BanDomainRequest {
-    String domain;
+	String domain;
 }

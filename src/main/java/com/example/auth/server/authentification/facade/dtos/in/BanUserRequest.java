@@ -17,5 +17,5 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BanUserRequest {
-    BanReason reason;
+	BanReason reason;
 }

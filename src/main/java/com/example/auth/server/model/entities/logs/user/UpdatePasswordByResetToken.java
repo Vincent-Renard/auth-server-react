@@ -19,9 +19,9 @@ import javax.persistence.Entity;
 @Entity
 public class UpdatePasswordByResetToken extends UserLog {
 
-    public UpdatePasswordByResetToken(Credentials user) {
-        super(user, LogStatus.UPDATE_PASSWORD_BY_RESET);
-    }
+	public UpdatePasswordByResetToken(Credentials user) {
+		super(user, LogStatus.UPDATE_PASSWORD_BY_RESET);
+	}
 }
 
 

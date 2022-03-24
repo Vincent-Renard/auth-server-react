@@ -14,8 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -40,7 +38,7 @@ public class UserServiceImpl implements UserService, AuthUtils {
 
 
 			}
-			logsService.delogUser(iduser);
+
 			var ltokens = resetPasswordTokenRepository.findAllByUserIdUser(iduser);
 			ltokens.forEach(t -> t.setUser(null));
 			resetPasswordTokenRepository.saveAll(ltokens);
@@ -55,17 +53,12 @@ public class UserServiceImpl implements UserService, AuthUtils {
 
 	@Override
 	public void signOut(long idUser) throws NotSuchUserException, UserBanException {
-		Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
-		if (optCredentials.isPresent()) {
-			var credentials = optCredentials.get();
-			if (credentials.getBanishment() != null)
-				throw new UserBanException();
+		var credentials = showUser(idUser);
+		if (credentials.getBanishment() != null)
+			throw new UserBanException();
 
-			this.deleteCredentialsById(idUser);
+		this.deleteCredentialsById(idUser);
 
-		} else {
-			throw new NotSuchUserException();
-		}
 	}
 
 	@Override
@@ -76,42 +69,33 @@ public class UserServiceImpl implements UserService, AuthUtils {
 
 	@Override
 	public void updateMail(long idUser, String newmail) throws MailAlreadyTakenException, NotSuchUserException, InvalidMailException, ForbiddenDomainMailUseException, UserBanException {
-		Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+		var credentials = showUser(idUser);
 
-		if (optCredentials.isPresent()) {
+		if (credentials.getBanishment() != null)
+			throw new UserBanException();
 
-			var credentials = optCredentials.get();
-			if (credentials.getBanishment() != null)
-				throw new UserBanException();
+		if (!mailChecker.test(newmail))
+			throw new InvalidMailException();
+		String domain = newmail.split("@")[1];
+		if (base.existDomainByName(domain))
+			throw new ForbiddenDomainMailUseException();
 
-			if (!mailChecker.test(newmail))
-				throw new InvalidMailException();
-			String domain = newmail.split("@")[1];
-			if (base.existDomainByName(domain))
-				throw new ForbiddenDomainMailUseException();
+		if (userExistsWithMail(newmail))
+			throw new MailAlreadyTakenException();
 
-			if (userExistsWithMail(newmail))
-				throw new MailAlreadyTakenException();
+		if (credentials.getMail().equals(MAIL_ADMIN))
+			newmail = MAIL_ADMIN;
 
-			if (credentials.getMail().equals(mailAdmin))
-				newmail = mailAdmin;
+		String oldMail = credentials.getMail();
+		credentials.setMail(newmail);
+		base.saveCredentials(credentials);
+		logsService.logMailUpdate(oldMail, credentials);
 
-			String oldMail = credentials.getMail();
-			credentials.setMail(newmail);
-			base.saveCredentials(credentials);
-			logsService.logMailUpdate(oldMail, credentials);
-		} else {
-			throw new NotSuchUserException();
-		}
 	}
 
 	@Override
 	public Credentials showUser(long idUser) throws NotSuchUserException {
-		Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
-		if (optCredentials.isPresent()) {
-			return optCredentials.get();
-		} else {
-			throw new NotSuchUserException();
-		}
+		return base.findCredentialsById(idUser).orElseThrow(NotSuchUserException::new);
 	}
+
 }

@@ -19,7 +19,7 @@ import javax.persistence.Entity;
 @Entity
 public class SuccessfulLogingLog extends UserLog {
 
-    public SuccessfulLogingLog(Credentials user) {
-        super(user, LogStatus.LOGING_SUCCESSFULL);
-    }
+	public SuccessfulLogingLog(Credentials user) {
+		super(user, LogStatus.LOGING_SUCCESSFULL);
+	}
 }

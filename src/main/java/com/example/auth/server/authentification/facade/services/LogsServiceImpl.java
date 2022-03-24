@@ -7,7 +7,6 @@ import com.example.auth.server.model.entities.logs.admin.AdminRoleUpdateLog;
 import com.example.auth.server.model.entities.logs.admin.AdminUnbanLog;
 import com.example.auth.server.model.entities.logs.user.*;
 import com.example.auth.server.model.repositories.CredentialsRepository;
-import com.example.auth.server.model.repositories.logs.AdminBanLogRepository;
 import com.example.auth.server.model.repositories.logs.BanLogRepository;
 import com.example.auth.server.model.repositories.logs.RoleUpdateLogRepository;
 import com.example.auth.server.model.repositories.logs.UnBanLogRepository;
@@ -28,157 +27,131 @@ import java.util.Collection;
 public class LogsServiceImpl implements LogsService {
 
 
-    CredentialsRepository users;
+	CredentialsRepository users;
 
 
-    RoleUpdateLogRepository roleUpdateLogRepository;
+	RoleUpdateLogRepository roleUpdateLogRepository;
 
 
-    BanLogRepository banLogs;
+	BanLogRepository banLogs;
 
 
-    UnBanLogRepository unbanLogs;
+	UnBanLogRepository unbanLogs;
 
 
-    AdminBanLogRepository adminBanLogRepository;
+	@Override
+	public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
+		var logUser = new RoleUpdateLog(user);
 
-    @Override
-    public void logRoleUpdate(Credentials user, Credentials admin, Collection<String> newRoles) {
-        RoleUpdateLog logUser = new RoleUpdateLog(user);
+		logUser.setRoles(newRoles);
+		logUser.setAdmin(admin);
+		user.addLog(logUser);
 
-        logUser.setRoles(newRoles);
-        logUser.setAdmin(admin);
-        user.addLog(logUser);
+		users.save(user);
 
-        users.save(user);
+		var logAdmin = new AdminRoleUpdateLog(admin, user);
+		logAdmin.setRoles(newRoles);
+		admin.addLog(logAdmin);
 
-        AdminRoleUpdateLog logAdmin = new AdminRoleUpdateLog(admin, user);
-        logAdmin.setRoles(newRoles);
-        admin.addLog(logAdmin);
-
-        users.save(admin);
-    }
+		users.save(admin);
+	}
 
 
-    @Override
-    public void logBadPassword(Credentials user) {
-        BadPasswordAttempt bpal = new BadPasswordAttempt(user);
-        user.addLog(bpal);
-        users.save(user);
-    }
+	@Override
+	public void logBadPassword(Credentials user) {
+		var bpal = new BadPasswordAttempt(user);
+		user.addLog(bpal);
+		users.save(user);
+	}
 
-    @Override
-    public void logLogin(Credentials user) {
-        SuccessfulLogingLog ull = new SuccessfulLogingLog(user);
-        user.addLog(ull);
-        users.save(user);
+	@Override
+	public void logLogin(Credentials user) {
+		var ull = new SuccessfulLogingLog(user);
+		user.addLog(ull);
+		users.save(user);
 
-    }
+	}
 
-    @Override
-    public void logRegistration(Credentials user) {
-        user.addLog(new RegistrationLog(user));
-        users.save(user);
-    }
+	@Override
+	public void logRegistration(Credentials user) {
+		user.addLog(new RegistrationLog(user));
+		users.save(user);
+	}
 
-    @Override
-    public void LogRefreshing(Credentials user) {
-        user.addLog(new RefreshingTokensLog(user));
-        users.save(user);
-    }
+	@Override
+	public void logRefreshing(Credentials user) {
+		user.addLog(new RefreshingTokensLog(user));
+		users.save(user);
+	}
 
-    @Override
-    public void logUpdatePassword(Credentials user) {
-        user.addLog(new PasswordUpdateLog(user));
-        users.save(user);
-    }
+	@Override
+	public void logUpdatePassword(Credentials user) {
+		user.addLog(new PasswordUpdateLog(user));
+		users.save(user);
+	}
 
-    @Override
-    public void logBan(Credentials user, Credentials admin, BanReason reason) {
-        BanLog bul = new BanLog(user, admin, reason);
-        user.addLog(bul);
-        user = users.save(user);
-
-
-        AdminBanLog abul = new AdminBanLog(admin, user, reason);
-        admin.addLog(abul);
-        users.save(admin);
-
-    }
-
-    @Override
-    public void logMailUpdate(String oldMail, Credentials user) {
-        MailUpdateLog mul = new MailUpdateLog(user, oldMail);
-        user.addLog(mul);
-        users.save(user);
-
-    }
-
-    @Override
-    public void logUnban(Credentials user, Credentials admin) {
-        UnbanLog bul = new UnbanLog(user, admin);
-        user.addLog(bul);
-        users.save(user);
+	@Override
+	public void logBan(Credentials user, Credentials admin, BanReason reason) {
+		var bul = new BanLog(user, admin, reason);
+		user.addLog(bul);
+		user = users.save(user);
 
 
-        AdminUnbanLog abul = new AdminUnbanLog(admin, user);
-        admin.addLog(abul);
-        users.save(admin);
-    }
+		var abul = new AdminBanLog(admin, user, reason);
+		admin.addLog(abul);
+		users.save(admin);
 
-    @Override
-    public void logUnbanDomain(long idAdmin, String domain) {
-        //TODO
-    }
+	}
 
-    @Override
-    public void logBanDomain(Credentials admin, String domain) {
-        //TODO
-    }
+	@Override
+	public void logMailUpdate(String oldMail, Credentials user) {
+		var mul = new MailUpdateLog(user, oldMail);
+		user.addLog(mul);
+		users.save(user);
 
-    @Override
-    public void logAsksServerStateAdmin(Credentials admin) {
-        //TODO
-    }
+	}
 
-    @Override
-    public void delogAdmin(long iduser) {
-        var roleUpByAdmin = roleUpdateLogRepository.findAllByAdmin_IdUser(iduser);
-        roleUpByAdmin.forEach(e -> e.setAdmin(null));
-        roleUpdateLogRepository.saveAll(roleUpByAdmin);
-
-        var banLogsByAdmin = banLogs.findAllByAdmin_IdUser(iduser);
-        banLogsByAdmin.forEach(banLog -> banLog.setAdmin(null));
-        banLogs.saveAll(banLogsByAdmin);
-
-        var unbanLogsByAdmin = unbanLogs.findAllByAdmin_IdUser(iduser);
-        unbanLogsByAdmin.forEach(unbanLog -> unbanLog.setAdmin(null));
-        unbanLogs.saveAll(unbanLogsByAdmin);
+	@Override
+	public void logUnban(Credentials user, Credentials admin) {
+		var bul = new UnbanLog(user, admin);
+		user.addLog(bul);
+		users.save(user);
 
 
-    }
+		var abul = new AdminUnbanLog(admin, user);
+		admin.addLog(abul);
+		users.save(admin);
+	}
 
-    @Override
-    public void delogUser(long iduser) {
 
-        //admin role update
-        //ADMINban log
+	@Override
+	public void delogAdmin(long iduser) {
+		var roleUpByAdmin = roleUpdateLogRepository.findAllByAdmin_IdUser(iduser);
+		roleUpByAdmin.forEach(e -> e.setAdmin(null));
+		roleUpdateLogRepository.saveAll(roleUpByAdmin);
 
-        //adminUnban
-    }
+		var banLogsByAdmin = banLogs.findAllByAdmin_IdUser(iduser);
+		banLogsByAdmin.forEach(banLog -> banLog.setAdmin(null));
+		banLogs.saveAll(banLogsByAdmin);
 
-    @Override
-    public void logUpdatePasswordByResetToken(Credentials u) {
-        UpdatePasswordByResetToken upbrt = new UpdatePasswordByResetToken(u);
-        u.addLog(upbrt);
-        users.save(u);
+		var unbanLogsByAdmin = unbanLogs.findAllByAdmin_IdUser(iduser);
+		unbanLogsByAdmin.forEach(unbanLog -> unbanLog.setAdmin(null));
+		unbanLogs.saveAll(unbanLogsByAdmin);
 
-    }
 
-    @Override
-    public void askResetPasswordToken(Credentials u) {
-        ClaimResetTokenLog claimResetTokenLog = new ClaimResetTokenLog(u);
-        u.addLog(claimResetTokenLog);
-        //users.save(u);
-    }
+	}
+
+	@Override
+	public void logUpdatePasswordByResetToken(Credentials u) {
+		var upbrt = new UpdatePasswordByResetToken(u);
+		u.addLog(upbrt);
+		users.save(u);
+	}
+
+	@Override
+	public void askResetPasswordToken(Credentials u) {
+		var claimResetTokenLog = new ClaimResetTokenLog(u);
+		u.addLog(claimResetTokenLog);
+		users.save(u);
+	}
 }

@@ -8,6 +8,6 @@ import lombok.Value;
  */
 @Value(staticConstructor = "from")
 public class Bearers {
-    String accessToken;
-    String refreshToken;
+	String accessToken;
+	String refreshToken;
 }

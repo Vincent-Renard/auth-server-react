@@ -19,7 +19,7 @@ import javax.persistence.Entity;
 @Entity
 public class RefreshingTokensLog extends UserLog {
 
-    public RefreshingTokensLog(Credentials user) {
-        super(user, LogStatus.REFRESHING);
-    }
+	public RefreshingTokensLog(Credentials user) {
+		super(user, LogStatus.REFRESHING);
+	}
 }

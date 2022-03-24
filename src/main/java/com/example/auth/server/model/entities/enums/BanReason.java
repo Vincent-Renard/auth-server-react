@@ -6,5 +6,5 @@ package com.example.auth.server.model.entities.enums;
  */
 
 public enum BanReason {
-    SPAM, ABUSE
+	SPAM, ABUSE
 }

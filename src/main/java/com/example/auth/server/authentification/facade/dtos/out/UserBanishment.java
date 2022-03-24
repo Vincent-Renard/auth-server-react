@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UserBanishment {
-    BanReason reason;
-    LocalDateTime date;
+	BanReason reason;
+	LocalDateTime date;
 
-    public static UserBanishment from(Banishment b) {
-        return new UserBanishment(b.getReason(), b.getDate());
-    }
+	public static UserBanishment from(Banishment b) {
+		return new UserBanishment(b.getReason(), b.getDate());
+	}
 }

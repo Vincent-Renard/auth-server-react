@@ -22,37 +22,37 @@ import java.util.Objects;
 @ToString
 public class RSAKey {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
 
-    @Column(length = 2048, unique = true, nullable = false)
-    String privateKey;
+	@Column(length = 2048, unique = true, nullable = false)
+	String privateKey;
 
-    @Column(length = 2048, unique = true, nullable = false)
-    String publicKey;
+	@Column(length = 2048, unique = true, nullable = false)
+	String publicKey;
 
-    @CreationTimestamp
-    LocalDateTime dateTimeInserted;
+	@CreationTimestamp
+	LocalDateTime dateTimeInserted;
 
-    public RSAKey() {
-    }
+	public RSAKey() {
+	}
 
-    public RSAKey(String sk, String pk) {
-        privateKey = sk;
-        publicKey = pk;
-    }
+	public RSAKey(String sk, String pk) {
+		privateKey = sk;
+		publicKey = pk;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RSAKey rsaKey = (RSAKey) o;
-        return privateKey.equals(rsaKey.privateKey) && publicKey.equals(rsaKey.publicKey);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		RSAKey rsaKey = (RSAKey) o;
+		return privateKey.equals(rsaKey.privateKey) && publicKey.equals(rsaKey.publicKey);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(privateKey, publicKey);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(privateKey, publicKey);
+	}
 }

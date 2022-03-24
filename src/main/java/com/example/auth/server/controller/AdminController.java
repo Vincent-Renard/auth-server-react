@@ -32,110 +32,110 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdminController {
 
-    private AdminService adminService;
-    private DomainService domainService;
-    private ServerService serverService;
-    private RoleService roleService;
+	private AdminService adminService;
+	private DomainService domainService;
+	private ServerService serverService;
+	private RoleService roleService;
 
 
-    @PostMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> addDomain(Principal admin, @RequestBody BanDomainRequest domain) {
-        domainService.addForbidenDomain(Long.parseLong(admin.getName()), domain.getDomain());
-        return ResponseEntity.ok().build();
+	@PostMapping(value = "/domains", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Void> addDomain(Principal admin, @RequestBody BanDomainRequest domain) {
+		domainService.addForbidenDomain(Long.parseLong(admin.getName()), domain.getDomain());
+		return ResponseEntity.ok().build();
 
-    }
+	}
 
-    @PostMapping(value = "/domains/list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> addDomains(Principal admin, @RequestBody BanDomainsRequest request) {
+	@PostMapping(value = "/domains/list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Void> addDomains(Principal admin, @RequestBody BanDomainsRequest request) {
 
-        domainService.addForbidenDomains(Long.parseLong(admin.getName()), request.getDomains());
-        return ResponseEntity.ok().build();
+		domainService.addForbidenDomains(Long.parseLong(admin.getName()), request.getDomains());
+		return ResponseEntity.ok().build();
 
-    }
-
-
-    @DeleteMapping(value = "/domains/{dom}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> delDomain(Principal admin, @PathVariable(name = "dom") String domain) {
-        domainService.delForbidenDomain(Long.parseLong(admin.getName()), domain);
-        return ResponseEntity.noContent().build();
-
-    }
-
-    @GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<AuthServerStateAdmin> stateAdmin(Principal admin) throws NotSuchUserException {
-        return ResponseEntity.ok(adminService.getServerStateAdmin(Long.parseLong(admin.getName())));
-    }
-
-    @GetMapping(value = "/users/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> showUser(Principal admin, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
-        return ResponseEntity.ok(User.from(adminService.showUser(Long.parseLong(admin.getName()), idUser)));
-    }
-
-    @GetMapping(value = "/users/", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Collection<User>> searchUsers(Principal admin, @RequestParam(name = "maildomain", required = false) String domain
-            , @RequestParam(required = false, name = "role") String role) {
+	}
 
 
-        HashSet<User> e = new HashSet<>();
+	@DeleteMapping(value = "/domains/{dom}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Void> delDomain(Principal admin, @PathVariable(name = "dom") String domain) {
+		domainService.delForbidenDomain(Long.parseLong(admin.getName()), domain);
+		return ResponseEntity.noContent().build();
+
+	}
+
+	@GetMapping(value = "/state", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<AuthServerStateAdmin> stateAdmin(Principal admin) throws NotSuchUserException {
+		return ResponseEntity.ok(adminService.getServerStateAdmin(Long.parseLong(admin.getName())));
+	}
+
+	@GetMapping(value = "/users/{iduser}", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<User> showUser(Principal admin, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
+		return ResponseEntity.ok(User.from(adminService.showUser(Long.parseLong(admin.getName()), idUser)));
+	}
+
+	@GetMapping(value = "/users/", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Collection<User>> searchUsers(Principal admin, @RequestParam(name = "maildomain", required = false) String domain
+			, @RequestParam(required = false, name = "role") String role) {
 
 
-        if (domain != null) {
-            HashSet<User> r = adminService.getAllUsersWithDomain(domain)
-                    .stream()
-                    .map(User::from)
-                    .collect(Collectors.toCollection(HashSet::new));
-            if (e.isEmpty())
-                e.addAll(r);
-            else
-                e.retainAll(r);
+		HashSet<User> e = new HashSet<>();
 
 
-        }
-        if (role != null) {
-            HashSet<User> r = roleService.getAllUsersWithRole(role)
-                    .stream()
-                    .map(User::from)
-                    .collect(Collectors.toCollection(HashSet::new));
-
-            if (e.isEmpty())
-                e.addAll(r);
-            else
-                e.retainAll(r);
+		if (domain != null) {
+			HashSet<User> r = adminService.getAllUsersWithDomain(domain)
+					.stream()
+					.map(User::from)
+					.collect(Collectors.toCollection(HashSet::new));
+			if (e.isEmpty())
+				e.addAll(r);
+			else
+				e.retainAll(r);
 
 
-        }
-        return ResponseEntity.ok(e);
-    }
+		}
+		if (role != null) {
+			HashSet<User> r = roleService.getAllUsersWithRole(role)
+					.stream()
+					.map(User::from)
+					.collect(Collectors.toCollection(HashSet::new));
 
-    @PatchMapping(value = "/users/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> updateRoles(Principal admin, @PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException, NotSuchAdminException {
-        return ResponseEntity
-                .ok(User.from(roleService.updateRoles(idUser,
-                        updateRolesRequest.getRoles(),
-                        Long.parseLong(admin.getName()))));
+			if (e.isEmpty())
+				e.addAll(r);
+			else
+				e.retainAll(r);
 
-    }
 
-    @PostMapping(value = "/users/{iduser}/ban", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> banUser(Principal principal, @PathVariable(name = "iduser") long idUser, @RequestBody BanUserRequest bur) throws NotSuchUserException, UserAlreadyBanException {
-        return ResponseEntity.ok(
-                User.from(adminService.banUser(idUser,
-                        bur.getReason(),
-                        Long.parseLong(principal.getName()))));
+		}
+		return ResponseEntity.ok(e);
+	}
 
-    }
+	@PatchMapping(value = "/users/{id}/roles", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<User> updateRoles(Principal admin, @PathVariable(value = "id") long idUser, @RequestBody UpdateRolesRequest updateRolesRequest) throws NotSuchUserException, NotSuchAdminException {
+		return ResponseEntity
+				.ok(User.from(roleService.updateRoles(idUser,
+						updateRolesRequest.getRoles(),
+						Long.parseLong(admin.getName()))));
 
-    @DeleteMapping(value = "/users/{iduser}/ban")
-    public ResponseEntity<Void> unBanUser(Principal principal, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
-        adminService.unBanUser(idUser, Long.parseLong(principal.getName()));
-        return ResponseEntity.noContent().build();
-    }
+	}
 
-    @DeleteMapping(value = "/clean")
-    public ResponseEntity<Void> clear() {
-        serverService.clear();
-        return ResponseEntity.noContent().build();
-    }
+	@PostMapping(value = "/users/{iduser}/ban", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<User> banUser(Principal principal, @PathVariable(name = "iduser") long idUser, @RequestBody BanUserRequest bur) throws NotSuchUserException, UserAlreadyBanException {
+		return ResponseEntity.ok(
+				User.from(adminService.banUser(idUser,
+						bur.getReason(),
+						Long.parseLong(principal.getName()))));
+
+	}
+
+	@DeleteMapping(value = "/users/{iduser}/ban")
+	public ResponseEntity<Void> unBanUser(Principal principal, @PathVariable(name = "iduser") long idUser) throws NotSuchUserException {
+		adminService.unBanUser(idUser, Long.parseLong(principal.getName()));
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping(value = "/clean")
+	public ResponseEntity<Void> clear() {
+		serverService.clear();
+		return ResponseEntity.noContent().build();
+	}
 
 
 }

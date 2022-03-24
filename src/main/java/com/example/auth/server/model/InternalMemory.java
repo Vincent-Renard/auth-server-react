@@ -20,26 +20,26 @@ import java.util.Optional;
 @AllArgsConstructor
 public class InternalMemory {
 
-    KeyRepository keys;
-    TokenRepository tokens;
+	KeyRepository keys;
+	TokenRepository tokens;
 
-    public Optional<TokensId> findLastTokensId() {
-        return tokens.findById(1L);
-    }
+	public Optional<TokensId> findLastTokensId() {
+		return tokens.findById(1L);
+	}
 
-    public TokensId saveTokensId(TokensId ids) {
-        return tokens.save(ids);
-    }
+	public TokensId saveTokensId(TokensId ids) {
+		return tokens.save(ids);
+	}
 
-    public TokensId getLastTokensId() {
-        return tokens.getOne(1L);
-    }
+	public TokensId getLastTokensId() {
+		return tokens.getOne(1L);
+	}
 
-    public Optional<RSAKey> findKeys() {
-        return keys.findById(1L);
-    }
+	public Optional<RSAKey> findKeys() {
+		return keys.findById(1L);
+	}
 
-    public RSAKey saveKeys(RSAKey rsaKey) {
-        return keys.save(rsaKey);
-    }
+	public RSAKey saveKeys(RSAKey rsaKey) {
+		return keys.save(rsaKey);
+	}
 }

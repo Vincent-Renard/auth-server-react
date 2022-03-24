@@ -22,43 +22,36 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PersistenceEngine {
 
-    ForbidenDomainRepository forbidenDomains;
+	ForbidenDomainRepository forbidenDomains;
 
 
-    CredentialsRepository userCredentials;
+	CredentialsRepository userCredentials;
 
 
-    public Credentials saveCredentials(Credentials credentials) {
-        return userCredentials.save(credentials);
-    }
+	public Credentials saveCredentials(Credentials credentials) {
+		return userCredentials.save(credentials);
+	}
 
-    public Collection<ForbidenDomain> findAllDomains() {
-        return forbidenDomains.findAll();
-    }
-
-
-    public Optional<Credentials> findCredentialsById(long idUser) {
-        return userCredentials.findById(idUser);
-    }
-
-    public boolean existDomainByName(String domain) {
-        return forbidenDomains.existsByDomain(domain.toLowerCase(Locale.ROOT));
-    }
-
-    public Optional<Credentials> findCredentialsByMail(String mailUser) {
-        mailUser = mailUser.toLowerCase();
-        return userCredentials.findByMail(mailUser);
-    }
+	public Collection<ForbidenDomain> findAllDomains() {
+		return forbidenDomains.findAll();
+	}
 
 
+	public Optional<Credentials> findCredentialsById(long idUser) {
+		return userCredentials.findById(idUser);
+	}
+
+	public boolean existDomainByName(String domain) {
+		return forbidenDomains.existsByDomain(domain.toLowerCase(Locale.ROOT));
+	}
+
+	public Optional<Credentials> findCredentialsByMail(String mailUser) {
+		mailUser = mailUser.toLowerCase();
+		return userCredentials.findByMail(mailUser);
+	}
 
 
-
-
-
-
-
-    public void cleanOldAndUnusedResetTokens(int ttl) {
+	public void cleanOldAndUnusedResetTokens(int ttl) {
         /*
        var td= resetPasswordTokens.findAll().stream()
                 .filter(rpt-> rpt.getDateTime()
@@ -67,7 +60,7 @@ public class PersistenceEngine {
                         && rpt.getDateTimeUse()==null)
                .collect(Collectors.toList()).forEach(rpt -> rpt.setUser);
        */
-    }
+	}
 
 
 }

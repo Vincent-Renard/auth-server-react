@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface ForbidenDomainRepository extends JpaRepository<ForbidenDomain, String> {
 
-    boolean existsByDomain(String domain);
+	boolean existsByDomain(String domain);
 
 }

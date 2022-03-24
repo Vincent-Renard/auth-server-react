@@ -56,19 +56,17 @@ public class ServerServiceImpl implements ServerService, AuthUtils {
 
 
 	private String genPassword(int lenght, int chunks) {
-		String sep = "-";
-		String alphaU = "ABCDEGHIJKLMNOPQRSTUVWXYZ";
+		final var sep = "-";
+		var alphaU = "ABCDEGHIJKLMNPQRSTUVWXYZ";
 
-		String alpha = alphaU + alphaU.toLowerCase() + "0123456789";
+		final var alpha = alphaU + alphaU.toLowerCase() + "123456789";
 
-		alpha = alpha.replace("0", "")
-				.replace("O", "");
-		StringBuilder s = new StringBuilder();
-		Random r = new Random();
+		var sb = new StringBuilder();
+		var r = new Random();
 		for(int i = 0; i <= lenght; i++) {
-			s.append(alpha.charAt(r.nextInt(alpha.length())));
+			sb.append(alpha.charAt(r.nextInt(alpha.length())));
 			if (i > 0 && i % chunks == 0 && i < lenght) {
-				s.append(sep);
+				sb.append(sep);
 			}
 
 		}
@@ -79,11 +77,11 @@ public class ServerServiceImpl implements ServerService, AuthUtils {
 	private void fill() {
 		var password = genPassword(16, 4);
 
-		if (!userService.userExistsWithMail(mailAdmin)) {
+		if (!userService.userExistsWithMail(MAIL_ADMIN)) {
 
-			var admin = new Credentials(mailAdmin, passwordService.encodePassword(password), Set.of("USER", "ADMIN"));
+			var admin = new Credentials(MAIL_ADMIN, passwordService.encodePassword(password), Set.of("USER", "ADMIN"));
 			base.saveCredentials(admin);
-			logger.info(mailAdmin + "  " + password);
+			logger.info(MAIL_ADMIN + "  " + password);
 		}
 	}
 
@@ -94,7 +92,7 @@ public class ServerServiceImpl implements ServerService, AuthUtils {
 
 	@Override
 	public AuthServerStatePublic getServerStatePublic() {
-		AuthServerStatePublic p = new AuthServerStatePublic();
+		var p = new AuthServerStatePublic();
 
 		p.setAuthTokenTTL(tokenEncoder.getAuthTTL());
 		p.setRefreshTokenTTL(tokenEncoder.getRefreshTTL());

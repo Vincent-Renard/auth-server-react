@@ -28,76 +28,74 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class JwtDecoder implements TokenConstant {
-    @Value(value = "${auth.token.prefix}")
-    private String TOKENS_PREFIX;
+	final KeyStore keyStore;
+
+	@Value(value = "${auth.token.prefix}")
+	private String tokensPrefix;
+
+	public long decodeRefreshToken(String token) throws NoTokenException, InvalidTokenException, TokenExpiredException {
+		var upat = this.decode(token);
 
 
-    final KeyStore keyStore;
+		var body = Jwts.parserBuilder().setSigningKey(keyStore.getPublicKey()).build()
+				.parseClaimsJws(token).getBody();
 
+		if (!body.get(CLAIMS_KEY_TOKEN_TYPE).equals(TokenType.REFRESH.name())) {
+			throw new InvalidTokenException();
+		}
+		return (long) upat.getPrincipal();
+	}
 
-    public long decodeRefreshToken(String token) throws NoTokenException, InvalidTokenException, TokenExpiredException {
-        UsernamePasswordAuthenticationToken upat = this.decode(token);
+	private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidTokenException {
+		try {
 
+			long iduser = Long.parseLong(refreshClaims.getSubject());
 
-        Claims body = Jwts.parserBuilder().setSigningKey(keyStore.getPublicKey()).build()
-                .parseClaimsJws(token).getBody();
+			return new UsernamePasswordAuthenticationToken(iduser, null, null);
+		} catch (JwtException e) {
+			e.printStackTrace();
+			throw new InvalidTokenException();
+		}
+	}
 
-        if (!body.get(CLAIMS_KEY_TOKEN_TYPE).equals(TokenType.REFRESH.name())) {
-            throw new InvalidTokenException();
-        }
-        return (long) upat.getPrincipal();
-    }
+	private UsernamePasswordAuthenticationToken decodeAccess(Claims accessClaims) throws InvalidTokenException {
+		try {
+			var userroles = accessClaims.get(CLAIMS_KEY_TOKEN_ROLES, List.class);
+			var roles = new ArrayList<String>();
+			userroles.forEach(r -> roles.add((String) r));
 
-    private UsernamePasswordAuthenticationToken decodeRefresh(Claims refreshClaims) throws InvalidTokenException {
-        try {
+			Collection<SimpleGrantedAuthority> authorities = roles.stream()
+					.map(SimpleGrantedAuthority::new)
+					.collect(Collectors.toSet());
+			long iduser = Long.parseLong(accessClaims.getSubject());
 
-            long iduser = Long.parseLong(refreshClaims.getSubject());
+			return new UsernamePasswordAuthenticationToken(iduser, null, authorities);
 
-            return new UsernamePasswordAuthenticationToken(iduser, null, null);
-        } catch (JwtException e) {
-            e.printStackTrace();
-            throw new InvalidTokenException();
-        }
-    }
+		} catch (JwtException e) {
+			e.printStackTrace();
+			throw new InvalidTokenException();
+		}
+	}
 
-    private UsernamePasswordAuthenticationToken decodeAccess(Claims accessClaims) throws InvalidTokenException {
-        try {
-            var userroles = accessClaims.get(CLAIMS_KEY_TOKEN_ROLES, List.class);
-            var roles = new ArrayList<String>();
-            userroles.forEach(r -> roles.add((String) r));
+	public UsernamePasswordAuthenticationToken decode(String token) throws
+			NoTokenException, InvalidTokenException, TokenExpiredException {
+		if (token == null)
+			throw new NoTokenException();
+		if (token.startsWith(tokensPrefix))
+			token = token.replace(tokensPrefix, "");
+		try {
+			Claims body = Jwts.parserBuilder().setSigningKey(keyStore.getPublicKey()).build()
+					.parseClaimsJws(token).getBody();
 
-            Collection<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toSet());
-            long iduser = Long.parseLong(accessClaims.getSubject());
-
-            return new UsernamePasswordAuthenticationToken(iduser, null, authorities);
-
-        } catch (JwtException e) {
-            e.printStackTrace();
-            throw new InvalidTokenException();
-        }
-    }
-
-    public UsernamePasswordAuthenticationToken decode(String token) throws
-            NoTokenException, InvalidTokenException, TokenExpiredException {
-        if (token == null)
-            throw new NoTokenException();
-        if (token.startsWith(TOKENS_PREFIX))
-            token = token.replace(TOKENS_PREFIX, "");
-        try {
-            Claims body = Jwts.parserBuilder().setSigningKey(keyStore.getPublicKey()).build()
-                    .parseClaimsJws(token).getBody();
-
-            TokenType type = TokenType.valueOf(body.get(CLAIMS_KEY_TOKEN_TYPE).toString());
-            if (type.equals(TokenType.ACCESS))
-                return decodeAccess(body);
-            else return decodeRefresh(body);
-        } catch (ExpiredJwtException e) {
-            throw new TokenExpiredException();
-        } catch (JwtException e) {
-            throw new InvalidTokenException();
-        }
-    }
+			var type = TokenType.valueOf(body.get(CLAIMS_KEY_TOKEN_TYPE).toString());
+			if (type.equals(TokenType.ACCESS))
+				return decodeAccess(body);
+			else return decodeRefresh(body);
+		} catch (ExpiredJwtException e) {
+			throw new TokenExpiredException();
+		} catch (JwtException e) {
+			throw new InvalidTokenException();
+		}
+	}
 }
 

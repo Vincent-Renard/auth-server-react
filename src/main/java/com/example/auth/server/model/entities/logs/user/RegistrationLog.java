@@ -20,7 +20,7 @@ import javax.persistence.Entity;
 public class RegistrationLog extends UserLog {
 
 
-    public RegistrationLog(Credentials user) {
-        super(user, LogStatus.REGISTRATION);
-    }
+	public RegistrationLog(Credentials user) {
+		super(user, LogStatus.REGISTRATION);
+	}
 }

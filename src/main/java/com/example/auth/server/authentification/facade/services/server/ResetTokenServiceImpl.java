@@ -24,10 +24,8 @@ public class ResetTokenServiceImpl implements ResetTokenService {
 		do {
 			key = UUID.randomUUID().toString().replace("-", "");
 		} while (resetPasswordTokenRepository.existsByResetToken(key));
-		ResetPasswordToken rpt = new ResetPasswordToken(key, u);
-		rpt = resetPasswordTokenRepository.save(rpt);
 
-		return rpt;
+		return resetPasswordTokenRepository.save(new ResetPasswordToken(key, u));
 	}
 
 }

@@ -26,55 +26,49 @@ import java.util.Optional;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyStore {
-    static final Logger log = LoggerFactory.getLogger(KeyStore.class);
+	static final Logger log = LoggerFactory.getLogger(KeyStore.class);
 
 
-    KeyPair keyPair;
-    @Autowired
-    InternalMemory memory;
+	KeyPair keyPair;
+	@Autowired
+	InternalMemory memory;
 
-    @PostConstruct
-    private void genKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        if (keyPair == null) {
-            Optional<RSAKey> k = memory.findKeys();
-            if (!k.isPresent()) {
-                keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
-                var sk = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
+	@PostConstruct
+	private void genKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		if (keyPair == null) {
+			var keys = memory.findKeys();
+			if (!keys.isPresent()) {
+				keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
+				var sk = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
 
-                var pk = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+				var pk = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
 
-                memory.saveKeys(new RSAKey(sk, pk));
-
-
-            } else {
-                String sk = k.get().getPrivateKey();
-                String pk = k.get().getPublicKey();
-                byte[] pkcs8EncodedBytes = Base64.getDecoder().decode(sk);
-                byte[] X509EncodedByes = Base64.getDecoder().decode(pk);
-
-                PKCS8EncodedKeySpec secretKeySpec = new PKCS8EncodedKeySpec(pkcs8EncodedBytes);
-                X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(X509EncodedByes);
-
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-                var privateKey = keyFactory.generatePrivate(secretKeySpec);
-                var publicKey = keyFactory.generatePublic(publicKeySpec);
+				memory.saveKeys(new RSAKey(sk, pk));
 
 
-                keyPair = new KeyPair(publicKey, privateKey);
+			} else {
+				var keysChain = keys.get();
+				byte[] privateEncodedKey = Base64.getDecoder().decode(keysChain.getPrivateKey());
+				byte[] publicEncodedKey = Base64.getDecoder().decode(keysChain.getPublicKey());
 
+				var secretKeySpec = new PKCS8EncodedKeySpec(privateEncodedKey);
+				var publicKeySpec = new X509EncodedKeySpec(publicEncodedKey);
 
-            }
-            log.debug(keyPair.getPublic().toString());
-            log.debug(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
-        }
-    }
+				var keyFactory = KeyFactory.getInstance("RSA");
 
-    public PublicKey getPublicKey() {
-        return keyPair.getPublic();
-    }
+				var privateKey = keyFactory.generatePrivate(secretKeySpec);
+				var publicKey = keyFactory.generatePublic(publicKeySpec);
 
-    public PrivateKey getPrivateKey() {
-        return keyPair.getPrivate();
-    }
+				keyPair = new KeyPair(publicKey, privateKey);
+			}
+		}
+	}
+
+	public PublicKey getPublicKey() {
+		return keyPair.getPublic();
+	}
+
+	public PrivateKey getPrivateKey() {
+		return keyPair.getPrivate();
+	}
 }

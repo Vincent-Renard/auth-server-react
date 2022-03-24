@@ -22,41 +22,41 @@ import java.util.Objects;
 @Entity
 public class ForbidenDomain {
 
-    @Id
-    @Column(length = 512, unique = true, nullable = false)
-    String domain;
+	@Id
+	@Column(length = 512, unique = true, nullable = false)
+	String domain;
 
-    @CreationTimestamp
-    LocalDateTime dateTimeInserted;
-    @Setter
-    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials admin;
+	@CreationTimestamp
+	LocalDateTime dateTimeInserted;
+	@Setter
+	@OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	Credentials admin;
 
-    public ForbidenDomain(Credentials admin, String dom) {
-        //this.admin=admin;
-        this.domain = dom;
-    }
+	public ForbidenDomain(Credentials admin, String dom) {
+		//this.admin=admin;
+		this.domain = dom;
+	}
 
-    @Override
-    public String toString() {
-        return "ForbidenDomain{" +
-                "domain='" + domain + '\'' +
-                ", dateTimeInserted=" + dateTimeInserted +
-                ", admin.id=" + (admin == null ? "null" : admin.getIdUser()) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ForbidenDomain{" +
+				"domain='" + domain + '\'' +
+				", dateTimeInserted=" + dateTimeInserted +
+				", admin.id=" + (admin == null ? "null" : admin.getIdUser()) +
+				'}';
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ForbidenDomain that = (ForbidenDomain) o;
-        return domain.equals(that.domain);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ForbidenDomain that = (ForbidenDomain) o;
+		return domain.equals(that.domain);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(domain);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(domain);
+	}
 }

@@ -27,24 +27,24 @@ import java.util.TreeSet;
 public class RoleUpdateLog extends UserLog {
 
 
-    @Setter
-    @ElementCollection
-    Collection<String> roles = new TreeSet<>();
+	@Setter
+	@ElementCollection
+	Collection<String> roles = new TreeSet<>();
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials admin;
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	Credentials admin;
 
-    public RoleUpdateLog(Credentials user) {
-        super(user, LogStatus.ROLES_UPDATE);
-    }
+	public RoleUpdateLog(Credentials user) {
+		super(user, LogStatus.ROLES_UPDATE);
+	}
 
-    @Override
-    public String toString() {
-        return "RoleUpdateLog{" +
-                "roles=" + roles +
-                ", admin=" + admin.getIdUser() +
-                "} " + super.toString();
-    }
+	@Override
+	public String toString() {
+		return "RoleUpdateLog{" +
+				"roles=" + roles +
+				", admin=" + admin.getIdUser() +
+				"} " + super.toString();
+	}
 }

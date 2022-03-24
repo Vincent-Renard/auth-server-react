@@ -18,8 +18,8 @@ import java.util.Collection;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthServerStateAdmin extends AuthServerStatePublic {
 
-    long nbUsersRegistered;
-    long nbUsersAdminsRegistered;
-    Collection<String> forbidenDomains;
+	long nbUsersRegistered;
+	long nbUsersAdminsRegistered;
+	Collection<String> forbidenDomains;
 
 }

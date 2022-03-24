@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @ToString
 public class UserCredentials {
 
-    String mail;
-    String password;
+	String mail;
+	String password;
 
 }

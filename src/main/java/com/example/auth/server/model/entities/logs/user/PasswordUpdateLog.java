@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 @Getter
 @Entity
 public class PasswordUpdateLog extends UserLog {
-    public PasswordUpdateLog(Credentials user) {
-        super(user, LogStatus.UPDATE_PASSWORD);
-    }
+	public PasswordUpdateLog(Credentials user) {
+		super(user, LogStatus.UPDATE_PASSWORD);
+	}
 }

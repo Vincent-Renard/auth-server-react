@@ -23,34 +23,34 @@ import java.util.Objects;
 @Entity
 public class Banishment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
 
-    @Enumerated(value = EnumType.STRING)
-    BanReason reason;
+	@Enumerated(value = EnumType.STRING)
+	BanReason reason;
 
-    @CreationTimestamp
-    LocalDateTime date;
+	@CreationTimestamp
+	LocalDateTime date;
 
 
-    @Setter
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials admin;
+	@Setter
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	Credentials admin;
 
-    @Setter
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIdentityReference(alwaysAsId = true)
-    Credentials user;
+	@Setter
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIdentityReference(alwaysAsId = true)
+	Credentials user;
 
-    public Banishment(Credentials admin, BanReason reason) {
-        this.reason = reason;
-        this.admin = admin;
-    }
+	public Banishment(Credentials admin, BanReason reason) {
+		this.reason = reason;
+		this.admin = admin;
+	}
 
-    @Override
-    public String toString() {
+	@Override
+	public String toString() {
 		return "Banishment{" +
 				"id=" + id +
 				", user.id= " + ((user != null) ? user.getIdUser() : "null") +

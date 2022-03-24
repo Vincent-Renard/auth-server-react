@@ -12,11 +12,11 @@ import java.util.Optional;
  */
 @Repository
 public interface CredentialsRepository extends JpaRepository<Credentials, Long> {
-    Optional<Credentials> findByMail(String mail);
+	Optional<Credentials> findByMail(String mail);
 
-    boolean existsByMail(String mail);
+	boolean existsByMail(String mail);
 
-    long count();
+	long count();
 
 
 }

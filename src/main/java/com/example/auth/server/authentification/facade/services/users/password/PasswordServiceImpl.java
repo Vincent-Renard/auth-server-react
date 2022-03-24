@@ -8,7 +8,6 @@ import com.example.auth.server.authentification.facade.exceptions.UserBanExcepti
 import com.example.auth.server.authentification.facade.services.LogsService;
 import com.example.auth.server.authentification.facade.services.server.ResetTokenService;
 import com.example.auth.server.model.PersistenceEngine;
-import com.example.auth.server.model.entities.Credentials;
 import com.example.auth.server.model.entities.ResetPasswordToken;
 import com.example.auth.server.model.repositories.ResetPasswordTokenRepository;
 import lombok.AccessLevel;
@@ -16,8 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -47,36 +44,30 @@ public class PasswordServiceImpl implements PasswordService, AuthUtils {
 
 	@Override
 	public ResetPasswordToken askResetPasswordToken(String mail) throws NotSuchUserException, UserBanException {
-		var optUser = base.findCredentialsByMail(mail);
-		if (optUser.isPresent()) {
-			var u = optUser.get();
-			if (u.getBanishment() != null)
-				throw new UserBanException();
+		var user = base.findCredentialsByMail(mail).orElseThrow(NotSuchUserException::new);
+		if (user.getBanishment() != null)
+			throw new UserBanException();
 
-			logsService.askResetPasswordToken(u);
-			return resetTokenService.generateResetToken(u);
-		} else throw new NotSuchUserException();
+		logsService.askResetPasswordToken(user);
+		return resetTokenService.generateResetToken(user);
 
 	}
 
 	@Override
 	public void useResetPasswordToken(String key, String newPassword) throws UserBanException, BadPasswordFormatException, TokenNotFoundException {
-		var optToken = resetPasswordTokens.findById(key);
-		if (optToken.isPresent()) {
-			var token = optToken.get();
-			var u = token.getUser();
-			if (u.getBanishment() != null)
-				throw new UserBanException();
-			if (!passwordChecker.test(newPassword)) throw new BadPasswordFormatException();
+		var token = resetPasswordTokens.findById(key).orElseThrow(TokenNotFoundException::new);
+		var user = token.getUser();
+		if (user.getBanishment() != null)
+			throw new UserBanException();
+		if (!passwordChecker.test(newPassword)) throw new BadPasswordFormatException();
 
-			u.setPassword(this.encodePassword(newPassword));
+		user.setPassword(this.encodePassword(newPassword));
 
 
-			this.useToken(token);
-			base.saveCredentials(u);
-			logsService.logUpdatePasswordByResetToken(u);
-			base.cleanOldAndUnusedResetTokens(TTL_SECONDS_RESET_PASSWORD_TOKEN);
-		} else throw new TokenNotFoundException();
+		this.useToken(token);
+		base.saveCredentials(user);
+		logsService.logUpdatePasswordByResetToken(user);
+		base.cleanOldAndUnusedResetTokens(TTL_SECONDS_RESET_PASSWORD_TOKEN);
 	}
 
 	private void useToken(ResetPasswordToken token) {
@@ -86,10 +77,8 @@ public class PasswordServiceImpl implements PasswordService, AuthUtils {
 
 	@Override
 	public void updatePassword(long idUser, String newpasssword) throws NotSuchUserException, BadPasswordFormatException, UserBanException {
-		Optional<Credentials> optCredentials = base.findCredentialsById(idUser);
+		var credentials = base.findCredentialsById(idUser).orElseThrow(NotSuchUserException::new);
 
-		if (optCredentials.isPresent()) {
-			var credentials = optCredentials.get();
 			if (credentials.getBanishment() != null)
 				throw new UserBanException();
 			if (!passwordChecker.test(newpasssword)) throw new BadPasswordFormatException();
@@ -98,8 +87,5 @@ public class PasswordServiceImpl implements PasswordService, AuthUtils {
 
 			base.saveCredentials(credentials);
 			logsService.logUpdatePassword(credentials);
-		} else {
-			throw new NotSuchUserException();
-		}
 	}
 }

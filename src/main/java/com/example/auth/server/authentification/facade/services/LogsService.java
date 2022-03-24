@@ -14,7 +14,7 @@ public interface LogsService {
 
 	void logRegistration(Credentials user);
 
-	void LogRefreshing(Credentials user);
+	void logRefreshing(Credentials user);
 
 	void logUpdatePassword(Credentials user);
 
@@ -24,15 +24,7 @@ public interface LogsService {
 
 	void logUnban(Credentials user, Credentials admin);
 
-	void logUnbanDomain(long idAdmin, String domain);
-
-	void logBanDomain(Credentials admin, String domain);
-
-	void logAsksServerStateAdmin(Credentials admin);
-
 	void delogAdmin(long iduser);
-
-	void delogUser(long iduser);
 
 	void logUpdatePasswordByResetToken(Credentials u);
 
